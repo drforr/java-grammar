@@ -51,6 +51,22 @@ options {
 }
 
 @treeparser::members {
+    // XXX JMG I guess the fact that arguments have to be references means that
+    // XXX JMG this isn't really the right datastructure...
+
+    // XXX Ho ho, for the moment use the string as the key!
+    private final Map<String,String> literalCache =
+        new HashMap<String,String>();
+    private int gensym = 0;
+    private int getNextLiteral ( ) { return gensym++; };
+    private String hashSymbol ( String symbol ) {
+        literalCache.put( symbol, new String( symbol ) );
+        return symbol;
+    };
+    private String findSymbol ( String key ) {
+        return literalCache.get( key );
+    };
+
     /** Points to functions tracked by tree builder. */
     private List<CommonTree> functionDefinitions;
     
@@ -563,7 +579,7 @@ primaryExpression
 	|   explicitConstructorCall
 	|   ^(ARRAY_ELEMENT_ACCESS primaryExpression expression)
 	|   literal
-	    { System.out.println( $literal.value ); }
+	    { System.out.println( findSymbol( $literal.value ) ); }
 	|   newExpression
 	|   THIS
 	|   arrayTypeDeclarator
@@ -620,23 +636,23 @@ arguments
 
 literal returns [String value]
 	:   HEX_LITERAL
-	    { $value = new String( $HEX_LITERAL.text ); }
+	    { $value = hashSymbol( $HEX_LITERAL.text ); }
 	|   OCTAL_LITERAL
-	    { $value = new String( $OCTAL_LITERAL.text ); }
+	    { $value = hashSymbol( $OCTAL_LITERAL.text ); }
 	|   DECIMAL_LITERAL
-	    { $value = new String( $DECIMAL_LITERAL.text ); }
+	    { $value = hashSymbol( $DECIMAL_LITERAL.text ); }
 	|   FLOATING_POINT_LITERAL
-	    { $value = new String( $FLOATING_POINT_LITERAL.text ); }
+	    { $value = hashSymbol( $FLOATING_POINT_LITERAL.text ); }
 	|   CHARACTER_LITERAL
-	    { $value = new String( $CHARACTER_LITERAL.text ); }
+	    { $value = hashSymbol( $CHARACTER_LITERAL.text ); }
 	|   STRING_LITERAL
-	    { $value = new String( $STRING_LITERAL.text ); }
+	    { $value = hashSymbol( $STRING_LITERAL.text ); }
 	|   TRUE
-	    { $value = new String( $TRUE.text ); }
+	    { $value = hashSymbol( $TRUE.text ); }
 	|   FALSE
-	    { $value = new String( $FALSE.text ); }
+	    { $value = hashSymbol( $FALSE.text ); }
 	|   NULL
-	    { $value = new String( $NULL.text ); }
+	    { $value = hashSymbol( $NULL.text ); }
 	;
 
 /* }}} */
