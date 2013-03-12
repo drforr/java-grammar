@@ -4,4 +4,4 @@ all:
 	javac JavaLexer.java JavaParser.java JavaTreeParser.java Test.java
 
 clean:
-	rm -f *.class JavaLexer* JavaParser* Java.tokens JavaTreeParser.tokens
+	rm -f *.class *.tokens JavaLexer* JavaParser* JavaTreeParser.java

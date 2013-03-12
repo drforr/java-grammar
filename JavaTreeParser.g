@@ -44,6 +44,12 @@ options {
     ASTLabelType = CommonTree;
 }
 
+@header {
+    import java.util.Map;
+    import java.util.HashMap;
+    import java.math.BigInteger;
+}
+
 @treeparser::members {
     /** Points to functions tracked by tree builder. */
     private List<CommonTree> functionDefinitions;
@@ -493,7 +499,7 @@ expression
 	;
 
 expr
-	:   ^(ASSIGN expr expr)
+	:   ^(ASSIGN lhs=expr rhs=expr)
 	|   ^(PLUS_ASSIGN expr expr)
 	|   ^(MINUS_ASSIGN expr expr)
 	|   ^(STAR_ASSIGN expr expr)
@@ -557,6 +563,7 @@ primaryExpression
 	|   explicitConstructorCall
 	|   ^(ARRAY_ELEMENT_ACCESS primaryExpression expression)
 	|   literal
+	    { System.out.println( $literal.value ); }
 	|   newExpression
 	|   THIS
 	|   arrayTypeDeclarator
@@ -609,14 +616,27 @@ arguments
 	:   ^(ARGUMENT_LIST expression*)
 	;
 
-literal
+/* {{{ literal */
+
+literal returns [String value]
 	:   HEX_LITERAL
+	    { $value = new String( $HEX_LITERAL.text ); }
 	|   OCTAL_LITERAL
+	    { $value = new String( $OCTAL_LITERAL.text ); }
 	|   DECIMAL_LITERAL
+	    { $value = new String( $DECIMAL_LITERAL.text ); }
 	|   FLOATING_POINT_LITERAL
+	    { $value = new String( $FLOATING_POINT_LITERAL.text ); }
 	|   CHARACTER_LITERAL
+	    { $value = new String( $CHARACTER_LITERAL.text ); }
 	|   STRING_LITERAL
+	    { $value = new String( $STRING_LITERAL.text ); }
 	|   TRUE
+	    { $value = new String( $TRUE.text ); }
 	|   FALSE
+	    { $value = new String( $FALSE.text ); }
 	|   NULL
+	    { $value = new String( $NULL.text ); }
 	;
+
+/* }}} */
