@@ -515,52 +515,53 @@ expression
 	;
 
 expr
-	:   ^(ASSIGN lhs=expr rhs=expr)
-	|   ^(PLUS_ASSIGN expr expr)
-	|   ^(MINUS_ASSIGN expr expr)
-	|   ^(STAR_ASSIGN expr expr)
-	|   ^(DIV_ASSIGN expr expr)
-	|   ^(AND_ASSIGN expr expr)
-	|   ^(OR_ASSIGN expr expr)
-	|   ^(XOR_ASSIGN expr expr)
-	|   ^(MOD_ASSIGN expr expr)
-	|   ^(BIT_SHIFT_RIGHT_ASSIGN expr expr)
-	|   ^(SHIFT_RIGHT_ASSIGN expr expr)
-	|   ^(SHIFT_LEFT_ASSIGN expr expr)
-	|   ^(QUESTION expr expr expr)
-	|   ^(LOGICAL_OR expr expr)
-	|   ^(LOGICAL_AND expr expr)
-	|   ^(OR expr expr)
-	|   ^(XOR expr expr)
-	|   ^(AND expr expr)
-	|   ^(EQUAL expr expr)
-	|   ^(NOT_EQUAL expr expr)
-	|   ^(INSTANCEOF expr type)
-	|   ^(LESS_OR_EQUAL expr expr)
-	|   ^(GREATER_OR_EQUAL expr expr)
-	|   ^(BIT_SHIFT_RIGHT expr expr)
-	|   ^(SHIFT_RIGHT expr expr)
-	|   ^(GREATER_THAN expr expr)
-	|   ^(SHIFT_LEFT expr expr)
-	|   ^(LESS_THAN expr expr)
-	|   ^(PLUS expr expr)
-	|   ^(MINUS expr expr)
-	|   ^(STAR expr expr)
-	|   ^(DIV expr expr)
-	|   ^(MOD expr expr)
-	|   ^(UNARY_PLUS expr)
-	|   ^(UNARY_MINUS expr)
-	|   ^(PRE_INC expr)
-	|   ^(PRE_DEC expr)
-	|   ^(POST_INC expr)
-	|   ^(POST_DEC expr)
-	|   ^(NOT expr)
-	|   ^(LOGICAL_NOT expr)
-	|   ^(CAST_EXPR type expr)
-	|   primaryExpression
+	:	^(ASSIGN lhs=expr rhs=expr)
+	|	^(PLUS_ASSIGN expr expr)
+	|	^(MINUS_ASSIGN expr expr)
+	|	^(STAR_ASSIGN expr expr)
+	|	^(DIV_ASSIGN expr expr)
+	|	^(AND_ASSIGN expr expr)
+	|	^(OR_ASSIGN expr expr)
+	|	^(XOR_ASSIGN expr expr)
+	|	^(MOD_ASSIGN expr expr)
+	|	^(BIT_SHIFT_RIGHT_ASSIGN expr expr)
+	|	^(SHIFT_RIGHT_ASSIGN expr expr)
+	|	^(SHIFT_LEFT_ASSIGN expr expr)
+	|	^(QUESTION expr expr expr)
+	|	^(LOGICAL_OR expr expr)
+	|	^(LOGICAL_AND expr expr)
+	|	^(OR expr expr)
+	|	^(XOR expr expr)
+	|	^(AND expr expr)
+	|	^(EQUAL expr expr)
+	|	^(NOT_EQUAL expr expr)
+	|	^(INSTANCEOF expr type)
+	|	^(LESS_OR_EQUAL expr expr)
+	|	^(GREATER_OR_EQUAL expr expr)
+	|	^(BIT_SHIFT_RIGHT expr expr)
+	|	^(SHIFT_RIGHT expr expr)
+	|	^(GREATER_THAN expr expr)
+	|	^(SHIFT_LEFT expr expr)
+	|	^(LESS_THAN expr expr)
+	|	^(PLUS expr expr)
+	|	^(MINUS expr expr)
+	|	^(STAR expr expr)
+	|	^(DIV expr expr)
+	|	^(MOD expr expr)
+	|	^(UNARY_PLUS expr)
+	|	^(UNARY_MINUS expr)
+	|	^(PRE_INC expr)
+	|	^(PRE_DEC expr)
+	|	^(POST_INC expr)
+	|	^(POST_DEC expr)
+	|	^(NOT expr)
+	|	^(LOGICAL_NOT expr)
+	|	^(CAST_EXPR type expr)
+	|	primaryExpression
+	 	{ System.out.println($primaryExpression.value); }
 	;
     
-primaryExpression
+primaryExpression returns [String value]
 	:   ^(  DOT
 	        (   primaryExpression
 	            (   IDENT
@@ -573,17 +574,27 @@ primaryExpression
 	        |   VOID CLASS
 	        )
 	    )
+{$value=new String("foo 1");}
 	|   parenthesizedExpression
-	|   IDENT
+{$value=new String("foo 2");}
+	|	IDENT
+		{ $value = $IDENT.text; }
 	|   ^(METHOD_CALL primaryExpression genericTypeArgumentList? arguments)
+{$value=new String("foo 4");}
 	|   explicitConstructorCall
-	|   ^(ARRAY_ELEMENT_ACCESS primaryExpression expression)
-	|   literal
-	    { System.out.println( findSymbol( $literal.value ) ); }
+{$value=new String("foo 4");}
+	|	^(ARRAY_ELEMENT_ACCESS variable=primaryExpression expression)
+		{ $value = new String( $variable.value + "[" + "### value ###" + "]" ); }
+	|	literal
+		{ $value = findSymbol( $literal.value ); }
 	|   newExpression
+{$value=new String("foo 5");}
 	|   THIS
+{$value=new String("foo 6");}
 	|   arrayTypeDeclarator
+{$value=new String("foo 7");}
 	|   SUPER
+{$value=new String("foo 8");}
 	;
     
 explicitConstructorCall
@@ -635,24 +646,24 @@ arguments
 /* {{{ literal */
 
 literal returns [String value]
-	:   HEX_LITERAL
-	    { $value = hashSymbol( $HEX_LITERAL.text ); }
-	|   OCTAL_LITERAL
-	    { $value = hashSymbol( $OCTAL_LITERAL.text ); }
-	|   DECIMAL_LITERAL
-	    { $value = hashSymbol( $DECIMAL_LITERAL.text ); }
-	|   FLOATING_POINT_LITERAL
-	    { $value = hashSymbol( $FLOATING_POINT_LITERAL.text ); }
-	|   CHARACTER_LITERAL
-	    { $value = hashSymbol( $CHARACTER_LITERAL.text ); }
-	|   STRING_LITERAL
-	    { $value = hashSymbol( $STRING_LITERAL.text ); }
-	|   TRUE
-	    { $value = hashSymbol( $TRUE.text ); }
-	|   FALSE
-	    { $value = hashSymbol( $FALSE.text ); }
-	|   NULL
-	    { $value = hashSymbol( $NULL.text ); }
+	:	HEX_LITERAL
+	 	{ $value = hashSymbol( $HEX_LITERAL.text ); }
+	|	OCTAL_LITERAL
+	 	{ $value = hashSymbol( $OCTAL_LITERAL.text ); }
+	|	DECIMAL_LITERAL
+	 	{ $value = hashSymbol( $DECIMAL_LITERAL.text ); }
+	|	FLOATING_POINT_LITERAL
+	 	{ $value = hashSymbol( $FLOATING_POINT_LITERAL.text ); }
+	|	CHARACTER_LITERAL
+	 	{ $value = hashSymbol( $CHARACTER_LITERAL.text ); }
+	|	STRING_LITERAL
+	 	{ $value = hashSymbol( $STRING_LITERAL.text ); }
+	|	TRUE
+	 	{ $value = hashSymbol( $TRUE.text ); }
+	|	FALSE
+	 	{ $value = hashSymbol( $FALSE.text ); }
+	|	NULL
+	 	{ $value = hashSymbol( $NULL.text ); }
 	;
 
 /* }}} */
