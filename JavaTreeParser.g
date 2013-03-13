@@ -571,28 +571,27 @@ expr returns [String value]
 		{ $value = $lhs.value + " * " + $rhs.value; }
 	|	^(DIV lhs=expr rhs=expr)
 		{ $value = $lhs.value + " / " + $rhs.value; }
-	|	^(MOD expr expr)
-//		{ $value = "[10...assign]"; }
-	|	^(UNARY_PLUS expr)
-//		{ $value = "+" + $expr.value; }
-	|	^(UNARY_MINUS expr)
-//		{ $value = "-" + $expr.value; }
-	|	^(PRE_INC expr)
-//		{ $value = "++" + $expr.value; }
-	|	^(PRE_DEC expr)
-//		{ $value = "--" + $expr.value; }
-	|	^(POST_INC expr)
-//		{ $value = $expr.value + "++"; }
-	|	^(POST_DEC expr)
-//		{ $value = $expr.value + "--"; }
-	|	^(NOT expr)
-//		{ $value = "!" + $expr.value; }
-	|	^(LOGICAL_NOT expr)
-//		{ $value = "~" + $expr.value; }
-	|	^(CAST_EXPR type expr)
-//		{ $value = "(" + $type.value + ")" + $expr.value; }
+	|	^(MOD lhs=expr rhs=expr)
+		{ $value = "[10...assign]"; }
+	|	^(UNARY_PLUS a=expr)
+		{ $value = "+" + $a.value; }
+	|	^(UNARY_MINUS a=expr)
+		{ $value = "-" + $a.value; }
+	|	^(PRE_INC a=expr)
+		{ $value = "++" + $a.value; }
+	|	^(PRE_DEC a=expr)
+		{ $value = "--" + $a.value; }
+	|	^(POST_INC a=expr)
+		{ $value = $a.value + "++"; }
+	|	^(POST_DEC a=expr)
+		{ $value = $a.value + "--"; }
+	|	^(NOT a=expr)
+		{ $value = "!" + $a.value; }
+	|	^(LOGICAL_NOT a=expr)
+		{ $value = "~" + $a.value; }
+	|	^(CAST_EXPR type a=expr)
+//		{ $value = "(" + $type.value + ")" + $a.value; }
 	|	primaryExpression
-	 	//{ System.out.println($primaryExpression.value); }
 	 	{ $value = $primaryExpression.value; }
 	;
     
