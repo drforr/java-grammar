@@ -137,6 +137,7 @@ javaSource
 
 packageDeclaration
 	:   ^(PACKAGE qualifiedIdentifier)  
+		{ System.out.println( $PACKAGE.text + " " + $qualifiedIdentifier.value ); }
 	;
     
 importDeclaration
@@ -194,31 +195,25 @@ classTopLevelScope
 classScopeDeclarations
 	:   ^(CLASS_INSTANCE_INITIALIZER block)
 	|   ^(CLASS_STATIC_INITIALIZER block)
-	|   ^(FUNCTION_METHOD_DECL
-	  modifierList
-	  genericTypeParameterList?
-	  type
-	  IDENT
-	  formalParameterList
-	  arrayDeclaratorList?
-	  throwsClause? block?)
-	|   ^(VOID_METHOD_DECL
-	  modifierList
-	  genericTypeParameterList?
-	  IDENT
-	  formalParameterList
-	  throwsClause?
-	  block?)
-	|   ^(VAR_DECLARATION
-	  modifierList
-	  type
-	  variableDeclaratorList)
-	|   ^(CONSTRUCTOR_DECL
-	  modifierList
-	  genericTypeParameterList?
-	  formalParameterList
-	  throwsClause?
-	  block)
+	|   ^(FUNCTION_METHOD_DECL modifierList
+				   genericTypeParameterList?
+				   type
+			     IDENT formalParameterList
+				   arrayDeclaratorList?
+				   throwsClause? block?)
+	|   ^(VOID_METHOD_DECL modifierList
+			       genericTypeParameterList?
+			 IDENT formalParameterList
+			       throwsClause?
+			       block?)
+	|   ^(VAR_DECLARATION modifierList
+			      type
+			      variableDeclaratorList)
+	|   ^(CONSTRUCTOR_DECL modifierList
+			       genericTypeParameterList?
+			       formalParameterList
+			       throwsClause?
+			       block)
 	|   typeDeclaration
 	;
     
@@ -227,20 +222,16 @@ interfaceTopLevelScope
 	;
     
 interfaceScopeDeclarations
-	:   ^(FUNCTION_METHOD_DECL
-	  modifierList
-	  genericTypeParameterList?
-	  type
-	  IDENT
-	  formalParameterList
-	  arrayDeclaratorList?
-	  throwsClause?)
-	|   ^(VOID_METHOD_DECL
-	  modifierList
-	  genericTypeParameterList?
-	  IDENT
-	  formalParameterList
-	  throwsClause?)
+	:   ^(FUNCTION_METHOD_DECL modifierList
+				   genericTypeParameterList?
+				   type
+			     IDENT formalParameterList
+				   arrayDeclaratorList?
+				   throwsClause?)
+	|   ^(VOID_METHOD_DECL modifierList
+			       genericTypeParameterList?
+			 IDENT formalParameterList
+			       throwsClause?)
 			 // Interface constant declarations have been switched
 			 // to variable declarations by 'java.g';
 			 //  the parser has already checked that
@@ -261,23 +252,38 @@ variableDeclaratorId
 	:   ^(IDENT arrayDeclaratorList?)
 	;
 
+/* {{{ variableInitializer */
+
 variableInitializer
-	:   arrayInitializer
-	|   expression
+	:	arrayInitializer
+		{ System.out.println( $arrayInitializer.value ); }
+	|	expression
 		{ System.out.println( $expression.value ); }
 	;
 
-arrayDeclarator
-	:   LBRACK RBRACK
+/* }}} */
+
+/* {{{ arrayDeclarator */
+
+arrayDeclarator returns [String value]
+	:	LBRACK RBRACK
+		{ $value = $LBRACK.text + $RBRACK.text; }
 	;
+
+/* }}} */
 
 arrayDeclaratorList
 	:   ^(ARRAY_DECLARATOR_LIST ARRAY_DECLARATOR*)  
 	;
     
-arrayInitializer
+/* {{{ arrayInitializer */
+
+arrayInitializer returns [String value]
 	:   ^(ARRAY_INITIALIZER variableInitializer*)
+{ $value = "[arrayInitialized]"; }
 	;
+
+/* }}} */
 
 throwsClause
 	:   ^(THROWS_CLAUSE qualifiedIdentifier+)
@@ -287,28 +293,36 @@ modifierList
 	:   ^(MODIFIER_LIST modifier*)
 	;
 
-modifier
-	:   PUBLIC
-	|   PROTECTED
-	|   PRIVATE
-	|   STATIC
-	|   ABSTRACT
-	|   NATIVE
-	|   SYNCHRONIZED
-	|   TRANSIENT
-	|   VOLATILE
-	|   STRICTFP
-	|   localModifier
+/* {{{ modifier */
+
+modifier returns [String value]
+	:	PUBLIC		{ $value = $PUBLIC.text; }
+	|	PROTECTED	{ $value = $PROTECTED.text; }
+	|	PRIVATE		{ $value = $PRIVATE.text; }
+	|	STATIC		{ $value = $STATIC.text; }
+	|	ABSTRACT	{ $value = $ABSTRACT.text; }
+	|	NATIVE		{ $value = $NATIVE.text; }
+	|	SYNCHRONIZED	{ $value = $SYNCHRONIZED.text; }
+	|	TRANSIENT	{ $value = $TRANSIENT.text; }
+	|	VOLATILE	{ $value = $VOLATILE.text; }
+	|	STRICTFP	{ $value = $STRICTFP.text; }
+	|	localModifier	{ $value = $localModifier.value; }
 	;
+
+/* }}} */
 
 localModifierList
 	:   ^(LOCAL_MODIFIER_LIST localModifier*)
 	;
 
-localModifier
-	:   FINAL
-	|   annotation
+/* {{{ localModifier */
+
+localModifier returns [String value]
+	:	FINAL		{ $value = $FINAL.text; }
+	|	annotation	{ $value = $annotation.value; }
 	;
+
+/* }}} */
 
 type
 	:   ^(TYPE (primitiveType | qualifiedTypeIdent) arrayDeclaratorList?)
@@ -322,16 +336,20 @@ typeIdent
 	:   ^(IDENT genericTypeArgumentList?)
 	;
 
-primitiveType
-	:   BOOLEAN
-	|   CHAR
-	|   BYTE
-	|   SHORT
-	|   INT
-	|   LONG
-	|   FLOAT
-	|   DOUBLE
+/* {{{ primitiveType */
+
+primitiveType returns [String value]
+	:	BOOLEAN	{ $value = $BOOLEAN.text; }
+	|	CHAR	{ $value = $CHAR.text; }
+	|	BYTE	{ $value = $BYTE.text; }
+	|	SHORT	{ $value = $SHORT.text; }
+	|	INT	{ $value = $INT.text; }
+	|	LONG	{ $value = $LONG.text; }
+	|	FLOAT	{ $value = $FLOAT.text; }
+	|	DOUBLE	{ $value = $DOUBLE.text; }
 	;
+
+/* }}} */
 
 genericTypeArgumentList
 	:   ^(GENERIC_TYPE_ARG_LIST genericTypeArgument+)
@@ -348,29 +366,32 @@ genericWildcardBoundType
 	;
 
 formalParameterList
-    :   ^(FORMAL_PARAM_LIST
-          formalParameterStandardDecl*
-          formalParameterVarargDecl?) 
-    ;
+	:   ^(FORMAL_PARAM_LIST formalParameterStandardDecl*
+				formalParameterVarargDecl?) 
+	;
     
 formalParameterStandardDecl
-	:   ^(FORMAL_PARAM_STD_DECL
-	  localModifierList
-	  type
-	  variableDeclaratorId)
+	:   ^(FORMAL_PARAM_STD_DECL localModifierList
+				    type
+				    variableDeclaratorId)
 	;
     
 formalParameterVarargDecl
-	:   ^(FORMAL_PARAM_VARARG_DECL
-	  localModifierList
-	  type
-	  variableDeclaratorId)
+	:   ^(FORMAL_PARAM_VARARG_DECL localModifierList
+				       type
+				       variableDeclaratorId)
 	;
     
-qualifiedIdentifier
-	:   IDENT
-	|   ^(DOT qualifiedIdentifier IDENT)
+/* {{{ qualifiedIdentifier */
+
+qualifiedIdentifier returns [String value]
+	:	IDENT
+		{ $value = $IDENT.text; }
+	|	^(DOT a=qualifiedIdentifier IDENT)
+		{ $value = $a.value + $DOT.text + $IDENT.text; }
 	;
+
+/* }}} */
     
 // ANNOTATIONS
 
@@ -378,8 +399,9 @@ annotationList
 	:   ^(ANNOTATION_LIST annotation*)
 	;
 
-annotation
+annotation returns [String value]
 	:   ^(AT qualifiedIdentifier annotationInit?)
+{ $value = "[annotation]"; }
 	;
     
 annotationInit
@@ -398,7 +420,7 @@ annotationInitializer
 annotationElementValue
 	:   ^(ANNOTATION_INIT_ARRAY_ELEMENT annotationElementValue*)
 	|   annotation
-	|   expression
+	|	expression
 		{ System.out.println( $expression.value ); }
 	;
     
@@ -407,11 +429,8 @@ annotationTopLevelScope
 	;
     
 annotationScopeDeclarations
-	:   ^(ANNOTATION_METHOD_DECL
-	  modifierList
-	  type
-	  IDENT
-	  annotationDefaultValue?)
+	:   ^(ANNOTATION_METHOD_DECL modifierList type
+			       IDENT annotationDefaultValue?)
 	|   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
 	|   typeDeclaration
 	;
@@ -429,7 +448,8 @@ block
 blockStatement
 	:   localVariableDeclaration
 	|   typeDeclaration
-	|   statement
+	|	statement
+		{ System.out.println( $statement.value ); }
 	;
     
 localVariableDeclaration
@@ -437,7 +457,7 @@ localVariableDeclaration
 	;
     
         
-statement
+statement returns [String value]
 	:   block
 	|   ^(ASSERT a=expression b=expression?)
 //		{ System.out.println( $a.value ); }
@@ -445,22 +465,28 @@ statement
 	|   ^(FOR forInit forCondition forUpdater statement)
 	|   ^(FOR_EACH localModifierList type IDENT expression statement) 
 //		{ System.out.println( $expression.value ); }
-	|   ^(WHILE parenthesizedExpression statement)
+	|   ^(WHILE parenthesizedExpression a=statement)
+		{ $value = $WHILE.text + " " +
+			   $parenthesizedExpression.value + " { " +
+				$a.value +
+			   " } ";
+		}
 	|   ^(DO statement parenthesizedExpression)
 	|   ^(TRY block catches? block?)
             // The second optional block is the optional finally block.
 	|   ^(SWITCH parenthesizedExpression switchBlockLabels)
 	|   ^(SYNCHRONIZED parenthesizedExpression block)
 	|	^(RETURN expression?)
-		{ System.out.println( $RETURN.text + " " + $expression.value ); }
+		{ $value = $RETURN.text + " " + $expression.value; }
 	|	^(THROW expression)
-		{ System.out.println( $THROW.text + " " + $expression.value ); }
+		{ $value = $THROW.text + " " + $expression.value; }
 	|   ^(BREAK IDENT?)
 	|   ^(CONTINUE IDENT?)
 	|   ^(LABELED_STATEMENT IDENT statement)
 	|	expression
-		{ System.out.println( $expression.value ); }
-	|   SEMI // Empty statement.
+		{ $value = $expression.value; }
+	|	SEMI // Empty statement.
+		{ $value = $SEMI.text; }
 	;
         
 catches
@@ -497,8 +523,9 @@ forUpdater
     
 // EXPRESSIONS
 
-parenthesizedExpression
-	:   ^(PARENTESIZED_EXPR expression)
+parenthesizedExpression returns [String value]
+	:	^(PARENTESIZED_EXPR expression)
+		{ $value = "( " + $expression.value + " )"; }
 	;
     
 expression returns [String value]
@@ -609,8 +636,8 @@ primaryExpression returns [String value]
 	        )
 	    )
 {$value=new String("foo 1");}
-	|   parenthesizedExpression
-{$value=new String("foo 2");}
+	|	parenthesizedExpression
+		{ $value = $parenthesizedExpression.value; }
 	|	IDENT
 		{ $value = $IDENT.text; }
 	|   ^(METHOD_CALL primaryExpression genericTypeArgumentList? arguments)
@@ -623,20 +650,19 @@ primaryExpression returns [String value]
 		{ $value = $literal.value; }
 	|   newExpression
 {$value=new String("foo 8");}
-	|   THIS
-{$value=new String("foo 9");}
+	|	THIS
+		{ $value = $THIS.text; }
 	|   arrayTypeDeclarator
 {$value=new String("foo 10");}
-	|   SUPER
-{$value=new String("foo 11");}
+	|	SUPER
+		{ $value = $SUPER.text; }
 	;
     
 explicitConstructorCall
 	:   ^(THIS_CONSTRUCTOR_CALL genericTypeArgumentList? arguments)
-	|   ^(SUPER_CONSTRUCTOR_CALL
-	      primaryExpression?
-	      genericTypeArgumentList?
-	      arguments)
+	|   ^(SUPER_CONSTRUCTOR_CALL primaryExpression?
+				     genericTypeArgumentList?
+				     arguments)
 	;
 
 arrayTypeDeclarator
@@ -652,20 +678,17 @@ newExpression
                     newArrayConstruction
 	        )
 	    )
-	|   ^(CLASS_CONSTRUCTOR_CALL
-	      genericTypeArgumentList?
-	      qualifiedTypeIdent
-	      arguments
-	      classTopLevelScope?)
+	|   ^(CLASS_CONSTRUCTOR_CALL genericTypeArgumentList?
+				     qualifiedTypeIdent
+				     arguments
+				     classTopLevelScope?)
 	;
 
 // something like 'InnerType innerType = outer.new InnerType();'
 innerNewExpression 
-	:   ^(CLASS_CONSTRUCTOR_CALL
-	      genericTypeArgumentList?
-	      IDENT
-	      arguments
-	      classTopLevelScope?)
+	:   ^(CLASS_CONSTRUCTOR_CALL genericTypeArgumentList?
+			       IDENT arguments
+				     classTopLevelScope?)
 	;
     
 newArrayConstruction
