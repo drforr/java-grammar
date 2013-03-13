@@ -51,22 +51,6 @@ options {
 }
 
 @treeparser::members {
-    // XXX JMG I guess the fact that arguments have to be references means that
-    // XXX JMG this isn't really the right datastructure...
-
-    // XXX Ho ho, for the moment use the string as the key!
-    private final Map<String,String> literalCache =
-        new HashMap<String,String>();
-    private int gensym = 0;
-    private int getNextLiteral ( ) { return gensym++; };
-    private String hashSymbol ( String symbol ) {
-        literalCache.put( symbol, new String( symbol ) );
-        return symbol;
-    };
-    private String findSymbol ( String key ) {
-        return literalCache.get( key );
-    };
-
     /** Points to functions tracked by tree builder. */
     private List<CommonTree> functionDefinitions;
     
@@ -280,6 +264,7 @@ variableDeclaratorId
 variableInitializer
 	:   arrayInitializer
 	|   expression
+		{ System.out.println( $expression.value ); }
 	;
 
 arrayDeclarator
@@ -414,6 +399,7 @@ annotationElementValue
 	:   ^(ANNOTATION_INIT_ARRAY_ELEMENT annotationElementValue*)
 	|   annotation
 	|   expression
+		{ System.out.println( $expression.value ); }
 	;
     
 annotationTopLevelScope
@@ -453,22 +439,27 @@ localVariableDeclaration
         
 statement
 	:   block
-	|   ^(ASSERT expression expression?)
+	|   ^(ASSERT a=expression b=expression?)
+//		{ System.out.println( $a.value ); }
 	|   ^(IF parenthesizedExpression statement statement?)
 	|   ^(FOR forInit forCondition forUpdater statement)
 	|   ^(FOR_EACH localModifierList type IDENT expression statement) 
+//		{ System.out.println( $expression.value ); }
 	|   ^(WHILE parenthesizedExpression statement)
 	|   ^(DO statement parenthesizedExpression)
 	|   ^(TRY block catches? block?)
             // The second optional block is the optional finally block.
 	|   ^(SWITCH parenthesizedExpression switchBlockLabels)
 	|   ^(SYNCHRONIZED parenthesizedExpression block)
-	|   ^(RETURN expression?)
-	|   ^(THROW expression)
+	|	^(RETURN expression?)
+		{ System.out.println( $RETURN.text + " " + $expression.value ); }
+	|	^(THROW expression)
+		{ System.out.println( $THROW.text + " " + $expression.value ); }
 	|   ^(BREAK IDENT?)
 	|   ^(CONTINUE IDENT?)
 	|   ^(LABELED_STATEMENT IDENT statement)
-	|   expression
+	|	expression
+		{ System.out.println( $expression.value ); }
 	|   SEMI // Empty statement.
 	;
         
@@ -510,55 +501,99 @@ parenthesizedExpression
 	:   ^(PARENTESIZED_EXPR expression)
 	;
     
-expression
-	:   ^(EXPR expr)
+expression returns [String value]
+	:	^(EXPR expr)
+		{ $value = $expr.value; }
 	;
 
-expr
+expr returns [String value]
 	:	^(ASSIGN lhs=expr rhs=expr)
-	|	^(PLUS_ASSIGN expr expr)
-	|	^(MINUS_ASSIGN expr expr)
-	|	^(STAR_ASSIGN expr expr)
-	|	^(DIV_ASSIGN expr expr)
-	|	^(AND_ASSIGN expr expr)
-	|	^(OR_ASSIGN expr expr)
-	|	^(XOR_ASSIGN expr expr)
+		{ $value = $lhs.value + " = " + $rhs.value; }
+	|	^(PLUS_ASSIGN lhs=expr rhs=expr)
+		{ $value = $lhs.value + " += " + $rhs.value; }
+	|	^(MINUS_ASSIGN lhs=expr rhs=expr)
+		{ $value = $lhs.value + " -= " + $rhs.value; }
+	|	^(STAR_ASSIGN lhs=expr rhs=expr)
+		{ $value = $lhs.value + " *= " + $rhs.value; }
+	|	^(DIV_ASSIGN lhs=expr rhs=expr)
+		{ $value = $lhs.value + " /= " + $rhs.value; }
+	|	^(AND_ASSIGN lhs=expr rhs=expr)
+		{ $value = $lhs.value + " &= " + $rhs.value; }
+	|	^(OR_ASSIGN lhs=expr rhs=expr)
+		{ $value = $lhs.value + " |= " + $rhs.value; }
+	|	^(XOR_ASSIGN lhs=expr rhs=expr)
+		{ $value = $lhs.value + " ^= " + $rhs.value; }
 	|	^(MOD_ASSIGN expr expr)
+		{ $value = "[mod_assign]"; }
 	|	^(BIT_SHIFT_RIGHT_ASSIGN expr expr)
+		{ $value = "[bsr_assign]"; }
 	|	^(SHIFT_RIGHT_ASSIGN expr expr)
+		{ $value = "[sr_assign]"; }
 	|	^(SHIFT_LEFT_ASSIGN expr expr)
+		{ $value = "[sl_assign]"; }
 	|	^(QUESTION expr expr expr)
+		{ $value = "[question]"; }
 	|	^(LOGICAL_OR expr expr)
+		{ $value = "[logical_or]"; }
 	|	^(LOGICAL_AND expr expr)
-	|	^(OR expr expr)
-	|	^(XOR expr expr)
-	|	^(AND expr expr)
-	|	^(EQUAL expr expr)
-	|	^(NOT_EQUAL expr expr)
+		{ $value = "[logical_and]"; }
+	|	^(OR lhs=expr rhs=expr)
+		{ $value = $lhs.value + " |= " + $rhs.value; }
+	|	^(XOR lhs=expr rhs=expr)
+		{ $value = $lhs.value + " ^ " + $rhs.value; }
+	|	^(AND lhs=expr rhs=expr)
+		{ $value = $lhs.value + " & " + $rhs.value; }
+	|	^(EQUAL lhs=expr rhs=expr)
+		{ $value = $lhs.value + " == " + $rhs.value; }
+	|	^(NOT_EQUAL lhs=expr rhs=expr)
+		{ $value = $lhs.value + " != " + $rhs.value; }
 	|	^(INSTANCEOF expr type)
-	|	^(LESS_OR_EQUAL expr expr)
-	|	^(GREATER_OR_EQUAL expr expr)
+		{ $value = "[instanceof]"; }
+	|	^(LESS_OR_EQUAL lhs=expr rhs=expr)
+		{ $value = $lhs.value + " <= " + $rhs.value; }
+	|	^(GREATER_OR_EQUAL lhs=expr rhs=expr)
+		{ $value = $lhs.value + " >= " + $rhs.value; }
 	|	^(BIT_SHIFT_RIGHT expr expr)
+		{ $value = "[1...assign]"; }
 	|	^(SHIFT_RIGHT expr expr)
-	|	^(GREATER_THAN expr expr)
+		{ $value = "[2...assign]"; }
+	|	^(GREATER_THAN lhs=expr rhs=expr)
+		{ $value = $lhs.value + " > " + $rhs.value; }
 	|	^(SHIFT_LEFT expr expr)
-	|	^(LESS_THAN expr expr)
-	|	^(PLUS expr expr)
-	|	^(MINUS expr expr)
-	|	^(STAR expr expr)
-	|	^(DIV expr expr)
+		{ $value = "[4...assign]"; }
+	|	^(LESS_THAN lhs=expr rhs=expr)
+		{ $value = $lhs.value + " < " + $rhs.value; }
+	|	^(PLUS lhs=expr rhs=expr)
+		{ $value = $lhs.value + " + " + $rhs.value; }
+	|	^(MINUS lhs=expr rhs=expr)
+		{ $value = $lhs.value + " - " + $rhs.value; }
+	|	^(STAR lhs=expr rhs=expr)
+		{ $value = $lhs.value + " * " + $rhs.value; }
+	|	^(DIV lhs=expr rhs=expr)
+		{ $value = $lhs.value + " / " + $rhs.value; }
 	|	^(MOD expr expr)
+//		{ $value = "[10...assign]"; }
 	|	^(UNARY_PLUS expr)
+//		{ $value = "+" + $expr.value; }
 	|	^(UNARY_MINUS expr)
+//		{ $value = "-" + $expr.value; }
 	|	^(PRE_INC expr)
+//		{ $value = "++" + $expr.value; }
 	|	^(PRE_DEC expr)
+//		{ $value = "--" + $expr.value; }
 	|	^(POST_INC expr)
+//		{ $value = $expr.value + "++"; }
 	|	^(POST_DEC expr)
+//		{ $value = $expr.value + "--"; }
 	|	^(NOT expr)
+//		{ $value = "!" + $expr.value; }
 	|	^(LOGICAL_NOT expr)
+//		{ $value = "~" + $expr.value; }
 	|	^(CAST_EXPR type expr)
+//		{ $value = "(" + $type.value + ")" + $expr.value; }
 	|	primaryExpression
-	 	{ System.out.println($primaryExpression.value); }
+	 	//{ System.out.println($primaryExpression.value); }
+	 	{ $value = $primaryExpression.value; }
 	;
     
 primaryExpression returns [String value]
@@ -582,19 +617,19 @@ primaryExpression returns [String value]
 	|   ^(METHOD_CALL primaryExpression genericTypeArgumentList? arguments)
 {$value=new String("foo 4");}
 	|   explicitConstructorCall
-{$value=new String("foo 4");}
-	|	^(ARRAY_ELEMENT_ACCESS variable=primaryExpression expression)
-		{ $value = new String( $variable.value + "[" + "### value ###" + "]" ); }
-	|	literal
-		{ $value = findSymbol( $literal.value ); }
-	|   newExpression
 {$value=new String("foo 5");}
-	|   THIS
-{$value=new String("foo 6");}
-	|   arrayTypeDeclarator
-{$value=new String("foo 7");}
-	|   SUPER
+	|	^(ARRAY_ELEMENT_ACCESS variable=primaryExpression expression)
+		{ $value = $variable.value + "[" + $expression.value + "]"; }
+	|	literal
+		{ $value = $literal.value; }
+	|   newExpression
 {$value=new String("foo 8");}
+	|   THIS
+{$value=new String("foo 9");}
+	|   arrayTypeDeclarator
+{$value=new String("foo 10");}
+	|   SUPER
+{$value=new String("foo 11");}
 	;
     
 explicitConstructorCall
@@ -647,23 +682,23 @@ arguments
 
 literal returns [String value]
 	:	HEX_LITERAL
-	 	{ $value = hashSymbol( $HEX_LITERAL.text ); }
+	 	{ $value = $HEX_LITERAL.text; }
 	|	OCTAL_LITERAL
-	 	{ $value = hashSymbol( $OCTAL_LITERAL.text ); }
+	 	{ $value = $OCTAL_LITERAL.text; }
 	|	DECIMAL_LITERAL
-	 	{ $value = hashSymbol( $DECIMAL_LITERAL.text ); }
+	 	{ $value = $DECIMAL_LITERAL.text; }
 	|	FLOATING_POINT_LITERAL
-	 	{ $value = hashSymbol( $FLOATING_POINT_LITERAL.text ); }
+	 	{ $value = $FLOATING_POINT_LITERAL.text; }
 	|	CHARACTER_LITERAL
-	 	{ $value = hashSymbol( $CHARACTER_LITERAL.text ); }
+	 	{ $value = $CHARACTER_LITERAL.text; }
 	|	STRING_LITERAL
-	 	{ $value = hashSymbol( $STRING_LITERAL.text ); }
+	 	{ $value = $STRING_LITERAL.text; }
 	|	TRUE
-	 	{ $value = hashSymbol( $TRUE.text ); }
+	 	{ $value = $TRUE.text; }
 	|	FALSE
-	 	{ $value = hashSymbol( $FALSE.text ); }
+	 	{ $value = $FALSE.text; }
 	|	NULL
-	 	{ $value = hashSymbol( $NULL.text ); }
+	 	{ $value = $NULL.text; }
 	;
 
 /* }}} */
