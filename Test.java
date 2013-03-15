@@ -27,6 +27,6 @@ public class Test {
 		new CommonTreeNodeStream(t);
         JavaTreeParser evaluator =
 		new JavaTreeParser(nodes, parser.functionDefinitions);
-        evaluator.javaSource();
+        System.out.println( evaluator.javaSource() );
     }
 }
