@@ -1922,37 +1922,43 @@ annotationInit returns [String value]
 annotationInitializers returns [String value]
     :   ^(ANNOTATION_INIT_KEY_LIST annotationInitializer+)
 {
-	$value = $ANNOTATION_INIT_KEY_LIST.text + " " +
-		 $annotationInitializer.value + "{{annotationInitializers 1}}";
+	$value = "{{annotationInitializers[1] " +
+		 $ANNOTATION_INIT_KEY_LIST.text + " " +
+		 $annotationInitializer.value + "}}";
 }
     |   ^(ANNOTATION_INIT_DEFAULT_KEY annotationElementValue)
 {
-	$value = $ANNOTATION_INIT_DEFAULT_KEY.text + " " +
-		 $annotationElementValue.value + "{{annotationInitializers 2}}";
+	$value = "{{annotationInitializers[2] " +
+		 $ANNOTATION_INIT_DEFAULT_KEY.text + " " +
+		 $annotationElementValue.value + "}}";
 }
     ;
     
 annotationInitializer returns [String value]
     :   ^(IDENT annotationElementValue)
 {
-	$value = $IDENT.text + " " +
-		 $annotationElementValue.value + "{{annotationInitializer}}";
+	$value = "{{annotationInitializer " +
+		 $IDENT.text + " " +
+		 $annotationElementValue.value + "}}";
 }
     ;
     
 annotationElementValue returns [String value]
     :   ^(ANNOTATION_INIT_ARRAY_ELEMENT a=annotationElementValue*)
 {
-	$value = $ANNOTATION_INIT_ARRAY_ELEMENT.text + " " +
-		 $a.value + "{{annotationElementValue 1}}";
+	$value = "{{annotationElementValue[1] " +
+		 $ANNOTATION_INIT_ARRAY_ELEMENT.text + " " +
+		 $a.value + "}}";
 }
     |   annotation
 {
-	$value = $annotation.value + "{{annotationElementValue 2}}";
+	$value = "{{annotationElementValue[2] " +
+		 $annotation.value + "}}";
 }
     |   expression
 {
-	$value = $expression.value + "{{annotationElementValue 3}}";
+	$value = "{{annotationElementValue[3] " +
+		 $expression.value + "}}";
 }
     ;
     
@@ -1967,30 +1973,34 @@ annotationTopLevelScope returns [String value]
 annotationScopeDeclarations returns [String value]
     :   ^(ANNOTATION_METHOD_DECL modifierList type IDENT annotationDefaultValue?)
 {
-	$value = $ANNOTATION_METHOD_DECL.text + " " +
+	$value = "{{annotationScopeDeclarations[1] " +
+		 $ANNOTATION_METHOD_DECL.text + " " +
 		 $modifierList.value + " " +
 		 $type.value + " " +
 		 $IDENT.text + " " +
-		 $annotationDefaultValue.value + "{{annotationScopeDeclarations 1}}";
+		 $annotationDefaultValue.value + "}}";
 }
     |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
 {
-	$value = $VAR_DECLARATION.text + " " +
+	$value = "{{annotationScopeDeclarations[2] " +
+		 $VAR_DECLARATION.text + " " +
 		 $modifierList.value + " " +
 		 $type.value + " " +
-		 $variableDeclaratorList.value + "{{annotationScopeDeclarations 2}}";
+		 $variableDeclaratorList.value + "}}";
 }
     |   typeDeclaration
 {
-	$value = $typeDeclaration.value + "{{annotationScopeDeclarations 3}}";
+	$value = "{{annotationScopeDeclarations[3] " +
+		 $typeDeclaration.value + "}}";
 }
     ;
     
 annotationDefaultValue returns [String value]
     :   ^(DEFAULT annotationElementValue)
 {
-	$value = $DEFAULT.text + " " +
-		 $annotationElementValue.value + "{{annotationDefaultValue}}";
+	$value = "{{annotationDefaultValue " +
+		 $DEFAULT.text + " " +
+		 $annotationElementValue.value + "}}";
 }
     ;
 
@@ -2007,25 +2017,29 @@ block returns [String value]
 blockStatement returns [String value]
     :   localVariableDeclaration
 {
-	$value = $localVariableDeclaration.value + "{{blockStatement 1}}";
+	$value = "{{blockStatement[1] " +
+		 $localVariableDeclaration.value + "}}";
 }
     |   typeDeclaration
 {
-	$value = $typeDeclaration.value + "{{blockStatement 2}}";
+	$value = "{{blockStatement[2] " +
+		 $typeDeclaration.value + "}}";
 }
     |   statement
 {
-	$value = $statement.value + "{{blockStatement 3}}";
+	$value = "{{blockStatement[3] " +
+		 $statement.value + "}}";
 }
     ;
     
 localVariableDeclaration returns [String value]
     :   ^(VAR_DECLARATION localModifierList type variableDeclaratorList)
 {
-	$value = $VAR_DECLARATION.text + " " +
+	$value = "{{localVariableDeclaration " +
+		 $VAR_DECLARATION.text + " " +
 		 $localModifierList.value + " " +
 		 $type.value + " " +
-		 $variableDeclaratorList.value + "{{localVariableDeclaration}}";
+		 $variableDeclaratorList.value + "}}";
 }
     ;
     
@@ -2033,102 +2047,117 @@ localVariableDeclaration returns [String value]
 statement returns [String value]
     :   block
 {
-	$value = $block.value + "{{statement 1}}";
+	$value = "{{statement[1] " +
+		 $block.value + "}}";
 }
     |   ^(ASSERT a=expression b=expression?)
 {
-	$value = $ASSERT.text + " " +
+	$value = "{{statement[2] " +
 		 $a.value + " " +
-		 $b.value + "{{statement 2}}";
+		 $b.value + "}}";
 }
-    |   ^(IF parenthesizedExpression statement statement?)
+    |   ^(IF parenthesizedExpression a=statement b=statement?)
 {
-	$value = $IF.text + " " +
-		 $parenthesizedExpression.value + " " +
+	$value = "{{statement[3] " +
+		 $IF.text + " " +
 		 $a.value + " " +
-		 $b.value + "{{statement 3}}";
+		 $b.value + "}}";
 }
     |   ^(FOR forInit forCondition forUpdater a=statement)
 {
-	$value = $FOR.text + " " +
+	$value = "{{statement[4] " +
+		 $FOR.text + " " +
 		 $forInit.value + " " +
 		 $forCondition.value + " " +
 		 $forUpdater.value + " " +
-		 $a.value + "{{statement 4}}";
+		 $a.value + "}}";
 }
     |   ^(FOR_EACH localModifierList type IDENT expression a=statement) 
 {
-	$value = $FOR_EACH.text + " " +
+	$value = "{{statement[5] " +
+		 $FOR_EACH.text + " " +
 		 $localModifierList.value + " " +
 		 $type.value + " " +
 		 $IDENT.text + " " +
 		 $expression.value + " " +
-		 $a.value + "{{statement 5}}";
+		 $a.value + "}}";
 }
     |   ^(WHILE parenthesizedExpression a=statement)
 {
-	$value = $WHILE.text + " " +
+	$value = "{{statement[6] " +
+		 $WHILE.text + " " +
 		 $parenthesizedExpression.value + " " +
-		 $a.value + "{{statement 6}}";
+		 $a.value + "}}";
 }
     |   ^(DO a=statement parenthesizedExpression)
 {
-	$value = $DO.text + " " +
+	$value = "{{statement[7] " +
+		 $DO.text + " " +
 		 $a.value + " " +
-		 $parenthesizedExpression.value + "{{statement 7}}";
+		 $parenthesizedExpression.value + "}}";
 }
     |   ^(TRY a=block catches? b=block?)  // The second optional block is the optional finally block.
 {
-	$value = $TRY.text + " " +
+	$value = "{{statement[8] " +
+		 $TRY.text + " " +
 		 $a.value + " " +
 		 $catches.value + " " +
-		 $b.value + "{{statement 8}}";
+		 $b.value + "}}";
 }
     |   ^(SWITCH parenthesizedExpression switchBlockLabels)
 {
-	$value = $SWITCH.text + " " +
+	$value = "{{statement[9] " +
+		 $SWITCH.text + " " +
 		 $parenthesizedExpression.value + " " +
-		 $switchBlockLabels.value + "{{statement 9}}";
+		 $switchBlockLabels.value + "}}";
 }
     |   ^(SYNCHRONIZED parenthesizedExpression block)
 {
-	$value = $SYNCHRONIZED.text + " " +
+	$value = "{{statement[10] " +
+		 $SYNCHRONIZED.text + " " +
 		 $parenthesizedExpression.value + " " +
-		 $block.value + "{{statement 10}}";
+		 $block.value + "}}";
 }
     |   ^(RETURN expression?)
 {
-	$value = $RETURN.text + " " +
-		 $expression.value + "{{statement 11}}";
+	$value = "{{statement[11] " +
+		 $RETURN.text + " " +
+		 $expression.value + "}}";
 }
     |   ^(THROW expression)
 {
-	$value = $THROW.text + " " +
-		 $expression.value + "{{statement 12}}";
+	$value = "{{statement[12] " +
+		 $THROW.text + " " +
+		 $expression.value + "}}";
 }
     |   ^(BREAK IDENT?)
 {
-	$value = $BREAK.text + " " +
-		 $IDENT.text + "{{statement 13}}";
+	$value = "{{statement[13] " +
+		 $BREAK.text + " " +
+		 $IDENT.text + "}}";
 }
     |   ^(CONTINUE IDENT?)
 {
-	$value = $CONTINUE.text + " " +
-		 $IDENT.text + "{{statement 14}}";
+	$value = "{{statement[14] " +
+		 $CONTINUE.text + " " +
+		 $IDENT.text + "}}";
 }
     |   ^(LABELED_STATEMENT IDENT a=statement)
 {
-	$value = $LABELED_STATEMENT.text + " " +
+	$value = "{{statement[15] " +
+		 $LABELED_STATEMENT.text + " " +
 		 $IDENT.text + " " +
-		 $a.value + "{{statement 15}}";
+		 $a.value + "}}";
 }
     |   expression
 {
-	$value = $expression.value + "{{statement 16}}";
+	$value = "{{statement[16] " +
+		 $expression.value + "}}";
 }
     |   SEMI // Empty statement.
 {
-	$value = $SEMI.text + "{{statement 17}}";
+	$value = "{{statement[17] " +
+		 $SEMI.text + "}}";
 }
     ;
         
@@ -2143,9 +2172,10 @@ catches returns [String value]
 catchClause returns [String value]
     :   ^(CATCH formalParameterStandardDecl block)
 {
-	$value = $CATCH.text + " " +
+	$value = "{{catchClause " +
+		 $CATCH.text + " " +
 		 $formalParameterStandardDecl.value + " " +
-		 $block.value + "{{catchClause}}";
+		 $block.value + "}}";
 }
     ;
 
@@ -2162,12 +2192,12 @@ switchBlockLabels returns [String value]
     ;
         
 switchCaseLabel returns [String value]
-    :   ^(CASE expression blockStatement*)
-{
-	$value = $CASE.text + " " +
-		 $expression.value + " " +
-		 $blockStatement.value + "{{switchCaseLabel}}";
-}
+    :	{ $value = "{{switchCaseLabel"; }
+   	^( CASE
+	   expression { $value += " " + $expression.value; }
+	   ( blockStatement
+	     { $value += " " + $blockStatement.value; } )* )
+	{ $value += "}}"; }
     ;
     
 switchDefaultLabel returns [String value]
@@ -2190,8 +2220,9 @@ forInit returns [String value]
 forCondition returns [String value]
     :   ^(FOR_CONDITION expression?)
 {
-	$value = $FOR_CONDITION.text + " " +
-		 $expression.value + "{{forCondition}}";
+	$value = "{{forCondition " +
+		 $FOR_CONDITION.text + " " +
+		 $expression.value + "}}";
 }
     ;
     
@@ -2448,7 +2479,8 @@ primaryExpression returns [String value]
             )
         )
 {
-	$value = $DOT.text + " " +
+	$value = "{{primaryExpression[1] " +
+		 $DOT.text + " " +
 		 $a.value + " " +
 		 $IDENT.text + " " +
 		 $THIS.text + " " +
@@ -2458,52 +2490,62 @@ primaryExpression returns [String value]
 		 $primitiveType.value + " " +
 		 $B.text + " " +
 		 $VOID.text + " " +
-		 $C.text + " " + "{{primaryExpression 1}}";
+		 $C.text + " " + "}}";
 }
     |   parenthesizedExpression
 {
-	$value = $parenthesizedExpression.value + "{{primaryExpression 2}}";
+	$value = "{{primaryExpression[2] " +
+		 $parenthesizedExpression.value + "}}";
 }
     |   IDENT
 {
-	$value = $IDENT.text + "{{primaryExpression 3}}";
+	$value = "{{primaryExpression[3] " +
+		 $IDENT.text + "}}";
 }
     |   ^(METHOD_CALL a=primaryExpression genericTypeArgumentList? arguments)
 {
-	$value = $METHOD_CALL.text + " " +
+	$value = "{{primaryExpression[4] " +
+		 $METHOD_CALL.text + " " +
 		 $a.value + " " +
 		 $genericTypeArgumentList.value + " " +
-		 $arguments.value + " " + "{{primaryExpression 4}}";
+		 $arguments.value + " " + "}}";
 }
     |   explicitConstructorCall
 {
-	$value = $explicitConstructorCall.value + "{{primaryExpression 5}}";
+	$value = "{{primaryExpression[5] " +
+		 $explicitConstructorCall.value + " " + "}}";
 }
     |   ^(ARRAY_ELEMENT_ACCESS a=primaryExpression expression)
 {
-	$value = $ARRAY_ELEMENT_ACCESS.text + " " +
+	$value = "{{primaryExpression[6] " +
+		 $ARRAY_ELEMENT_ACCESS.text + " " +
 		 $a.value + " " +
-		 $expression.value + " " + "{{primaryExpression 6}}";
+		 $expression.value + " " + "}}";
 }
     |   literal
 {
-	$value = $literal.value + "{{primaryExpression 7}}";
+	$value = "{{primaryExpression[7] " +
+		 $literal.value + " " + "}}";
 }
     |   newExpression
 {
-	$value = $newExpression.value + "{{primaryExpression 8}}";
+	$value = "{{primaryExpression[8] " +
+		 $newExpression.value + " " + "}}";
 }
     |   THIS
 {
-	$value = $THIS.text + "{{primaryExpression 9}}";
+	$value = "{{primaryExpression[9] " +
+		 $THIS.text + " " + "}}";
 }
     |   arrayTypeDeclarator
 {
-	$value = $arrayTypeDeclarator.value + "{{primaryExpression 10}}";
+	$value = "{{primaryExpression[10] " +
+		 $arrayTypeDeclarator.value + " " + "}}";
 }
     |   SUPER
 {
-	$value = $SUPER.text + "{{primaryExpression 11}}";
+	$value = "{{primaryExpression[11] " +
+		 $SUPER.text + " " + "}}";
 }
     ;
     
