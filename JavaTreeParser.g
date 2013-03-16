@@ -1317,10 +1317,11 @@ javaSource returns [String value]
 			importDeclaration*
 			typeDeclaration*)
 {
-	$value = $annotationList.value + "\n" +
+	$value = "{{javaSource " +
+		 $annotationList.value + "\n" +
 		 $packageDeclaration.value + "\n" +
 		 $importDeclaration.value + "\n" +
-		 $typeDeclaration.value + "{{javaSource}}";
+		 $typeDeclaration.value + "}}";
 }
     ;
 
@@ -1438,13 +1439,10 @@ bound returns [String value]
     ;
 
 enumTopLevelScope returns [String value]
-    :   ^(ENUM_TOP_LEVEL_SCOPE enumConstant+ classTopLevelScope?)
-{
-	$value = "{{enumTopLevelScope " +
-		 $ENUM_TOP_LEVEL_SCOPE.text + " " +
-		 $enumConstant.value + " " +
-		 $classTopLevelScope.value + "}}";
-}
+    : { $value = "{{enumTopLevelScope"; }
+      ^( ENUM_TOP_LEVEL_SCOPE { $value += " " + $ENUM_TOP_LEVEL_SCOPE.text; }
+	 ( enumConstant { $value += " " + $enumConstant.value; } )+
+	 ( classTopLevelScope { $value += " " + $classTopLevelScope.value; } )? )
     ;
     
 enumConstant returns [String value]
@@ -1546,7 +1544,12 @@ interfaceTopLevelScope returns [String value]
     ;
     
 interfaceScopeDeclarations returns [String value]
-    :   ^(FUNCTION_METHOD_DECL modifierList genericTypeParameterList? type IDENT formalParameterList arrayDeclaratorList? throwsClause?)
+    :   ^(FUNCTION_METHOD_DECL modifierList
+			       genericTypeParameterList?
+			       type
+			 IDENT formalParameterList
+			       arrayDeclaratorList?
+			       throwsClause?)
 {
 	$value = "{{interfaceTopLevelDeclarations[1] " +
 		 $FUNCTION_METHOD_DECL.text + " " +
@@ -1558,10 +1561,13 @@ interfaceScopeDeclarations returns [String value]
 		 $arrayDeclaratorList.value + " " +
 		 $throwsClause.value + "}}";
 }
-    |   ^(VOID_METHOD_DECL modifierList genericTypeParameterList? IDENT formalParameterList throwsClause?)
-                         // Interface constant declarations have been switched to variable
-                         // declarations by 'java.g'; the parser has already checked that
-                         // there's an obligatory initializer.
+    |   ^(VOID_METHOD_DECL modifierList
+			   genericTypeParameterList?
+		     IDENT formalParameterList
+			   throwsClause?)
+        // Interface constant declarations have been switched to variable
+        // declarations by 'java.g'; the parser has already checked that
+        // there's an obligatory initializer.
 {
 	$value = "{{interfaceTopLevelDeclarations[2] " +
 		 $VOID_METHOD_DECL.text + " " +
@@ -1616,15 +1622,11 @@ variableDeclaratorId returns [String value]
 variableInitializer returns [String value]
     :   arrayInitializer
 {
-	$value = "{{variableInitializer[1] " +
-		 $arrayInitializer.value +
-		 "}}";
+	$value = "{{variableInitializer[1] " + $arrayInitializer.value + "}}";
 }
     |   expression
 {
-	$value = "{{variableInitializer[2] " +
-		 $expression.value +
-		 "}}";
+	$value = "{{variableInitializer[2] " + $expression.value + "}}";
 }
     ;
 
@@ -1920,12 +1922,11 @@ annotationInit returns [String value]
     ;
 
 annotationInitializers returns [String value]
-    :   ^(ANNOTATION_INIT_KEY_LIST annotationInitializer+)
-{
-	$value = "{{annotationInitializers[1] " +
-		 $ANNOTATION_INIT_KEY_LIST.text + " " +
-		 $annotationInitializer.value + "}}";
-}
+    :   { $value = "{{annotationInitializers[1]"; }
+        ^( ANNOTATION_INIT_KEY_LIST
+	   ( annotationInitializer
+	     { $value += " " + $annotationInitializer.value; } )+ )
+	{ $value += "}}"; }
     |   ^(ANNOTATION_INIT_DEFAULT_KEY annotationElementValue)
 {
 	$value = "{{annotationInitializers[2] " +
@@ -1944,12 +1945,11 @@ annotationInitializer returns [String value]
     ;
     
 annotationElementValue returns [String value]
-    :   ^(ANNOTATION_INIT_ARRAY_ELEMENT a=annotationElementValue*)
-{
-	$value = "{{annotationElementValue[1] " +
-		 $ANNOTATION_INIT_ARRAY_ELEMENT.text + " " +
-		 $a.value + "}}";
-}
+    :   { $value = "{{annotationElementValue"; }
+	^( ANNOTATION_INIT_ARRAY_ELEMENT
+	   { $value += " " + $ANNOTATION_INIT_ARRAY_ELEMENT.text; }
+	   ( a=annotationElementValue { $value += " " + $a.value; } )*)
+	{ $value += "}}"; }
     |   annotation
 {
 	$value = "{{annotationElementValue[2] " +
@@ -1971,7 +1971,9 @@ annotationTopLevelScope returns [String value]
     ;
     
 annotationScopeDeclarations returns [String value]
-    :   ^(ANNOTATION_METHOD_DECL modifierList type IDENT annotationDefaultValue?)
+    :   ^( ANNOTATION_METHOD_DECL modifierList
+				  type
+			    IDENT annotationDefaultValue? )
 {
 	$value = "{{annotationScopeDeclarations[1] " +
 		 $ANNOTATION_METHOD_DECL.text + " " +
@@ -2096,7 +2098,8 @@ statement returns [String value]
 		 $a.value + " " +
 		 $parenthesizedExpression.value + "}}";
 }
-    |   ^(TRY a=block catches? b=block?)  // The second optional block is the optional finally block.
+    |   ^(TRY a=block catches? b=block?)
+	// The second optional block is the optional finally block.
 {
 	$value = "{{statement[8] " +
 		 $TRY.text + " " +
@@ -2180,15 +2183,11 @@ catchClause returns [String value]
     ;
 
 switchBlockLabels returns [String value]
-    :   ^(SWITCH_BLOCK_LABEL_LIST a=switchCaseLabel*
-				  switchDefaultLabel?
-				  b=switchCaseLabel*)
-{
-	$value = $SWITCH_BLOCK_LABEL_LIST.text + " " +
-		 $a.value + " " +
-		 $switchDefaultLabel.value + " " +
-		 $b.value + "{{switchBlockLabels}}";
-}
+    :   { $value = "{{switchBlockLabels"; }
+	^( SWITCH_BLOCK_LABEL_LIST
+	   ( a=switchCaseLabel { $value += " " + $a.value; } )*
+	   switchDefaultLabel? { $value += " " + $switchDefaultLabel.value; }
+	   ( b=switchCaseLabel { $value += " " + $b.value; } )* )
     ;
         
 switchCaseLabel returns [String value]
@@ -2209,7 +2208,7 @@ switchDefaultLabel returns [String value]
     ;
     
 forInit returns [String value]
-    :   ^(FOR_INIT (localVariableDeclaration | expression*)?)
+    :   ^( FOR_INIT ( localVariableDeclaration | expression* )? )
 {
 	$value = $FOR_INIT.text + " " +
 		 $localVariableDeclaration.value + " " +
@@ -2552,33 +2551,40 @@ primaryExpression returns [String value]
 explicitConstructorCall returns [String value]
     :   ^(THIS_CONSTRUCTOR_CALL genericTypeArgumentList? arguments)
 {
-	$value = $THIS_CONSTRUCTOR_CALL.text + " " +
+	$value = "{{explicitConstructorCall[1] " +
+		 $THIS_CONSTRUCTOR_CALL.text + " " +
 		 $genericTypeArgumentList.value + " " +
-		 $arguments.value + " " + "{{explicitConstructorCall 1}}";
+		 $arguments.value + "}}";
 }
-    |   ^(SUPER_CONSTRUCTOR_CALL primaryExpression? genericTypeArgumentList? arguments)
+    |   ^(SUPER_CONSTRUCTOR_CALL primaryExpression?
+				 genericTypeArgumentList?
+				 arguments)
 {
-	$value = $SUPER_CONSTRUCTOR_CALL.text + " " +
+	$value = "{{explicitConstructorCall[2] " +
+		 $SUPER_CONSTRUCTOR_CALL.text + " " +
 		 $primaryExpression.value + " " +
-		 $genericTypeArgumentList.value + " " +
-		 $arguments.value + " " + "{{explicitConstructorCall 2}}";
+		 $genericTypeArgumentList.value + "}}";
 }
     ;
 
 arrayTypeDeclarator returns [String value]
-    :   ^(ARRAY_DECLARATOR (a=arrayTypeDeclarator | qualifiedIdentifier | primitiveType))
+    :   ^( ARRAY_DECLARATOR
+	   ( a=arrayTypeDeclarator | qualifiedIdentifier | primitiveType ) )
 {
-	$value = $ARRAY_DECLARATOR.text + " " +
+	$value = "{{arrayTypeDeclarator " +
+		 $ARRAY_DECLARATOR.text + " " +
 		 $a.value + " " +
 		 $qualifiedIdentifier.value + " " +
-		 $primitiveType.value + " " + "{{arrayTypeDeclarator}}}";
+		 $primitiveType.value + " " + "}}";
 }
     ;
 
 newExpression returns [String value]
     :   ^(  STATIC_ARRAY_CREATOR
             (   primitiveType a=newArrayConstruction
-            |   genericTypeArgumentList? qualifiedTypeIdent b=newArrayConstruction
+            |   genericTypeArgumentList?
+		qualifiedTypeIdent
+		b=newArrayConstruction
             )
         )
 // Uncomment this and you get a stacktrace.
@@ -2609,25 +2615,26 @@ innerNewExpression returns [String value] // something like 'InnerType innerType
 			   IDENT arguments
 				 classTopLevelScope?)
 {
-	$value = $CLASS_CONSTRUCTOR_CALL.text + " " +
+	$value = "{{innerNewExpression " +
+		 $CLASS_CONSTRUCTOR_CALL.text + " " +
 		 $genericTypeArgumentList.value + " " +
 		 $IDENT.text + " " +
 		 $arguments.value + " " +
-		 $classTopLevelScope.value + " " + "{{innerNewExpression}}}";
+		 $classTopLevelScope.value + " " + "}}";
 }
     ;
     
 newArrayConstruction returns [String value]
     :   arrayDeclaratorList arrayInitializer
 {
-	$value = $arrayDeclaratorList.value + " " +
-		 $arrayInitializer.value + " " + "{{newArrayConstruction 1}}}";
+	$value = "{{newArrayConstruction[1] " +
+		 $arrayDeclaratorList.value + " " +
+		 $arrayInitializer.value + "}}";
 }
-    |   expression+ arrayDeclaratorList?
-{
-	$value = $expression.value + " " +
-		 $arrayDeclaratorList.value + " " + "{{newArrayConstruction 2}}}";
-}
+    |   { $value = "{{newArrayConstruction[2] "; }
+	( expression { $value += " " + $expression.value; } )+
+	arrayDeclaratorList? { $value += " " + $arrayDeclaratorList.value; }
+	{ $value += "}}"; }
     ;
 
 arguments returns [String value]
