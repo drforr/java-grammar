@@ -307,7 +307,6 @@ classScopeDeclarations returns [String value]
 			       block?)
 {
 	$value = "{{classScopeDeclarations[3] " +
-		 $FUNCTION_METHOD_DECL.text + " " +
 		 $modifierList.value + " " +
 		 $genericTypeParameterList.value + " " +
 		 $type.value + " " +
@@ -324,7 +323,6 @@ classScopeDeclarations returns [String value]
 			   block?)
 {
 	$value = "{{classScopeDeclarations[4] " +
-		 $VOID_METHOD_DECL.text + " " +
 		 $modifierList.value + " " +
 		 $genericTypeParameterList.value + " " +
 		 $IDENT.text + " " +
@@ -335,7 +333,6 @@ classScopeDeclarations returns [String value]
     |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
 {
 	$value = "{{classScopeDeclarations[5] " +
-		 $VAR_DECLARATION.text + " " +
 		 $modifierList.value + " " +
 		 $type.value + " " +
 		 $variableDeclaratorList.value + "}}";
@@ -347,7 +344,6 @@ classScopeDeclarations returns [String value]
 			   block)
 {
 	$value = "{{classScopeDeclarations[6] " +
-		 $CONSTRUCTOR_DECL.text + " " +
 		 $genericTypeParameterList.value + " " +
 		 $formalParameterList.value + " " +
 		 $throwsClause.value + " " +
@@ -376,7 +372,6 @@ interfaceScopeDeclarations returns [String value]
 			       throwsClause?)
 {
 	$value = "{{interfaceTopLevelDeclarations[1] " +
-		 $FUNCTION_METHOD_DECL.text + " " +
 		 $modifierList.value + " " +
 		 $genericTypeParameterList.value + " " +
 		 $type.value + " " +
@@ -394,7 +389,6 @@ interfaceScopeDeclarations returns [String value]
         // there's an obligatory initializer.
 {
 	$value = "{{interfaceTopLevelDeclarations[2] " +
-		 $VOID_METHOD_DECL.text + " " +
 		 $modifierList.value + " " +
 		 $genericTypeParameterList.value + " " +
 		 $IDENT.text + " " +
@@ -404,7 +398,6 @@ interfaceScopeDeclarations returns [String value]
     |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
 {
 	$value = "{{interfaceTopLevelDeclarations[3] " +
-		 $VAR_DECLARATION.text + " " +
 		 $modifierList.value + " " +
 		 $type.value + " " +
 		 $variableDeclaratorList.value + "}}";
@@ -428,7 +421,6 @@ variableDeclarator returns [String value]
     :   ^(VAR_DECLARATOR variableDeclaratorId variableInitializer?)
 {
 	$value = "{{variableDeclarator " +
-		 $VAR_DECLARATOR.text + " " +
 		 $variableDeclaratorId.value + " " +
 		 $variableInitializer.value + "}}";
 }
@@ -680,7 +672,6 @@ formalParameterStandardDecl returns [String value]
 				variableDeclaratorId)
 {
 	$value = "{{formalParameterStandardDecl " +
-		 $FORMAL_PARAM_STD_DECL.text + " " +
 		 $localModifierList.value + " " +
 		 $type.value + " " +
 		 $variableDeclaratorId.value + "}}";
@@ -808,7 +799,6 @@ annotationScopeDeclarations returns [String value]
     |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
 {
 	$value = "{{annotationScopeDeclarations[2] " +
-		 $VAR_DECLARATION.text + " " +
 		 $modifierList.value + " " +
 		 $type.value + " " +
 		 $variableDeclaratorList.value + "}}";
@@ -861,7 +851,6 @@ localVariableDeclaration returns [String value]
     :   ^(VAR_DECLARATION localModifierList type variableDeclaratorList)
 {
 	$value = "{{localVariableDeclaration " +
-		 $VAR_DECLARATION.text + " " +
 		 $localModifierList.value + " " +
 		 $type.value + " " +
 		 $variableDeclaratorList.value + "}}";
@@ -1033,8 +1022,7 @@ switchDefaultLabel returns [String value]
 forInit returns [String value]
     :   ^( FOR_INIT ( localVariableDeclaration | expression* )? )
 {
-	$value = $FOR_INIT.text + " " +
-		 $localVariableDeclaration.value + " " +
+	$value = $localVariableDeclaration.value + " " +
 		 $expression.value + "{{forInit}}";
 }
     ;
@@ -1042,9 +1030,7 @@ forInit returns [String value]
 forCondition returns [String value]
     :   ^(FOR_CONDITION expression?)
 {
-	$value = "{{forCondition " +
-		 $FOR_CONDITION.text + " " +
-		 $expression.value + "}}";
+	$value = "{{forCondition " + $expression.value + "}}";
 }
     ;
     
@@ -1327,7 +1313,6 @@ primaryExpression returns [String value]
     |   ^(METHOD_CALL a=primaryExpression genericTypeArgumentList? arguments)
 {
 	$value = "{{primaryExpression[4] " +
-		 $METHOD_CALL.text + " " +
 		 $a.value + " " +
 		 $genericTypeArgumentList.value + " " +
 		 $arguments.value + " " + "}}";
@@ -1340,7 +1325,6 @@ primaryExpression returns [String value]
     |   ^(ARRAY_ELEMENT_ACCESS a=primaryExpression expression)
 {
 	$value = "{{primaryExpression[6] " +
-		 $ARRAY_ELEMENT_ACCESS.text + " " +
 		 $a.value + " " +
 		 $expression.value + " " + "}}";
 }
@@ -1412,7 +1396,6 @@ newExpression returns [String value]
         )
 {
 	$value = "{{newExpression[1] " +
-		 $STATIC_ARRAY_CREATOR.text + " " +
 		 $primitiveType.value + " " +
 		 $a.value + " " +
 		 $genericTypeArgumentList.value + " " +
@@ -1424,7 +1407,7 @@ newExpression returns [String value]
 				 arguments
 				 classTopLevelScope?)
 {
-	$value = "{{newExpression[2] " + $CLASS_CONSTRUCTOR_CALL.text + " " +
+	$value = "{{newExpression[2] " +
 		 $genericTypeArgumentList.value + " " +
 		 $qualifiedTypeIdent.value + " " +
 		 $arguments.value + " " +
