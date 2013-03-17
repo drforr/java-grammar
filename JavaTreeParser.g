@@ -186,7 +186,8 @@ typeDeclaration returns [String value]
 		 $IDENT.text + " " +
 		 ( $genericTypeParameterList.value != null ?
 		   $genericTypeParameterList.value : "" ) + " " +
-		 $extendsClause.value + " " +
+		 ( $extendsClause.value != null ?
+		   $extendsClause.value : "" ) + " " +
 		 ( $implementsClause.value != null ?
 		   $implementsClause.value : "" ) + " " +
 		 $classTopLevelScope.value + "}}";
@@ -580,8 +581,12 @@ type returns [String value]
     :   ^(TYPE (primitiveType | qualifiedTypeIdent) arrayDeclaratorList?)
 {
 	$value = "{{type " +
-		 $primitiveType.value + " " +
-		 $qualifiedTypeIdent.value + " " +
+		 // XXX Yes, I know, no need to do ?: on the last branch,
+		 // XXX but this keeps the code very much the same.
+		 ( $primitiveType.value != null ?
+		   $primitiveType.value :
+		   $qualifiedTypeIdent.value != null ?
+		   $qualifiedTypeIdent.value : "" ) + " " +
 		 ( $arrayDeclaratorList.value != null ?
 		   $arrayDeclaratorList.value : "" ) + "}}";
 }
@@ -598,10 +603,9 @@ qualifiedTypeIdent returns [String value]
 typeIdent returns [String value]
     :   ^(IDENT genericTypeArgumentList?)
 {
-	$value = "{{typeIdent " +
-		 $IDENT.text + " " +
+	$value = $IDENT.text + " " +
 	 	 ( $genericTypeArgumentList.value != null ?
-		   $genericTypeArgumentList.value : "" ) + "}}";
+		   $genericTypeArgumentList.value : "" );
 }
     ;
 
@@ -668,17 +672,13 @@ genericTypeArgument returns [String value]
 
 genericWildcardBoundType returns [String value]
     :   ^(EXTENDS type)
-{
-	$value = "{{genericWildcardBoundType[1] " +
-		 $EXTENDS.text + " " +
-	 	 $type.value + "}}";
-}
+	{
+		$value = $EXTENDS.text + " " + $type.value;
+	}
     |   ^(SUPER type)
-{
-	$value = "{{genericWildcardBoundType[2] " +
-		 $SUPER.text + " " +
-	 	 $type.value + "}}";
-}
+	{
+		$value = $SUPER.text + " " + $type.value;
+	}
     ;
 
 formalParameterList returns [String value]
@@ -766,11 +766,9 @@ annotationInitializers returns [String value]
 	     { $value += " " + $annotationInitializer.value; } )+ )
 	{ $value += "}}"; }
     |   ^(ANNOTATION_INIT_DEFAULT_KEY annotationElementValue)
-{
-	$value = "{{annotationInitializers[2] " +
-		 $ANNOTATION_INIT_DEFAULT_KEY.text + " " +
-		 $annotationElementValue.value + "}}";
-}
+	{
+		$value = $annotationElementValue.value;
+	}
     ;
     
 annotationInitializer returns [String value]
@@ -885,6 +883,7 @@ statement returns [String value]
     |   ^(ASSERT a=expression b=expression?)
 {
 	$value = "{{statement[2] " +
+		 $ASSERT.text + " " +
 		 $a.value + " " +
 		 ( $b.value != null ?
 		   $b.value : "" ) + "}}";
@@ -918,10 +917,9 @@ statement returns [String value]
 }
     |   ^(WHILE parenthesizedExpression a=statement)
 {
-	$value = "{{statement[6] " +
-		 $WHILE.text + " " +
+	$value = $WHILE.text + " " +
 		 $parenthesizedExpression.value + " " +
-		 $a.value + "}}";
+		 $a.value;
 }
     |   ^(DO a=statement parenthesizedExpression)
 {
@@ -938,7 +936,8 @@ statement returns [String value]
 		 $a.value + " " +
 		 ( $catches.value != null ?
 		   $catches.value : "" ) + " " +
-		 $b.value + "}}";
+		 ( $b.value != null ?
+		   $b.value : "" ) + "}}";
 }
     |   ^(SWITCH parenthesizedExpression switchBlockLabels)
 {
@@ -1277,16 +1276,23 @@ primaryExpression returns [String value]
 {
 	$value = "{{primaryExpression[1] " +
 		 $DOT.text + " " +
-		 $a.value + " " +
-		 $IDENT.text + " " +
-		 $THIS.text + " " +
-		 $SUPER.text + " " +
-		 $innerNewExpression.value + " " +
-		 $A.text + " " +
-		 $primitiveType.value + " " +
-		 $B.text + " " +
-		 $VOID.text + " " +
-		 $C.text + " " + "}}";
+		 ( $a.value != null ?
+  		   $a.value + " " +
+		   ( $IDENT.text != null ?
+		     $IDENT.text :
+		     $THIS.text != null ?
+		     $THIS.text :
+		     $SUPER.text != null ?
+		     $SUPER.text :
+		     $innerNewExpression.value != null ?
+		     $innerNewExpression.value :
+		     $A.text != null ?
+		     $A.text : "" ) :
+		   $primitiveType.value != null ?
+		   $primitiveType.value + " " + $B.text + " " :
+		   $VOID.text != null ?
+		   $VOID.text + " " + $C.text :
+		   "" ) + "}}";
 }
     |   parenthesizedExpression
 	{
@@ -1381,12 +1387,20 @@ newExpression returns [String value]
         )
 {
 	$value = "{{newExpression[1] " +
-		 $primitiveType.value + " " +
-		 $a.value + " " +
-	 	 ( $genericTypeArgumentList.value != null ?
-		   $genericTypeArgumentList.value : "" ) + " " +
-		 $qualifiedTypeIdent.value + " " +
-		 $b.value + "}}";
+		 ( $primitiveType.value != null ?
+		   $primitiveType.value + " " + $a.value :
+		   $qualifiedTypeIdent.value != null ?
+		   ( $genericTypeArgumentList.value != null ?
+		     $genericTypeArgumentList.value : "" ) + " " +
+		   $qualifiedTypeIdent.value + " " +
+		   $b.value : "" ) + "}}";
+//	$value = "{{newExpression[1] " +
+//		 $primitiveType.value + " " +
+//		 $a.value + " " +
+//	 	 ( $genericTypeArgumentList.value != null ?
+//		   $genericTypeArgumentList.value : "" ) + " " +
+//		 $qualifiedTypeIdent.value + " " +
+//		 $b.value + "}}";
 }
     |   ^(CLASS_CONSTRUCTOR_CALL genericTypeArgumentList?
 				 qualifiedTypeIdent
