@@ -131,12 +131,9 @@ options {
 
 // }}}
 
-
-
-
 // Starting point for parsing a Java file.
 javaSource returns [String value]
-    : { $value = "{{javaSource"; }
+    : { $value = ""; }
     	^( JAVA_SOURCE
 	   annotationList { $value += " " + $annotationList.value; }
 	   ( packageDeclaration
@@ -145,7 +142,6 @@ javaSource returns [String value]
 	     { $value += " " + $importDeclaration.value; } )*
 	   ( typeDeclaration
 	     { $value += " " + $typeDeclaration.value; } )* )
-      { $value += "}}"; }
     ;
 
 // {{{ packageDeclaration
@@ -163,13 +159,12 @@ packageDeclaration returns [String value]
 importDeclaration returns [String value]
     :   ^(IMPORT STATIC? qualifiedIdentifier DOTSTAR?)
 {
-	$value = "{{importDeclaration " +
-		 $IMPORT.text + " " +
+	$value = $IMPORT.text + " " +
 		 ( $STATIC.text != null ?
 		   $STATIC.text : "" ) + " " +
 		 $qualifiedIdentifier.value + " " +
 		 ( $DOTSTAR.text != null ?
-		   $DOTSTAR.text : "" ) + "}}";
+		   $DOTSTAR.text : "" );
 }
     ;
     
@@ -205,7 +200,7 @@ typeDeclaration returns [String value]
 		   $genericTypeParameterList.value : "" ) + " " +
 		 ( $extendsClause.value != null ?
 		   $extendsClause.value : "" ) + " " +
-		 $interfaceTopLevelScope.value + " " + "}}";
+		 $interfaceTopLevelScope.value + "}}";
 }
     |   ^(ENUM modifierList
 	 IDENT implementsClause?
@@ -477,34 +472,28 @@ arrayDeclarator returns [String value]
     ;
 
 arrayDeclaratorList returns [String value]
-    :	{ $value = "{{arrayDeclaratorList"; }
+    :	{ $value = ""; }
    	^( ARRAY_DECLARATOR_LIST
 	   ( ARRAY_DECLARATOR // This is [] from the grammar
 	     { $value += " " + "[" + "]"; } )* )
-	{ $value += "}}"; }
     ;
     
 arrayInitializer returns [String value]
-    :	{ $value = "{{arrayInitializer"; }
-   	^( ARRAY_INITIALIZER
+    :  ^( ARRAY_INITIALIZER
 	   ( variableInitializer
 	     { $value += " " + $variableInitializer.value; } )* )
-	{ $value += "}}"; }
     ;
 
 throwsClause returns [String value]
-    :	{ $value = "{{throwsClause"; }
-   	^( THROWS_CLAUSE
+    :	^( THROWS_CLAUSE
 	   ( qualifiedIdentifier
 	     { $value += " " + $qualifiedIdentifier.value; } )+ )
 	{ $value += "}}"; }
     ;
 
 modifierList returns [String value]
-    :   { $value = "{{modifierList"; }
-	^( MODIFIER_LIST
+    :   ^( MODIFIER_LIST
 	   ( modifier { $value += " " + $modifier.value; } )* )
-	{ $value += "}}"; }
     ;
 
 // {{{ modifier
@@ -559,11 +548,9 @@ modifier returns [String value]
 // }}}
 
 localModifierList returns [String value]
-    :   { $value = "{{localModifierList"; }
-        ^( LOCAL_MODIFIER_LIST
+    :   ^( LOCAL_MODIFIER_LIST
 	   ( localModifier
 	     { $value += " " + $localModifier.value; } )* )
-	{ $value += "}}"; }
     ;
 
 localModifier returns [String value]
@@ -580,15 +567,14 @@ localModifier returns [String value]
 type returns [String value]
     :   ^(TYPE (primitiveType | qualifiedTypeIdent) arrayDeclaratorList?)
 {
-	$value = "{{type " +
 		 // XXX Yes, I know, no need to do ?: on the last branch,
 		 // XXX but this keeps the code very much the same.
-		 ( $primitiveType.value != null ?
+	$value = ( $primitiveType.value != null ?
 		   $primitiveType.value :
 		   $qualifiedTypeIdent.value != null ?
 		   $qualifiedTypeIdent.value : "" ) + " " +
 		 ( $arrayDeclaratorList.value != null ?
-		   $arrayDeclaratorList.value : "" ) + "}}";
+		   $arrayDeclaratorList.value : "" );
 }
     ;
 
@@ -734,11 +720,9 @@ qualifiedIdentifier returns [String value]
 // ANNOTATIONS
 
 annotationList returns [String value]
-    :	{ $value = "{{annotationList"; }
-   	^( ANNOTATION_LIST
+    :	^( ANNOTATION_LIST
 	   ( annotation
 	     { $value += " " + $annotation.value; } )* )
-	{ $value += "}}"; }
     ;
 
 annotation returns [String value]
@@ -842,11 +826,9 @@ annotationDefaultValue returns [String value]
 // STATEMENTS / BLOCKS
 
 block returns [String value]
-    :	{ $value = "{{block"; }
-   	^( BLOCK_SCOPE
+    :   ^( BLOCK_SCOPE
 	   ( blockStatement
 	     { $value += " " + $blockStatement.value; } )* )
-	{ $value += "}}"; }
     ;
     
 blockStatement returns [String value]
@@ -867,10 +849,9 @@ blockStatement returns [String value]
 localVariableDeclaration returns [String value]
     :   ^(VAR_DECLARATION localModifierList type variableDeclaratorList)
 {
-	$value = "{{localVariableDeclaration " +
-		 $localModifierList.value + " " +
+	$value = $localModifierList.value + " " +
 		 $type.value + " " +
-		 $variableDeclaratorList.value + "}}";
+		 $variableDeclaratorList.value;
 }
     ;
     
@@ -880,13 +861,12 @@ statement returns [String value]
 	{
 		$value = $block.value;
 	}
-    |   ^(ASSERT a=expression b=expression?)
+    |   ^(ASSERT a=expression b=expression?) // assert x < 0 : "x negative";
 {
-	$value = "{{statement[2] " +
-		 $ASSERT.text + " " +
-		 $a.value + " " +
+	$value = $ASSERT.text + " " +
+		 $a.value +
 		 ( $b.value != null ?
-		   $b.value : "" ) + "}}";
+		   " : " + $b.value : "" );
 }
     |   ^(IF parenthesizedExpression a=statement b=statement?)
 {
@@ -898,12 +878,11 @@ statement returns [String value]
 }
     |   ^(FOR forInit forCondition forUpdater a=statement)
 {
-	$value = "{{statement[4] " +
-		 $FOR.text + " " +
-		 $forInit.value + " " +
-		 $forCondition.value + " " +
-		 $forUpdater.value + " " +
-		 $a.value + "}}";
+	$value = $FOR.text + " ( " +
+		 $forInit.value + "; " +
+		 $forCondition.value + "; " +
+		 $forUpdater.value + " ) " +
+		 $a.value;
 }
     |   ^(FOR_EACH localModifierList type IDENT expression a=statement) 
 {
@@ -923,10 +902,10 @@ statement returns [String value]
 }
     |   ^(DO a=statement parenthesizedExpression)
 {
-	$value = "{{statement[7] " +
-		 $DO.text + " " +
-		 $a.value + " " +
-		 $parenthesizedExpression.value + "}}";
+	$value = $DO.text + " { " +
+		 $a.value + " } " +
+		 "while" + " " + // JMG XXX Why doesn't the grammar have this?
+		 $parenthesizedExpression.value;
 }
     |   ^(TRY a=block catches? b=block?)
 	// The second optional block is the optional finally block.
@@ -941,10 +920,9 @@ statement returns [String value]
 }
     |   ^(SWITCH parenthesizedExpression switchBlockLabels)
 {
-	$value = "{{statement[9] " +
-		 $SWITCH.text + " " +
-		 $parenthesizedExpression.value + " " +
-		 $switchBlockLabels.value + "}}";
+	$value = $SWITCH.text + " " +
+		 $parenthesizedExpression.value + " { " +
+		 $switchBlockLabels.value + " } ";
 }
     |   ^(SYNCHRONIZED parenthesizedExpression block)
 {
@@ -1054,11 +1032,10 @@ forCondition returns [String value]
     ;
     
 forUpdater returns [String value]
-    :	{ $value = "{{forUpdater"; }
-   	^( FOR_UPDATE
+    :	{ $value = ""; }
+	^( FOR_UPDATE
 	   ( expression
 	     { $value += " " + $expression.value; } )* )
-	{ $value += "}}"; }
     ;
     
 // EXPRESSIONS
@@ -1261,7 +1238,8 @@ expr returns [String value]
 	;
     
 primaryExpression returns [String value]
-    :   ^(  DOT
+    :   { $value = "{{primaryExpression[1] "; }
+        ^(  DOT { $value += $DOT.text + " "; }
             (   a=primaryExpression
                 (   IDENT
                 |   THIS
@@ -1274,9 +1252,7 @@ primaryExpression returns [String value]
             )
         )
 {
-	$value = "{{primaryExpression[1] " +
-		 $DOT.text + " " +
-		 ( $a.value != null ?
+	$value += ( $a.value != null ?
   		   $a.value + " " +
 		   ( $IDENT.text != null ?
 		     $IDENT.text :
@@ -1316,9 +1292,8 @@ primaryExpression returns [String value]
 	}
     |   ^(ARRAY_ELEMENT_ACCESS a=primaryExpression expression)
 {
-	$value = "{{primaryExpression[6] " +
-		 $a.value + " " +
-		 $expression.value + " " + "}}";
+	$value = $a.value + " [ " +
+		 $expression.value + " ] ";
 }
     |   literal
 	{
