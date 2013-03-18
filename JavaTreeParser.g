@@ -150,7 +150,7 @@ packageDeclaration returns [String value]
     :   ^(PACKAGE qualifiedIdentifier)  
 	{
 		$value = $PACKAGE.text + " " +
-			 $qualifiedIdentifier.value + ";";
+			 $qualifiedIdentifier.value + ";\n";
 	}
     ;
 
@@ -287,11 +287,11 @@ enumConstant returns [String value]
     
     
 classTopLevelScope returns [String value]
-    :	{ $value = "{{classTopLevelScope"; }
+    :	{ $value = ""; }
    	^( CLASS_TOP_LEVEL_SCOPE
 	   ( classScopeDeclarations
-	     { $value += " " + $classScopeDeclarations.value; } )+ )
-	{ $value += "}}"; }
+	     { $value += ( $value == "" ? $classScopeDeclarations.value
+					: " " + $classScopeDeclarations.value ); } )+ )
     ;
     
 classScopeDeclarations returns [String value]
@@ -329,15 +329,14 @@ classScopeDeclarations returns [String value]
 			   throwsClause?
 			   block?)
 {
-	$value = "{{classScopeDeclarations[4] " +
-		 $modifierList.value + " " +
+	$value = $modifierList.value + " " +
 		 ( $genericTypeParameterList.value != null ?
 		   $genericTypeParameterList.value : "" ) + " " +
 		 $IDENT.text + " " +
 		 $formalParameterList.value + " " +
 		 ( $throwsClause.value != null ?
 		   $throwsClause.value : "" ) + " " +
-		 ( $block.value != null ? $block.value : "" ) + "}}";
+		 ( $block.value != null ? $block.value : "" );
 }
     |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
 {
@@ -778,7 +777,7 @@ annotationElementValue returns [String value]
     :   { $value = "{{annotationElementValue"; }
 	^( ANNOTATION_INIT_ARRAY_ELEMENT
 	   { $value += " " + $ANNOTATION_INIT_ARRAY_ELEMENT.text; }
-	   ( a=annotationElementValue { $value += "### " + $a.value; } )*)
+	   ( a=annotationElementValue { $value += " " + $a.value; } )*)
 	{ $value += "}}"; }
     |   annotation
 	{
@@ -839,7 +838,8 @@ block returns [String value]
     :   { $value = " {\n"; }
 	^( BLOCK_SCOPE
 	   ( blockStatement
-	     { $value += " " + $blockStatement.value; } )* )
+	     { $value += ( $value == " {\n" ? $blockStatement.value
+					    : ";\n" + $blockStatement.value ); } )* )
 	{ $value += " }\n"; }
     ;
     
@@ -922,13 +922,12 @@ statement returns [String value]
     |   ^(TRY a=block catches? b=block?)
 	// The second optional block is the optional finally block.
 {
-	$value = "{{statement[8] " +
-		 $TRY.text + " " +
+	$value = $TRY.text + " " +
 		 $a.value + " " +
 		 ( $catches.value != null ?
 		   $catches.value : "" ) + " " +
 		 ( $b.value != null ?
-		   $b.value : "" ) + "}}";
+		   $b.value : "" );
 }
     |   ^(SWITCH parenthesizedExpression switchBlockLabels)
 {
@@ -984,11 +983,11 @@ $value += ";\n";
     ;
         
 catches returns [String value]
-    :	{ $value = "{{catches"; }
+    :	{ $value = ""; }
    	^( CATCH_CLAUSE_LIST
 	   ( catchClause
-	     { $value += " " + $catchClause.value; } )+ )
-	{ $value += "}}"; }
+	     { $value += ( $value == "" ? $catchClause.value
+					: " ### " + $catchClause.value ); } )+ )
     ;
     
 catchClause returns [String value]
@@ -1001,13 +1000,16 @@ catchClause returns [String value]
     ;
 
 switchBlockLabels returns [String value]
-    :   { $value = "{{switchBlockLabels"; }
+    :   { $value = ""; }
 	^( SWITCH_BLOCK_LABEL_LIST
-	   ( a=switchCaseLabel { $value += " " + $a.value; } )*
+	   ( a=switchCaseLabel
+	     { $value += ( $value == "" ? $a.value
+					: " " + $a.value ); } )*
 	   ( switchDefaultLabel
 	     { $value += " " + $switchDefaultLabel.value; } )?
-	   ( b=switchCaseLabel { $value += " " + $b.value; } )* )
-{ $value += "}}"; }
+	   ( b=switchCaseLabel
+	     { $value += ( $value == "" ? $b.value
+					: " " + $b.value ); } )* )
     ;
         
 switchCaseLabel returns [String value]
@@ -1362,20 +1364,20 @@ newExpression returns [String value]
 		   ( $genericTypeArgumentList.value != null ?
 		     $genericTypeArgumentList.value : "" ) + " " +
 		   $qualifiedTypeIdent.value + " " +
-		   $b.value : "" ) + ";\n";
+		   $b.value : "" );
 }
     |   ^(CLASS_CONSTRUCTOR_CALL genericTypeArgumentList?
 				 qualifiedTypeIdent
 				 arguments
 				 classTopLevelScope?)
 {
-	$value = "{{newExpression[2] " + "new" +
+	$value = "new" +
 	 	 ( $genericTypeArgumentList.value != null ?
 		   $genericTypeArgumentList.value : "" ) + " " +
 		 $qualifiedTypeIdent.value + " ( " +
 		 $arguments.value + " ) " +
 	 	 ( $classTopLevelScope.value != null ?
-		   $classTopLevelScope.value : "" ) + "}}";
+		   $classTopLevelScope.value : "" );
 }
     ;
 
@@ -1398,9 +1400,8 @@ innerNewExpression returns [String value] // something like 'InnerType innerType
 newArrayConstruction returns [String value]
     :   arrayDeclaratorList arrayInitializer
 {
-	$value = "{{newArrayConstruction[1] " +
-		 $arrayDeclaratorList.value + " " +
-		 $arrayInitializer.value + "}}";
+	$value = $arrayDeclaratorList.value + " " +
+		 $arrayInitializer.value;
 }
     |   { $value = ""; }
 	( expression { $value += " [ " + $expression.value + " ] "; } )+
