@@ -184,7 +184,8 @@ typeDeclaration returns [String value]
 		   $extendsClause.value : "" ) + " " +
 		 ( $implementsClause.value != null ?
 		   $implementsClause.value : "" ) + " " +
-		 $classTopLevelScope.value + " } ";
+		 $classTopLevelScope.value + " }";
+$value += "\n";
 }
     |   ^(INTERFACE modifierList
 	      IDENT genericTypeParameterList?
@@ -424,11 +425,12 @@ interfaceScopeDeclarations returns [String value]
     ;
 
 variableDeclaratorList returns [String value]
-    :	{ $value = "{{variableDeclaratorList"; }
+    :	{ $value = ""; }
    	^( VAR_DECLARATOR_LIST
 	   ( variableDeclarator
-	     { $value += " " + $variableDeclarator.value; } )+ )
-	{ $value += "}}"; }
+	     { $value +=
+	       ( $value == "" ? $variableDeclarator.value
+			      : "." + $variableDeclarator.value ); } )+ )
     ;
 
 variableDeclarator returns [String value]
@@ -828,7 +830,7 @@ block returns [String value]
 	^( BLOCK_SCOPE
 	   ( blockStatement
 	     { $value += " " + $blockStatement.value; } )* )
-	{ $value += " } "; }
+	{ $value += " }\n"; }
     ;
     
 blockStatement returns [String value]
@@ -866,15 +868,15 @@ statement returns [String value]
 	$value = $ASSERT.text + " " +
 		 $a.value +
 		 ( $b.value != null ?
-		   " : " + $b.value : "" );
+		   " : " + $b.value : "" ) + ";\n";
 }
     |   ^(IF parenthesizedExpression a=statement b=statement?)
 {
-	$value = "{{statement[3] " +
-		 $IF.text + " " +
+	$value = $IF.text + " " +
+		 $parenthesizedExpression.value + " " +
 		 $a.value + " " +
 		 ( $b.value != null ?
-		   $b.value : "" ) + "}}";
+		   $b.value : "" ) + "\n";
 }
     |   ^(FOR forInit forCondition forUpdater a=statement)
 {
@@ -883,6 +885,7 @@ statement returns [String value]
 		 $forCondition.value + "; " +
 		 $forUpdater.value + " ) " +
 		 $a.value;
+$value += ";\n";
 }
     |   ^(FOR_EACH localModifierList type IDENT expression a=statement) 
 {
@@ -906,6 +909,7 @@ statement returns [String value]
 		 $a.value + " } " +
 		 "while" + " " + // JMG XXX Why doesn't the grammar have this?
 		 $parenthesizedExpression.value;
+$value += ";\n";
 }
     |   ^(TRY a=block catches? b=block?)
 	// The second optional block is the optional finally block.
@@ -936,6 +940,7 @@ statement returns [String value]
 	$value = $RETURN.text + " " +
 		 ( $expression.value != null ?
 		   $expression.value : "" );
+$value += ";\n";
 }
     |   ^(THROW expression)
 {
@@ -995,6 +1000,7 @@ switchBlockLabels returns [String value]
 	   ( switchDefaultLabel
 	     { $value += " " + $switchDefaultLabel.value; } )?
 	   ( b=switchCaseLabel { $value += " " + $b.value; } )* )
+{ $value += "}}"; }
     ;
         
 switchCaseLabel returns [String value]
@@ -1013,12 +1019,14 @@ switchDefaultLabel returns [String value]
     ;
     
 forInit returns [String value]
-    :   { $value = "{{forInit "; }
+    :   { $value = ""; }
 	^( FOR_INIT
 	   ( localVariableDeclaration
 	     { $value += " " + $localVariableDeclaration.value; }
-	   | ( expression { $value += " " + $expression.value; } )* )? )
-	 { $value += "}}"; }
+	   | ( expression { $value += ( $value == "" ? $expression.value
+						     : ", " + $expression.value ); } )*
+	   )?
+	 )
     ;
     
 forCondition returns [String value]
