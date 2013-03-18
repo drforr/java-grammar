@@ -367,11 +367,11 @@ classScopeDeclarations returns [String value]
     ;
     
 interfaceTopLevelScope returns [String value]
-    :	{ $value = "{{interfaceTopLevelScope"; }
+    :	{ $value = ""; }
    	^( INTERFACE_TOP_LEVEL_SCOPE
 	   ( interfaceScopeDeclarations
-	     { $value += " " + $interfaceScopeDeclarations.value; } )* )
-	{ $value += "}}"; }
+	     { $value += ( $value == "" ? $interfaceScopeDeclarations.value
+					: " ### " + $interfaceScopeDeclarations.value ); } )* )
     ;
     
 interfaceScopeDeclarations returns [String value]
@@ -475,13 +475,17 @@ arrayDeclaratorList returns [String value]
     :	{ $value = ""; }
    	^( ARRAY_DECLARATOR_LIST
 	   ( ARRAY_DECLARATOR // This is [] from the grammar
-	     { $value += " " + "[]"; } )* )
+	     { $value += ( $value == "" ? "[]"
+					: " " + "[]" ); } )* )
     ;
     
 arrayInitializer returns [String value]
-    :  ^( ARRAY_INITIALIZER
+    :   { $value = " { "; }
+	^( ARRAY_INITIALIZER
 	   ( variableInitializer
-	     { $value += " " + $variableInitializer.value; } )* )
+	     { $value += ( $value == " { " ? $variableInitializer.value
+					   : ", " + $variableInitializer.value ); } )* )
+	{ $value += " };\n"; }
     ;
 
 throwsClause returns [String value]
@@ -494,7 +498,8 @@ throwsClause returns [String value]
 modifierList returns [String value]
     :   { $value = ""; }
 	^( MODIFIER_LIST
-	   ( modifier { $value += " " + $modifier.value; } )* )
+	   ( modifier { $value += ( $value == "" ? $modifier.value
+						 : " " + $modifier.value ); } )* )
     ;
 
 // {{{ modifier
@@ -549,9 +554,11 @@ modifier returns [String value]
 // }}}
 
 localModifierList returns [String value]
-    :   ^( LOCAL_MODIFIER_LIST
+    :   { $value = ""; }
+	^( LOCAL_MODIFIER_LIST
 	   ( localModifier
-	     { $value += " " + $localModifier.value; } )* )
+	     { $value += ( $value == "" ? $localModifier.value
+					: ", " + $localModifier.value ); } )* )
     ;
 
 localModifier returns [String value]
@@ -672,7 +679,8 @@ formalParameterList returns [String value]
     :	{ $value = " ( "; }
    	^( FORMAL_PARAM_LIST
 	   ( formalParameterStandardDecl
-	     { $value += " " + $formalParameterStandardDecl.value; } )*
+	     { $value += ( $value == " ( " ? $formalParameterStandardDecl.value
+					   : ", " + $formalParameterStandardDecl.value ); } )*
 	   ( formalParameterVarargDecl
 	     { $value += " " + $formalParameterVarargDecl.value; } )? )
 	{ $value += " ) "; }
@@ -720,9 +728,11 @@ qualifiedIdentifier returns [String value]
 // ANNOTATIONS
 
 annotationList returns [String value]
-    :	^( ANNOTATION_LIST
+    :	{ $value = ""; }
+	^( ANNOTATION_LIST
 	   ( annotation
-	     { $value += " " + $annotation.value; } )* )
+	     { $value += ( $value == "" ? $annotation.value
+					: "\n" + $annotation.value ); } )* )
     ;
 
 annotation returns [String value]
@@ -768,7 +778,7 @@ annotationElementValue returns [String value]
     :   { $value = "{{annotationElementValue"; }
 	^( ANNOTATION_INIT_ARRAY_ELEMENT
 	   { $value += " " + $ANNOTATION_INIT_ARRAY_ELEMENT.text; }
-	   ( a=annotationElementValue { $value += " " + $a.value; } )*)
+	   ( a=annotationElementValue { $value += "### " + $a.value; } )*)
 	{ $value += "}}"; }
     |   annotation
 	{
@@ -826,7 +836,7 @@ annotationDefaultValue returns [String value]
 // STATEMENTS / BLOCKS
 
 block returns [String value]
-    :   { $value = " { "; }
+    :   { $value = " {\n"; }
 	^( BLOCK_SCOPE
 	   ( blockStatement
 	     { $value += " " + $blockStatement.value; } )* )
@@ -884,8 +894,7 @@ statement returns [String value]
 		 $forInit.value + "; " +
 		 $forCondition.value + "; " +
 		 $forUpdater.value + " ) " +
-		 $a.value;
-$value += ";\n";
+		 $a.value + ";\n";
 }
     |   ^(FOR_EACH localModifierList type IDENT expression a=statement) 
 {
@@ -905,11 +914,10 @@ $value += ";\n";
 }
     |   ^(DO a=statement parenthesizedExpression)
 {
-	$value = $DO.text + " { " +
+	$value = $DO.text + " {\n" +
 		 $a.value + " } " +
 		 "while" + " " + // JMG XXX Why doesn't the grammar have this?
-		 $parenthesizedExpression.value;
-$value += ";\n";
+		 $parenthesizedExpression.value + ";\n";
 }
     |   ^(TRY a=block catches? b=block?)
 	// The second optional block is the optional finally block.
@@ -926,7 +934,7 @@ $value += ";\n";
 {
 	$value = $SWITCH.text + " " +
 		 $parenthesizedExpression.value + " { " +
-		 $switchBlockLabels.value + " } ";
+		 $switchBlockLabels.value + " }\n";
 }
     |   ^(SYNCHRONIZED parenthesizedExpression block)
 {
@@ -986,10 +994,9 @@ catches returns [String value]
 catchClause returns [String value]
     :   ^(CATCH formalParameterStandardDecl block)
 {
-	$value = "{{catchClause " +
-		 $CATCH.text + " " +
-		 $formalParameterStandardDecl.value + " " +
-		 $block.value + "}}";
+	$value = $CATCH.text + " ( " +
+		 $formalParameterStandardDecl.value + " ) " +
+		 $block.value;
 }
     ;
 
@@ -1244,7 +1251,7 @@ expr returns [String value]
 	;
     
 primaryExpression returns [String value]
-    :   ^(DOT  (   a=primaryExpression { $value += $a.value + " "; }
+    :   ^(DOT ( a=primaryExpression { $value += $a.value + " "; }
                 { $value += "." + " "; }
                 (   IDENT { $value += $IDENT.text + " "; }
                 |   THIS { $value += $THIS.text + " "; }
@@ -1355,7 +1362,7 @@ newExpression returns [String value]
 		   ( $genericTypeArgumentList.value != null ?
 		     $genericTypeArgumentList.value : "" ) + " " +
 		   $qualifiedTypeIdent.value + " " +
-		   $b.value : "" );
+		   $b.value : "" ) + ";\n";
 }
     |   ^(CLASS_CONSTRUCTOR_CALL genericTypeArgumentList?
 				 qualifiedTypeIdent
