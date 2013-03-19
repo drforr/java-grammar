@@ -345,19 +345,21 @@ classScopeDeclarations returns [String value]
 		 $type.value + " " +
 		 $variableDeclaratorList.value + "}}";
 }
-    |   ^(CONSTRUCTOR_DECL modifierList
+    //|   ^(CONSTRUCTOR_DECL modifierList
+    |   ^(CONSTRUCTOR_DECL IDENT modifierList
 			   genericTypeParameterList?
 			   formalParameterList
 			   throwsClause?
 			   block)
 {
-	$value = "{{classScopeDeclarations[6] " +
+	$value = $modifierList.value + " " +
+		 $IDENT.text + " " +
 		 ( $genericTypeParameterList.value != null ?
 		   $genericTypeParameterList.value : "" ) + " " +
 		 $formalParameterList.value + " " +
 		 ( $throwsClause.value != null ?
 		   $throwsClause.value : "" ) + " " +
-		 $block.value + "}}";
+		 $block.value;
 }
     |   typeDeclaration
 	{
@@ -491,7 +493,6 @@ throwsClause returns [String value]
     :	^( THROWS_CLAUSE
 	   ( qualifiedIdentifier
 	     { $value += " " + $qualifiedIdentifier.value; } )+ )
-	{ $value += "}}"; }
     ;
 
 modifierList returns [String value]
