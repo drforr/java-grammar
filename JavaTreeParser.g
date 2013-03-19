@@ -231,19 +231,25 @@ $value += "\n";
 
 extendsClause returns [String value] // actually 'type' for classes and 'type+' for interfaces, but this has 
               // been resolved by the parser grammar.
-    :	^( EXTENDS_CLAUSE
+    :	{ $value = ""; }
+	^( EXTENDS_CLAUSE
 	   ( type
-	     { $value += " " + $type.value; } )+ )
+	     { $value += ( $value == "" ? $type.value
+					: " " + $type.value ); } )+ )
     ;
     
 implementsClause returns [String value]
-    :	^( IMPLEMENTS_CLAUSE ( type { $value += " " + $type.value; } )+ )
+    :	^( IMPLEMENTS_CLAUSE
+	   ( type
+	     { $value += ( $value == "" ? $type.value
+					: " " + $type.value ); } )+ )
     ;
         
 genericTypeParameterList returns [String value]
     :	^( GENERIC_TYPE_PARAM_LIST
 	   ( genericTypeParameter
-	     { $value += " " + $genericTypeParameter.value; } )+ )
+	     { $value += ( $value == "" ? $genericTypeParameter.value
+					: " " + $genericTypeParameter.value ); } )+ )
     ;
 
 genericTypeParameter returns [String value]
@@ -257,12 +263,16 @@ genericTypeParameter returns [String value]
         
 bound returns [String value]
     :	^( EXTENDS_BOUND_LIST
-	   ( type { $value += " " + $type.value; } )+ )
+	   ( type 
+	     { $value += ( $value == "" ? $type.value
+					: " " + $type.value ); } )+ )
     ;
 
 enumTopLevelScope returns [String value]
-    : ^( ENUM_TOP_LEVEL_SCOPE { $value += " " + $ENUM_TOP_LEVEL_SCOPE.text; }
-	 ( enumConstant { $value += " " + $enumConstant.value; } )+
+    : ^( ENUM_TOP_LEVEL_SCOPE { $value = ""; }
+	 ( enumConstant
+	   { $value += ( $value == "" ? $enumConstant.value
+				      : " " + $enumConstant.value ); } )+
 	 ( classTopLevelScope { $value += " " + $classTopLevelScope.value; } )? )
     ;
     
@@ -325,6 +335,7 @@ classScopeDeclarations returns [String value]
 	$value = $modifierList.value + " " +
 		 ( $genericTypeParameterList.value != null ?
 		   $genericTypeParameterList.value : "" ) + " " +
+		 "void" + " " +
 		 $IDENT.text + " " +
 		 $formalParameterList.value + " " +
 		 ( $throwsClause.value != null ?
@@ -363,7 +374,7 @@ interfaceTopLevelScope returns [String value]
    	^( INTERFACE_TOP_LEVEL_SCOPE
 	   ( interfaceScopeDeclarations
 	     { $value += ( $value == "" ? $interfaceScopeDeclarations.value
-					: " ### " + $interfaceScopeDeclarations.value ); } )* )
+					: " " + $interfaceScopeDeclarations.value ); } )* )
     ;
     
 interfaceScopeDeclarations returns [String value]
@@ -419,14 +430,14 @@ variableDeclaratorList returns [String value]
 	   ( variableDeclarator
 	     { $value +=
 	       ( $value == "" ? $variableDeclarator.value
-			      : "." + $variableDeclarator.value ); } )+ )
+			      : ", " + $variableDeclarator.value ); } )+ )
     ;
 
 variableDeclarator returns [String value]
     :   ^(VAR_DECLARATOR variableDeclaratorId
 	  		 variableInitializer?)
 {
-	$value = $variableDeclaratorId.value + " = " +
+	$value = $variableDeclaratorId.value + " " +
 		 ( $variableInitializer.value != null ?
 		   $variableInitializer.value : "" );
 }
@@ -473,13 +484,15 @@ arrayInitializer returns [String value]
 	   ( variableInitializer
 	     { $value += ( $value == " { " ? $variableInitializer.value
 					   : ", " + $variableInitializer.value ); } )* )
-	{ $value += " };\n"; }
+	{ $value += " } "; }
     ;
 
 throwsClause returns [String value]
-    :	^( THROWS_CLAUSE
+    :	{ $value = ""; }
+	^( THROWS_CLAUSE
 	   ( qualifiedIdentifier
-	     { $value += " " + $qualifiedIdentifier.value; } )+ )
+	     { $value += ( $value == "" ? $qualifiedIdentifier.value
+					: " " + $qualifiedIdentifier.value ); } )+ )
     ;
 
 modifierList returns [String value]
@@ -633,7 +646,8 @@ genericTypeArgumentList returns [String value]
     :	{ $value = ""; }
    	^( GENERIC_TYPE_ARG_LIST
 	   ( genericTypeArgument
-	     { $value += " " + $genericTypeArgument.value; } )+ )
+	     { $value += ( $value == "" ? $genericTypeArgument.value
+					: "." + $genericTypeArgument.value ); } )+ )
     ;
     
 genericTypeArgument returns [String value]
@@ -740,7 +754,8 @@ annotationInitializers returns [String value]
     :   { $value = ""; }
         ^( ANNOTATION_INIT_KEY_LIST
 	   ( annotationInitializer
-	     { $value += " " + $annotationInitializer.value; } )+ )
+	     { $value += ( $value == "" ? $annotationInitializer.value
+					: "." + $annotationInitializer.value ); } )+ )
     |   ^(ANNOTATION_INIT_DEFAULT_KEY annotationElementValue)
 	{
 		$value = $annotationElementValue.value;
@@ -817,7 +832,7 @@ block returns [String value]
 	   ( blockStatement
 	     { $value += ( $value == " {\n" ? $blockStatement.value
 					    : ";\n" + $blockStatement.value ); } )* )
-	{ $value += " }\n"; }
+	{ $value += "; }\n"; }
     ;
     
 blockStatement returns [String value]
@@ -861,7 +876,7 @@ statement returns [String value]
 {
 	$value = $IF.text + " " +
 		 $parenthesizedExpression.value + " " +
-		 $a.value + " " +
+		 $a.value + "; " +
 		 ( $b.value != null ?
 		   $b.value : "" ) + "\n";
 }
@@ -961,7 +976,7 @@ catches returns [String value]
    	^( CATCH_CLAUSE_LIST
 	   ( catchClause
 	     { $value += ( $value == "" ? $catchClause.value
-					: " ### " + $catchClause.value ); } )+ )
+					: " " + $catchClause.value ); } )+ )
     ;
     
 catchClause returns [String value]
@@ -990,7 +1005,7 @@ switchCaseLabel returns [String value]
     :	^( CASE { $value = " " + $CASE.text; }
 	   expression { $value += " " + $expression.value + ": "; }
 	   ( blockStatement
-	     { $value += " " + $blockStatement.value; } )* )
+	     { $value += "; " + $blockStatement.value; } )* )
     ;
     
 switchDefaultLabel returns [String value]
