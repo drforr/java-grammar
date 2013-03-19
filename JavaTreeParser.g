@@ -131,7 +131,8 @@ options {
 
 // }}}
 
-// Starting point for parsing a Java file.
+// {{{ Starting point for parsing a Java file.
+
 javaSource returns [String value]
     : { $value = ""; }
     	^( JAVA_SOURCE
@@ -143,6 +144,8 @@ javaSource returns [String value]
 	   ( typeDeclaration
 	     { $value += " " + $typeDeclaration.value; } )* )
     ;
+
+// }}}
 
 // {{{ packageDeclaration
 
@@ -156,17 +159,21 @@ packageDeclaration returns [String value]
 
 // }}}
     
+// {{{ importDeclaration
+
 importDeclaration returns [String value]
     :   ^(IMPORT STATIC? qualifiedIdentifier DOTSTAR?)
-{
-	$value = $IMPORT.text + " " +
-		 ( $STATIC.text != null ?
-		   $STATIC.text : "" ) + " " +
-		 $qualifiedIdentifier.value + " " +
-		 ( $DOTSTAR.text != null ?
-		   $DOTSTAR.text : "" );
-}
+	{
+		$value = $IMPORT.text + " " +
+			 ( $STATIC.text != null ?
+			   $STATIC.text : "" ) + " " +
+			 $qualifiedIdentifier.value + " " +
+			 ( $DOTSTAR.text != null ?
+			   $DOTSTAR.text : "" );
+	}
     ;
+
+// }}}
     
 typeDeclaration returns [String value]
     :   ^(CLASS modifierList
@@ -192,82 +199,69 @@ $value += "\n";
 	  	    extendsClause?
 		    interfaceTopLevelScope)
 {
-	$value = "{{typeDeclaration[2] " +
-		 $INTERFACE.text + " " +
+	$value = $INTERFACE.text + " " +
 		 $modifierList.value + " " +
 	         $IDENT.text + " " +
 		 ( $genericTypeParameterList.value != null ?
 		   $genericTypeParameterList.value : "" ) + " " +
 		 ( $extendsClause.value != null ?
 		   $extendsClause.value : "" ) + " " +
-		 $interfaceTopLevelScope.value + "}}";
+		 $interfaceTopLevelScope.value;
 }
     |   ^(ENUM modifierList
 	 IDENT implementsClause?
 	       enumTopLevelScope)
 {
-	$value = "{{typeDeclaration[3] " +
-		 $ENUM.text + " " +
+	$value = $ENUM.text + " " +
 		 $modifierList.value + " " +
 	 	 $IDENT.text + " " +
 		 ( $implementsClause.value != null ?
 		   $implementsClause.value : "" ) + " " +
-		 $enumTopLevelScope.value + "}}";
+		 $enumTopLevelScope.value;
 }
     |    ^(AT modifierList
 	IDENT annotationTopLevelScope)
 {
-	$value = "{{typeDeclaration[3] " +
-		 $AT.text + " " +
+	$value = $AT.text + " " +
 		 $modifierList.value + " " +
 		 $IDENT.text + " " +
-		 $annotationTopLevelScope.value + "}}";
+		 $annotationTopLevelScope.value;
 }
     ;
 
 extendsClause returns [String value] // actually 'type' for classes and 'type+' for interfaces, but this has 
               // been resolved by the parser grammar.
-    :	{ $value = "{{extendsClause"; }
-   	^( EXTENDS_CLAUSE
+    :	^( EXTENDS_CLAUSE
 	   ( type
 	     { $value += " " + $type.value; } )+ )
-	{ $value += "}}"; }
     ;
     
 implementsClause returns [String value]
-    :	{ $value = "{{implementsClause"; }
-   	^( IMPLEMENTS_CLAUSE ( type { $value += " " + $type.value; } )+ )
-	{ $value += "}}"; }
+    :	^( IMPLEMENTS_CLAUSE ( type { $value += " " + $type.value; } )+ )
     ;
         
 genericTypeParameterList returns [String value]
-    :	{ $value = "{{genericTypeParameterList"; }
-   	^( GENERIC_TYPE_PARAM_LIST
+    :	^( GENERIC_TYPE_PARAM_LIST
 	   ( genericTypeParameter
 	     { $value += " " + $genericTypeParameter.value; } )+ )
-	{ $value += "}}"; }
     ;
 
 genericTypeParameter returns [String value]
     :   ^(IDENT bound?)
 {
-	$value = "{{genericTypeParameter " +
-		  $IDENT.text + " " +
+	$value = $IDENT.text + " " +
 		  ( $bound.value != null ?
-		    $bound.value : "" ) + "}}";
+		    $bound.value : "" );
 }
     ;
         
 bound returns [String value]
-    :	{ $value = "{{bound"; }
-   	^( EXTENDS_BOUND_LIST
+    :	^( EXTENDS_BOUND_LIST
 	   ( type { $value += " " + $type.value; } )+ )
-	{ $value += "}}"; }
     ;
 
 enumTopLevelScope returns [String value]
-    : { $value = "{{enumTopLevelScope"; }
-      ^( ENUM_TOP_LEVEL_SCOPE { $value += " " + $ENUM_TOP_LEVEL_SCOPE.text; }
+    : ^( ENUM_TOP_LEVEL_SCOPE { $value += " " + $ENUM_TOP_LEVEL_SCOPE.text; }
 	 ( enumConstant { $value += " " + $enumConstant.value; } )+
 	 ( classTopLevelScope { $value += " " + $classTopLevelScope.value; } )? )
     ;
@@ -275,13 +269,12 @@ enumTopLevelScope returns [String value]
 enumConstant returns [String value]
     :   ^(IDENT annotationList arguments? classTopLevelScope?)
 {
-	$value = "{{enumConstant " +
-		 $IDENT.text + " " +
+	$value = $IDENT.text + " " +
 		 $annotationList.value + " " +
 		 ( $arguments.value != null ?
 		   $arguments.value : "" ) + " " +
 		 ( $classTopLevelScope.value != null ?
-		   $classTopLevelScope.value : "" ) + "}}";
+		   $classTopLevelScope.value : "" );
 }
     ;
     
@@ -340,12 +333,10 @@ classScopeDeclarations returns [String value]
 }
     |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
 {
-	$value = "{{classScopeDeclarations[5] " +
-		 $modifierList.value + " " +
+	$value = $modifierList.value + " " +
 		 $type.value + " " +
-		 $variableDeclaratorList.value + "}}";
+		 $variableDeclaratorList.value;
 }
-    //|   ^(CONSTRUCTOR_DECL modifierList
     |   ^(CONSTRUCTOR_DECL IDENT modifierList
 			   genericTypeParameterList?
 			   formalParameterList
@@ -383,8 +374,7 @@ interfaceScopeDeclarations returns [String value]
 			       arrayDeclaratorList?
 			       throwsClause?)
 {
-	$value = "{{interfaceTopLevelDeclarations[1] " +
-		 $modifierList.value + " " +
+	$value = $modifierList.value + " " +
 		 ( $genericTypeParameterList.value != null ?
 		   $genericTypeParameterList.value : "" ) + " " +
 		 $type.value + " " +
@@ -393,7 +383,7 @@ interfaceScopeDeclarations returns [String value]
 		 ( $arrayDeclaratorList.value != null ?
 		   $arrayDeclaratorList.value : "" ) + " " +
 		 ( $throwsClause.value != null ?
-		   $throwsClause.value : "" ) + "}}";
+		   $throwsClause.value : "" );
 }
     |   ^(VOID_METHOD_DECL modifierList
 			   genericTypeParameterList?
@@ -403,21 +393,19 @@ interfaceScopeDeclarations returns [String value]
         // declarations by 'java.g'; the parser has already checked that
         // there's an obligatory initializer.
 {
-	$value = "{{interfaceTopLevelDeclarations[2] " +
-		 $modifierList.value + " " +
+	$value = $modifierList.value + " " +
 		 ( $genericTypeParameterList.value != null ?
 		   $genericTypeParameterList.value : "" ) + " " +
 		 $IDENT.text + " " +
 		 $formalParameterList.value + " " +
 		 ( $throwsClause.value != null ?
-		   $throwsClause.value : "" ) + "}}";
+		   $throwsClause.value : "" );
 }
     |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
 {
-	$value = "{{interfaceTopLevelDeclarations[3] " +
-		 $modifierList.value + " " +
+	$value = $modifierList.value + " " +
 		 $type.value + " " +
-		 $variableDeclaratorList.value + "}}";
+		 $variableDeclaratorList.value;
 }
     |   typeDeclaration
 	{
@@ -438,8 +426,7 @@ variableDeclarator returns [String value]
     :   ^(VAR_DECLARATOR variableDeclaratorId
 	  		 variableInitializer?)
 {
-	$value =
-		 $variableDeclaratorId.value + " = " +
+	$value = $variableDeclaratorId.value + " = " +
 		 ( $variableInitializer.value != null ?
 		   $variableInitializer.value : "" );
 }
@@ -643,11 +630,10 @@ primitiveType returns [String value]
 // }}}
 
 genericTypeArgumentList returns [String value]
-    :	{ $value = "{{genericTypeArgumentList"; }
+    :	{ $value = ""; }
    	^( GENERIC_TYPE_ARG_LIST
 	   ( genericTypeArgument
 	     { $value += " " + $genericTypeArgument.value; } )+ )
-	{ $value += "}}"; }
     ;
     
 genericTypeArgument returns [String value]
@@ -657,10 +643,9 @@ genericTypeArgument returns [String value]
 	}
     |   ^(QUESTION genericWildcardBoundType?)
 {
-	$value = "{{genericTypeArgument[2] " +
-		 $QUESTION.text + " " +
+	$value = $QUESTION.text + " " +
 	 	 ( $genericWildcardBoundType.value != null ?
-		   $genericWildcardBoundType.value : "" ) + "}}";
+		   $genericWildcardBoundType.value : "" );
 }
     ;
 
@@ -702,11 +687,10 @@ formalParameterVarargDecl returns [String value]
 				   type
 				   variableDeclaratorId)
 {
-	$value = "{{formalParameterVarargDecl " +
-		 $FORMAL_PARAM_VARARG_DECL.text + " " +
+	$value = $FORMAL_PARAM_VARARG_DECL.text + " " +
 		 $localModifierList.value + " " +
 		 $type.value + " " +
-		 $variableDeclaratorId.value + "}}";
+		 $variableDeclaratorId.value;
 }
     ;
     
@@ -738,11 +722,10 @@ annotationList returns [String value]
 annotation returns [String value]
     :   ^(AT qualifiedIdentifier annotationInit?)
 {
-	$value = "{{annotation " +
-		 $AT.text + " " +
+	$value = $AT.text + " " +
 		 $qualifiedIdentifier.value + " " +
 		 ( $annotationInit.value != null ?
-		   $annotationInit.value : "" ) + "}}";
+		   $annotationInit.value : "" );
 }
     ;
     
@@ -754,11 +737,10 @@ annotationInit returns [String value]
     ;
 
 annotationInitializers returns [String value]
-    :   { $value = "{{annotationInitializers[1]"; }
+    :   { $value = ""; }
         ^( ANNOTATION_INIT_KEY_LIST
 	   ( annotationInitializer
 	     { $value += " " + $annotationInitializer.value; } )+ )
-	{ $value += "}}"; }
     |   ^(ANNOTATION_INIT_DEFAULT_KEY annotationElementValue)
 	{
 		$value = $annotationElementValue.value;
@@ -768,18 +750,16 @@ annotationInitializers returns [String value]
 annotationInitializer returns [String value]
     :   ^(IDENT annotationElementValue)
 {
-	$value = "{{annotationInitializer " +
-		 $IDENT.text + " " +
-		 $annotationElementValue.value + "}}";
+	$value = $IDENT.text + " " +
+		 $annotationElementValue.value;
 }
     ;
     
 annotationElementValue returns [String value]
-    :   { $value = "{{annotationElementValue"; }
+    :   { $value = ""; }
 	^( ANNOTATION_INIT_ARRAY_ELEMENT
 	   { $value += " " + $ANNOTATION_INIT_ARRAY_ELEMENT.text; }
-	   ( a=annotationElementValue { $value += " " + $a.value; } )*)
-	{ $value += "}}"; }
+	   ( a=annotationElementValue { $value += " " + $a.value; } )* )
     |   annotation
 	{
 		$value = $annotation.value;
@@ -791,11 +771,10 @@ annotationElementValue returns [String value]
     ;
     
 annotationTopLevelScope returns [String value]
-    :	{ $value = "{{annotationTopLevelScope"; }
+    :	{ $value = ""; }
    	^( ANNOTATION_TOP_LEVEL_SCOPE
 	   ( annotationScopeDeclarations
 	     { $value += " " + $annotationScopeDeclarations.value; } )* )
-	{ $value += "}}"; }
     ;
     
 annotationScopeDeclarations returns [String value]
@@ -803,20 +782,18 @@ annotationScopeDeclarations returns [String value]
 				  type
 			    IDENT annotationDefaultValue? )
 {
-	$value = "{{annotationScopeDeclarations[1] " +
-		 $ANNOTATION_METHOD_DECL.text + " " +
+	$value = $ANNOTATION_METHOD_DECL.text + " " +
 		 $modifierList.value + " " +
 		 $type.value + " " +
 		 $IDENT.text + " " +
 		 ( $annotationDefaultValue.value != null ?
-		   $annotationDefaultValue.value : "" ) + "}}";
+		   $annotationDefaultValue.value : "" );
 }
     |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
 {
-	$value = "{{annotationScopeDeclarations[2] " +
-		 $modifierList.value + " " +
+	$value = $modifierList.value + " " +
 		 $type.value + " " +
-		 $variableDeclaratorList.value + "}}";
+		 $variableDeclaratorList.value;
 }
     |   typeDeclaration
 	{
@@ -827,9 +804,8 @@ annotationScopeDeclarations returns [String value]
 annotationDefaultValue returns [String value]
     :   ^(DEFAULT annotationElementValue)
 {
-	$value = "{{annotationDefaultValue " +
-		 $DEFAULT.text + " " +
-		 $annotationElementValue.value + "}}";
+	$value = $DEFAULT.text + " " +
+		 $annotationElementValue.value;
 }
     ;
 
@@ -899,13 +875,12 @@ statement returns [String value]
 }
     |   ^(FOR_EACH localModifierList type IDENT expression a=statement) 
 {
-	$value = "{{statement[5] " +
-		 $FOR_EACH.text + " " +
+	$value = $FOR_EACH.text + " " +
 		 $localModifierList.value + " " +
 		 $type.value + " " +
 		 $IDENT.text + " " +
 		 $expression.value + " " +
-		 $a.value + "}}";
+		 $a.value;
 }
     |   ^(WHILE parenthesizedExpression a=statement)
 {
@@ -938,10 +913,9 @@ statement returns [String value]
 }
     |   ^(SYNCHRONIZED parenthesizedExpression block)
 {
-	$value = "{{statement[10] " +
-		 $SYNCHRONIZED.text + " " +
+	$value = $SYNCHRONIZED.text + " " +
 		 $parenthesizedExpression.value + " " +
-		 $block.value + "}}";
+		 $block.value;
 }
     |   ^(RETURN expression?)
 {
@@ -968,10 +942,9 @@ $value += ";\n";
 }
     |   ^(LABELED_STATEMENT IDENT a=statement)
 {
-	$value = "{{statement[15] " +
-		 $LABELED_STATEMENT.text + " " +
+	$value = $LABELED_STATEMENT.text + " " +
 		 $IDENT.text + " " +
-		 $a.value + "}}";
+		 $a.value;
 }
     |   expression
 	{
@@ -1021,11 +994,9 @@ switchCaseLabel returns [String value]
     ;
     
 switchDefaultLabel returns [String value]
-    :	{ $value = "{{switchDefaultLabel"; }
-   	^( DEFAULT
+    :	^( DEFAULT
 	   ( blockStatement
 	     { $value += " " + $blockStatement.value; } )* )
-	{ $value += "}}"; }
     ;
     
 forInit returns [String value]
@@ -1317,23 +1288,21 @@ primaryExpression returns [String value]
 explicitConstructorCall returns [String value]
     :   ^(THIS_CONSTRUCTOR_CALL genericTypeArgumentList? arguments)
 {
-	$value = "{{explicitConstructorCall[1] " +
-		 $THIS_CONSTRUCTOR_CALL.text + " " +
+	$value = $THIS_CONSTRUCTOR_CALL.text + " " +
 	 	 ( $genericTypeArgumentList.value != null ?
-		   $genericTypeArgumentList.value : "" ) + "}}" +
-		 $arguments.value + "}}";
+		   $genericTypeArgumentList.value : "" ) + " " +
+		 $arguments.value;
 }
     |   ^(SUPER_CONSTRUCTOR_CALL primaryExpression?
 				 genericTypeArgumentList?
 				 arguments)
 {
-	$value = "{{explicitConstructorCall[2] " +
-		 $SUPER_CONSTRUCTOR_CALL.text + " " +
+	$value = $SUPER_CONSTRUCTOR_CALL.text + " " +
 	 	 ( $primaryExpression.value != null ?
 		   $primaryExpression.value : "" ) + " " +
 	 	 ( $genericTypeArgumentList.value != null ?
 		   $genericTypeArgumentList.value : "" ) + " " +
-		 $arguments.value + "}}";
+		 $arguments.value;
 }
     ;
 
@@ -1341,11 +1310,10 @@ arrayTypeDeclarator returns [String value]
     :   ^( ARRAY_DECLARATOR
 	   ( a=arrayTypeDeclarator | qualifiedIdentifier | primitiveType ) )
 {
-	$value = "{{arrayTypeDeclarator " +
-		 $ARRAY_DECLARATOR.text + " " +
+	$value = $ARRAY_DECLARATOR.text + " " +
 		 $a.value + " " +
 		 $qualifiedIdentifier.value + " " +
-		 $primitiveType.value + " " + "}}";
+		 $primitiveType.value;
 }
     ;
 
@@ -1387,14 +1355,13 @@ innerNewExpression returns [String value] // something like 'InnerType innerType
 			   IDENT arguments
 				 classTopLevelScope?)
 {
-	$value = "{{innerNewExpression " +
-		 $CLASS_CONSTRUCTOR_CALL.text + " " +
+	$value = $CLASS_CONSTRUCTOR_CALL.text + " " +
 	 	 ( $genericTypeArgumentList.value != null ?
 		   $genericTypeArgumentList.value : "" ) + " " +
 		 $IDENT.text + " " +
 		 $arguments.value + " " +
 	 	 ( $classTopLevelScope.value != null ?
-		   $classTopLevelScope.value : "" ) + "}}";
+		   $classTopLevelScope.value : "" );
 }
     ;
     
