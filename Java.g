@@ -536,7 +536,7 @@ arrayInitializer
 
 throwsClause
     :   THROWS qualifiedIdentList
-        ->  ^(THROWS_CLAUSE[$THROWS, "THROWS_CLAUSE"] qualifiedIdentList)
+        ->  ^(THROWS_CLAUSE[$THROWS, "THROWS_CLAUSE"] THROWS qualifiedIdentList)
     ;
 
 modifierList

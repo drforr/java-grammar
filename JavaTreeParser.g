@@ -441,9 +441,9 @@ variableDeclarator returns [String value]
     :   ^(VAR_DECLARATOR variableDeclaratorId
 	  		 variableInitializer?)
 {
-	$value = $variableDeclaratorId.value + " = " +
+	$value = $variableDeclaratorId.value + " " +
 		( $variableInitializer.value != null ?
-		   $variableInitializer.value : "" );
+		   " = " + $variableInitializer.value : "" );
 }
     ;
     
@@ -494,8 +494,9 @@ arrayInitializer returns [String value]
 throwsClause returns [String value]
     :	{ $value = ""; }
 	^( THROWS_CLAUSE
+	   THROWS { $value += $THROWS.text + " "; }
 	   ( qualifiedIdentifier
-	     { $value += ( $value == "" ? $qualifiedIdentifier.value
+	     { $value += ( $value == $THROWS.text + " " ? $qualifiedIdentifier.value
 					: " " + $qualifiedIdentifier.value ); } )+ )
     ;
 
@@ -999,9 +1000,10 @@ switchBlockLabels returns [String value]
 					: " " + $a.value ); } )*
 	   ( switchDefaultLabel
 	     { $value += " " + $switchDefaultLabel.value; } )?
-	   ( b=switchCaseLabel
-	     { $value += ( $value == "" ? $b.value
-					: " " + $b.value ); } )* )
+//	   ( b=switchCaseLabel
+//	     { $value += ( $value == "" ? $b.value
+//					: " " + $b.value ); } )*
+	 )
     ;
         
 switchCaseLabel returns [String value]
@@ -1391,7 +1393,7 @@ newArrayConstruction returns [String value]
 }
     |   { $value = ""; }
 	( expression { $value += ( $value == "" ? "["+$expression.value+"]"
-		 			        : "." + $expression.value ); } )+
+		 			        : "" + "["+$expression.value+"]" ); } )+
 	( arrayDeclaratorList
 	  { $value += " " + $arrayDeclaratorList.value; } )?
     ;
