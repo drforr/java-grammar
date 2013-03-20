@@ -441,7 +441,7 @@ variableDeclarator returns [String value]
     :   ^(VAR_DECLARATOR variableDeclaratorId
 	  		 variableInitializer?)
 {
-	$value = $variableDeclaratorId.value + " " +
+	$value = $variableDeclaratorId.value + " = " +
 		( $variableInitializer.value != null ?
 		   $variableInitializer.value : "" );
 }
@@ -705,8 +705,7 @@ formalParameterVarargDecl returns [String value]
 				   type
 				   variableDeclaratorId)
 {
-	$value = $FORMAL_PARAM_VARARG_DECL.text + " " +
-		 $localModifierList.value + " " +
+	$value = $localModifierList.value + " " +
 		 $type.value + " " +
 		 $variableDeclaratorId.value;
 }
@@ -1024,9 +1023,7 @@ forInit returns [String value]
 	   ( localVariableDeclaration
 	     { $value += " " + $localVariableDeclaration.value; }
 	   | ( expression { $value += ( $value == "" ? $expression.value
-						     : ", " + $expression.value ); } )*
-	   )?
-	 )
+						     : ", " + $expression.value ); } )* )? )
     ;
     
 forCondition returns [String value]
@@ -1247,7 +1244,7 @@ expr returns [String value]
 primaryExpression returns [String value]
     :   { $value=""; }
 	^(DOT ( a=primaryExpression { $value += $a.value + " "; }
-                { $value += "=" + " "; }
+                { $value += "." + " "; }
                 (   IDENT { $value += $IDENT.text + " "; }
                 |   THIS { $value += $THIS.text + " "; }
                 |   SUPER { $value += $SUPER.text + " "; }
@@ -1347,7 +1344,7 @@ newExpression returns [String value]
             )
         )
 {
-	$value = " = new " +
+	$value = " new " +
 		 ( $primitiveType.value != null ?
 		   $primitiveType.value + " " + $a.value + " " :
 		   $qualifiedTypeIdent.value != null ?
