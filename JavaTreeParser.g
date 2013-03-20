@@ -239,14 +239,16 @@ extendsClause returns [String value] // actually 'type' for classes and 'type+' 
     ;
     
 implementsClause returns [String value]
-    :	^( IMPLEMENTS_CLAUSE
+    :	{ $value = ""; }
+	^( IMPLEMENTS_CLAUSE
 	   ( type
 	     { $value += ( $value == "" ? $type.value
 					: " " + $type.value ); } )+ )
     ;
         
 genericTypeParameterList returns [String value]
-    :	^( GENERIC_TYPE_PARAM_LIST
+    :	{ $value = ""; }
+	^( GENERIC_TYPE_PARAM_LIST
 	   ( genericTypeParameter
 	     { $value += ( $value == "" ? $genericTypeParameter.value
 					: " " + $genericTypeParameter.value ); } )+ )
@@ -262,18 +264,20 @@ genericTypeParameter returns [String value]
     ;
         
 bound returns [String value]
-    :	^( EXTENDS_BOUND_LIST
+    :	{ $value = ""; }
+	^( EXTENDS_BOUND_LIST
 	   ( type 
 	     { $value += ( $value == "" ? $type.value
 					: " " + $type.value ); } )+ )
     ;
 
 enumTopLevelScope returns [String value]
-    : ^( ENUM_TOP_LEVEL_SCOPE { $value = ""; }
-	 ( enumConstant
-	   { $value += ( $value == "" ? $enumConstant.value
-				      : " " + $enumConstant.value ); } )+
-	 ( classTopLevelScope { $value += " " + $classTopLevelScope.value; } )? )
+    :   { $value = ""; }
+	^( ENUM_TOP_LEVEL_SCOPE
+	   ( enumConstant
+	     { $value += ( $value == "" ? $enumConstant.value
+				        : " " + $enumConstant.value ); } )+
+	   ( classTopLevelScope { $value += " " + $classTopLevelScope.value; } )? )
     ;
     
 enumConstant returns [String value]
@@ -438,7 +442,7 @@ variableDeclarator returns [String value]
 	  		 variableInitializer?)
 {
 	$value = $variableDeclaratorId.value + " " +
-		 ( $variableInitializer.value != null ?
+		( $variableInitializer.value != null ?
 		   $variableInitializer.value : "" );
 }
     ;
@@ -1037,7 +1041,8 @@ forUpdater returns [String value]
     :	{ $value = ""; }
 	^( FOR_UPDATE
 	   ( expression
-	     { $value += " " + $expression.value; } )* )
+	     { $value += ( $value == "" ? $expression.value
+					: " " + $expression.value ); } )* )
     ;
     
 // EXPRESSIONS
@@ -1240,8 +1245,9 @@ expr returns [String value]
 	;
     
 primaryExpression returns [String value]
-    :   ^(DOT ( a=primaryExpression { $value += $a.value + " "; }
-                { $value += "." + " "; }
+    :   { $value=""; }
+	^(DOT ( a=primaryExpression { $value += $a.value + " "; }
+                { $value += "=" + " "; }
                 (   IDENT { $value += $IDENT.text + " "; }
                 |   THIS { $value += $THIS.text + " "; }
                 |   SUPER { $value += $SUPER.text + " "; }
@@ -1341,9 +1347,9 @@ newExpression returns [String value]
             )
         )
 {
-	$value = "new " +
+	$value = " = new " +
 		 ( $primitiveType.value != null ?
-		   $primitiveType.value + " " + $a.value :
+		   $primitiveType.value + " " + $a.value + " " :
 		   $qualifiedTypeIdent.value != null ?
 		   ( $genericTypeArgumentList.value != null ?
 		     $genericTypeArgumentList.value : "" ) + " " +
@@ -1384,10 +1390,11 @@ newArrayConstruction returns [String value]
     :   arrayDeclaratorList arrayInitializer
 {
 	$value = $arrayDeclaratorList.value + " " +
-		 $arrayInitializer.value;
+		 $arrayInitializer.value + " ";
 }
     |   { $value = ""; }
-	( expression { $value += " [ " + $expression.value + " ] "; } )+
+	( expression { $value += ( $value == "" ? "["+$expression.value+"]"
+		 			        : "." + $expression.value ); } )+
 	( arrayDeclaratorList
 	  { $value += " " + $arrayDeclaratorList.value; } )?
     ;
