@@ -134,7 +134,7 @@ options {
 // {{{ Starting point for parsing a Java file.
 
 javaSource returns [String value]
-@init{ int _i = 0; }
+@init{ int _i = 0, _j = 0; }
     : { $value = ""; }
     	^( JAVA_SOURCE
 	   annotationList { $value += " " + $annotationList.value; }
@@ -142,10 +142,10 @@ javaSource returns [String value]
 	     { $value += " " + $packageDeclaration.value; } )?
 	   ( importDeclaration
 	     { $value += ( _i++ == 0 ? $importDeclaration.value
-				     :" " + $importDeclaration.value ); } )*
+				     : " " + $importDeclaration.value ); } )*
 	   ( typeDeclaration
-	     { $value += ( _i++ == 0 ? $typeDeclaration.value
-				     :" " + $typeDeclaration.value ); } )* )
+	     { $value += ( _j++ == 0 ? $typeDeclaration.value
+				     : " " + $typeDeclaration.value ); } )* )
     ;
 
 // }}}
@@ -156,7 +156,7 @@ packageDeclaration returns [String value]
     :   ^(PACKAGE qualifiedIdentifier)  
 	{
 		$value = $PACKAGE.text + " " +
-			 $qualifiedIdentifier.value + ";\n";
+			 $qualifiedIdentifier.value + ";" + "\n";
 	}
     ;
 
@@ -187,14 +187,14 @@ typeDeclaration returns [String value]
 {
 	$value = $modifierList.value + " " +
 		 $CLASS.text + " " +
-		 $IDENT.text + " { " +
+		 $IDENT.text + " " + "{" + " " +
 		 ( $genericTypeParameterList.value != null ?
 		   $genericTypeParameterList.value : "" ) + " " +
 		 ( $extendsClause.value != null ?
 		   $extendsClause.value : "" ) + " " +
 		 ( $implementsClause.value != null ?
 		   $implementsClause.value : "" ) + " " +
-		 $classTopLevelScope.value + " }";
+		 $classTopLevelScope.value + " " + "}";
 $value += "\n";
 }
     |   ^(INTERFACE modifierList
@@ -446,7 +446,7 @@ variableDeclaratorList returns [String value]
 	   ( variableDeclarator
 	     { $value +=
 	       ( _i++ == 0 ? $variableDeclarator.value
-			   : ", " + $variableDeclarator.value ); } )+ )
+			   : "," + " " + $variableDeclarator.value ); } )+ )
     ;
 
 variableDeclarator returns [String value]
@@ -455,7 +455,7 @@ variableDeclarator returns [String value]
 {
 	$value = $variableDeclaratorId.value + " " +
 		( $variableInitializer.value != null ?
-		   " = " + $variableInitializer.value : "" );
+		   " " + "=" + " " + $variableInitializer.value : "" );
 }
     ;
     
@@ -497,12 +497,12 @@ arrayDeclaratorList returns [String value]
     
 arrayInitializer returns [String value]
 @init{ int _i = 0; }
-    :   { $value = " { "; }
+    :   { $value = " " + "{" + " "; }
 	^( ARRAY_INITIALIZER
 	   ( variableInitializer
 	     { $value += ( _i++ == 0 ? $variableInitializer.value
-				     : ", " + $variableInitializer.value ); } )* )
-	{ $value += " } "; }
+				     : "," + " " + $variableInitializer.value ); } )* )
+	{ $value += " " + "}" + " "; }
     ;
 
 throwsClause returns [String value]
@@ -580,7 +580,7 @@ localModifierList returns [String value]
 	^( LOCAL_MODIFIER_LIST
 	   ( localModifier
 	     { $value += ( _i++ == 0 ? $localModifier.value
-				     : ", " + $localModifier.value ); } )* )
+				     : "," + " " + $localModifier.value ); } )* )
     ;
 
 localModifier returns [String value]
@@ -700,14 +700,14 @@ genericWildcardBoundType returns [String value]
 
 formalParameterList returns [String value]
 @init{ int _i = 0; }
-    :	{ $value = " ( "; }
+    :	{ $value = " " + "(" + " "; }
    	^( FORMAL_PARAM_LIST
 	   ( formalParameterStandardDecl
 	     { $value += ( _i++ == 0 ? $formalParameterStandardDecl.value
-				     : ", " + $formalParameterStandardDecl.value ); } )*
+				     : "," + " " + $formalParameterStandardDecl.value ); } )*
 	   ( formalParameterVarargDecl
 	     { $value += " " + $formalParameterVarargDecl.value; } )? )
-	{ $value += " ) "; }
+	{ $value += " " + ")" + " "; }
     ;
     
 formalParameterStandardDecl returns [String value]
@@ -859,12 +859,12 @@ annotationDefaultValue returns [String value]
 
 block returns [String value]
 @init{ int _i = 0; }
-    :   { $value = " {\n"; }
+    :   { $value = " " + "{" + "\n"; }
 	^( BLOCK_SCOPE
 	   ( blockStatement
 	     { $value += ( _i++ == 0 ? $blockStatement.value
-				     : ";\n" + $blockStatement.value ); } )* )
-	{ $value += "; }\n"; }
+				     : ";" + "\n" + $blockStatement.value ); } )* )
+	{ $value += ";" + " " + "}" + "\n"; }
     ;
     
 blockStatement returns [String value]
@@ -902,23 +902,23 @@ statement returns [String value]
 	$value = $ASSERT.text + " " +
 		 $a.value +
 		 ( $b.value != null ?
-		   " : " + $b.value : "" ) + ";\n";
+		   " " + ":" + " " + $b.value : "" ) + ";" + "\n";
 }
     |   ^(IF parenthesizedExpression a=statement b=statement?)
 {
 	$value = $IF.text + " " +
 		 $parenthesizedExpression.value + " " +
-		 $a.value + "; " +
+		 $a.value + ";" + " " +
 		 ( $b.value != null ?
 		   $b.value : "" ) + "\n";
 }
     |   ^(FOR forInit forCondition forUpdater a=statement)
 {
-	$value = $FOR.text + " ( " +
-		 $forInit.value + "; " +
-		 $forCondition.value + "; " +
-		 $forUpdater.value + " ) " +
-		 $a.value + ";\n";
+	$value = $FOR.text + " " + "(" + " " +
+		 $forInit.value + ";" + " " +
+		 $forCondition.value + ";" + " " +
+		 $forUpdater.value + " " + ")" + " " +
+		 $a.value + ";" + "\n";
 }
     |   ^(FOR_EACH localModifierList type IDENT expression a=statement) 
 {
@@ -937,10 +937,10 @@ statement returns [String value]
 }
     |   ^(DO a=statement parenthesizedExpression)
 {
-	$value = $DO.text + " {\n" +
-		 $a.value + " } " +
+	$value = $DO.text + " " + "{" + "\n" +
+		 $a.value + " " + "}" + " " +
 		 "while" + " " + // JMG XXX Why doesn't the grammar have this?
-		 $parenthesizedExpression.value + ";\n";
+		 $parenthesizedExpression.value + ";" + "\n";
 }
     |   ^(TRY a=block catches? b=block?)
 	// The second optional block is the optional finally block.
@@ -955,8 +955,8 @@ statement returns [String value]
     |   ^(SWITCH parenthesizedExpression switchBlockLabels)
 {
 	$value = $SWITCH.text + " " +
-		 $parenthesizedExpression.value + " { " +
-		 $switchBlockLabels.value + " }\n";
+		 $parenthesizedExpression.value + " " + "{" + " " +
+		 $switchBlockLabels.value + " " + "}" + "\n";
 }
     |   ^(SYNCHRONIZED parenthesizedExpression block)
 {
@@ -969,7 +969,7 @@ statement returns [String value]
 	$value = $RETURN.text + " " +
 		 ( $expression.value != null ?
 		   $expression.value : "" );
-$value += ";\n";
+$value += ";" + "\n";
 }
     |   ^(THROW expression)
 {
@@ -1015,8 +1015,8 @@ catches returns [String value]
 catchClause returns [String value]
     :   ^(CATCH formalParameterStandardDecl block)
 {
-	$value = $CATCH.text + " ( " +
-		 $formalParameterStandardDecl.value + " ) " +
+	$value = $CATCH.text + " " + "(" + " " +
+		 $formalParameterStandardDecl.value + " " + ")" + " " +
 		 $block.value;
 }
     ;
@@ -1038,10 +1038,10 @@ switchBlockLabels returns [String value]
 switchCaseLabel returns [String value]
 @init{ int _i = 0; }
     :	^( CASE { $value = " " + $CASE.text; }
-	   expression { $value += " " + $expression.value + ": "; }
+	   expression { $value += " " + $expression.value + ":" + " "; }
 	   ( blockStatement
 	     { $value += ( _i++ == 0 ? $blockStatement.value
-				     : " ; " + $blockStatement.value ); } )* )
+				     : " " + ";" + " " + $blockStatement.value ); } )* )
     ;
     
 switchDefaultLabel returns [String value]
@@ -1059,7 +1059,7 @@ forInit returns [String value]
 	     { $value += " " + $localVariableDeclaration.value; }
 	   | ( expression
 	       { $value += ( $value == "" ? $expression.value
-						     : ", " + $expression.value ); } )* )? )
+						     : "," + " " + $expression.value ); } )* )? )
     ;
     
 forCondition returns [String value]
@@ -1086,7 +1086,7 @@ forUpdater returns [String value]
 parenthesizedExpression returns [String value]
 	:	^(PARENTESIZED_EXPR expression)
 		{
-			$value = "( " + $expression.value + " )";
+			$value = "(" + " " + $expression.value + " " + ")";
 		}
 	;
 
@@ -1270,7 +1270,9 @@ expr returns [String value]
 		}
 	|	^(CAST_EXPR type a=expr)
 		{
-			$value = " ( " + $type.value + ") " + $a.value;
+			$value = " " + "(" + " " +
+			         $type.value +
+				 " " + ")" + " " + $a.value;
 		}
 	|	primaryExpression
 	 	{
@@ -1304,10 +1306,10 @@ primaryExpression returns [String value]
 	}
     |   ^(METHOD_CALL a=primaryExpression genericTypeArgumentList? arguments)
 {
-	$value = $a.value + " ( " +
+	$value = $a.value + " " + "(" + " " +
 		 ( $genericTypeArgumentList.value != null ?
 		   $genericTypeArgumentList.value : "" ) + " " +
-		 $arguments.value + " ) ";
+		 $arguments.value + " " + ")" + " ";
 }
     |   explicitConstructorCall
 	{
@@ -1315,8 +1317,8 @@ primaryExpression returns [String value]
 	}
     |   ^(ARRAY_ELEMENT_ACCESS a=primaryExpression expression)
 {
-	$value = $a.value + " [ " +
-		 $expression.value + " ] ";
+	$value = $a.value + " " + "[" + " " +
+		 $expression.value + " " + "]" + " ";
 }
     |   literal
 	{
@@ -1381,7 +1383,7 @@ newExpression returns [String value]
             )
         )
 {
-	$value = " new " +
+	$value = " " + "new" + " " +
 		 ( $primitiveType.value != null ?
 		   $primitiveType.value + " " + $a.value + " " :
 		   $qualifiedTypeIdent.value != null ?
@@ -1398,8 +1400,8 @@ newExpression returns [String value]
 	$value = "new" +
 	 	 ( $genericTypeArgumentList.value != null ?
 		   $genericTypeArgumentList.value : "" ) + " " +
-		 $qualifiedTypeIdent.value + " ( " +
-		 $arguments.value + " ) " +
+		 $qualifiedTypeIdent.value + " " + "(" + " " +
+		 $arguments.value + " " + ")" + " " +
 	 	 ( $classTopLevelScope.value != null ?
 		   $classTopLevelScope.value : "" );
 }
@@ -1440,7 +1442,7 @@ arguments returns [String value]
       ^( ARGUMENT_LIST
 	 ( expression
 	   { $value += ( _i++ == 0 ? $expression.value
-				   : ", " + $expression.value ); } )* )
+				   : "," + " " + $expression.value ); } )* )
     ;
 
 // {{{ literal
