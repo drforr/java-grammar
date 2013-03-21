@@ -807,8 +807,8 @@ finallyClause
     ;
 
 switchBlockLabels
-    :   switchCaseLabels switchDefaultLabel? switchCaseLabels
-        ->  ^(SWITCH_BLOCK_LABEL_LIST switchCaseLabels switchDefaultLabel? switchCaseLabels)
+    :   switchCaseLabels switchDefaultLabel?
+        ->  ^(SWITCH_BLOCK_LABEL_LIST switchCaseLabels switchDefaultLabel?)
     ;
     
 switchCaseLabels
