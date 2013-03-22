@@ -131,7 +131,7 @@ options {
 
 // }}}
 
-// {{{ Starting point for parsing a Java file.
+// {{{ javaSource
 
 javaSource returns [String value]
 @init{ int _i = 0, _j = 0; }
@@ -196,7 +196,7 @@ typeDeclaration returns [String value]
 			   $extendsClause.value : "" ) + " " +
 			 ( $implementsClause.value != null ?
 			   $implementsClause.value : "" ) + " " +
-			 " " + "{" + " " +
+			 " " + "{" + "\n" +
 			 $classTopLevelScope.value + " " + "}" + "\n";
 	}
     |   ^(INTERFACE modifierList
@@ -369,7 +369,7 @@ classScopeDeclarations returns [String value]
 	{
 		$value = $modifierList.value + " " +
 			 $type.value + " " +
-			 $variableDeclaratorList.value;
+			 $variableDeclaratorList.value + ";";
 	}
     |   ^(CONSTRUCTOR_DECL IDENT modifierList
 			   genericTypeParameterList?
@@ -440,7 +440,7 @@ interfaceScopeDeclarations returns [String value]
 	{
 		$value = $modifierList.value + " " +
 			 $type.value + " " +
-			 $variableDeclaratorList.value;
+			 $variableDeclaratorList.value + "{;}";
 	}
     |   typeDeclaration
 	{
@@ -873,7 +873,7 @@ block returns [String value]
 	   ( blockStatement
 	     { $value += ( _i++ == 0 ? $blockStatement.value
 				     : ";" + "\n" + $blockStatement.value ); } )* )
-	{ $value += ";" + " " + "}" + "\n"; }
+	{ $value += " " + "}" + "\n"; } // Almost redundant, 'throw new exception(..)' requires it.
     ;
     
 blockStatement returns [String value]
@@ -917,7 +917,7 @@ statement returns [String value]
 	{
 		$value = $IF.text + " " +
 			 $parenthesizedExpression.value + " " +
-			 $a.value + ";" + " " +
+			 $a.value + " " +
 			 ( $b.value != null ?
 			   $b.value : "" ) + "\n";
 	}
@@ -927,7 +927,7 @@ statement returns [String value]
 			 $forInit.value + ";" + " " +
 			 $forCondition.value + ";" + " " +
 			 $forUpdater.value + " " + ")" + " " +
-			 $a.value + ";" + "\n";
+			 $a.value + "\n";
 	}
     |   ^(FOR_EACH localModifierList type IDENT expression a=statement) 
 	{
@@ -981,7 +981,7 @@ statement returns [String value]
 	}
     |   ^(THROW expression)
 	{
-		$value = $THROW.text + " " + $expression.value;
+		$value = $THROW.text + " " + $expression.value + ";";
 	}
     |   ^(BREAK IDENT?)
 	{
@@ -1003,7 +1003,7 @@ statement returns [String value]
 	}
     |   expression
 	{
-		$value = $expression.value;
+		$value = $expression.value + ";";
 	}
     |   SEMI // Empty statement.
 	{
