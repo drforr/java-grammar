@@ -252,6 +252,8 @@ extendsClause returns [String value]
 
 // }}}
 
+// {{{ implementsClause
+
 implementsClause returns [String value]
 @init{ int _i = 0; }
     :	{ $value = "implements" + " "; }
@@ -260,7 +262,11 @@ implementsClause returns [String value]
 	     { $value += ( _i++ == 0 ? $type.value
 				     : " " + $type.value ); } )+ )
     ;
+
+// }}}
         
+// {{{ genericTypeParameterList
+
 genericTypeParameterList returns [String value]
 @init{ int _i = 0; }
     :	{ $value = ""; }
@@ -270,6 +276,10 @@ genericTypeParameterList returns [String value]
 				     : " " + $genericTypeParameter.value ); } )+ )
     ;
 
+// }}}
+
+// {{{ genericTypeParameter
+
 genericTypeParameter returns [String value]
     :   ^(IDENT bound?)
 	{
@@ -278,7 +288,11 @@ genericTypeParameter returns [String value]
 			    $bound.value : "" );
 	}
     ;
+
+// }}}
         
+// {{{ bound
+
 bound returns [String value]
 @init{ int _i = 0; }
     :	{ $value = ""; }
@@ -287,6 +301,10 @@ bound returns [String value]
 	     { $value += ( _i++ == 0 ? $type.value
 				     : " " + $type.value ); } )+ )
     ;
+
+// }}}
+
+// {{{ enumTopLevelScope
 
 enumTopLevelScope returns [String value]
 @init{ int _i = 0; }
@@ -297,7 +315,11 @@ enumTopLevelScope returns [String value]
 				     : " " + $enumConstant.value ); } )+
 	   ( classTopLevelScope { $value += " " + $classTopLevelScope.value; } )? )
     ;
+
+// }}}
     
+// {{{ enumConstant
+
 enumConstant returns [String value]
     :   ^(IDENT annotationList arguments? classTopLevelScope?)
 	{
@@ -309,8 +331,11 @@ enumConstant returns [String value]
 			   $classTopLevelScope.value : "" );
 	}
     ;
+
+// }}}
     
-    
+// {{{ classTopLevelScope
+
 classTopLevelScope returns [String value]
 @init{ int _i = 0; }
     :	{ $value = ""; }
@@ -319,6 +344,10 @@ classTopLevelScope returns [String value]
 	     { $value += ( _i++ == 0 ? $classScopeDeclarations.value
 				     : " " + $classScopeDeclarations.value ); } )+ )
     ;
+
+// }}}
+
+// {{{ classScopeDeclarations
     
 classScopeDeclarations returns [String value]
     :   ^(CLASS_INSTANCE_INITIALIZER block)
@@ -391,7 +420,11 @@ classScopeDeclarations returns [String value]
 		$value = $typeDeclaration.value;
 	}
     ;
+
+// }}}
     
+// {{{ interfaceTopLevelScope
+
 interfaceTopLevelScope returns [String value]
 @init{ int _i = 0; }
     :	{ $value = ""; }
@@ -400,7 +433,11 @@ interfaceTopLevelScope returns [String value]
 	     { $value += ( _i++ == 0 ? $interfaceScopeDeclarations.value
 				     : " " + $interfaceScopeDeclarations.value ); } )* )
     ;
+
+// }}}
     
+// {{{ interfaceScopeDeclarations
+
 interfaceScopeDeclarations returns [String value]
     :   ^(FUNCTION_METHOD_DECL modifierList
 			       genericTypeParameterList?
@@ -448,6 +485,10 @@ interfaceScopeDeclarations returns [String value]
 	}
     ;
 
+// }}}
+
+// {{{ variableDeclaratorList
+
 variableDeclaratorList returns [String value]
 @init{ int _i = 0; }
     :	{ $value = ""; }
@@ -458,6 +499,10 @@ variableDeclaratorList returns [String value]
 			   : "," + " " + $variableDeclarator.value ); } )+ )
     ;
 
+// }}}
+
+// {{{ variableDeclarator
+
 variableDeclarator returns [String value]
     :   ^(VAR_DECLARATOR variableDeclaratorId
 	  		 variableInitializer?)
@@ -467,7 +512,11 @@ variableDeclarator returns [String value]
 			   " " + "=" + " " + $variableInitializer.value : "" );
 	}
     ;
+
+// }}}
     
+// {{{ variableDeclaratorId
+
 variableDeclaratorId returns [String value]
     :   ^(IDENT arrayDeclaratorList?)
 	{
@@ -476,6 +525,10 @@ variableDeclaratorId returns [String value]
 			   $arrayDeclaratorList.value : "" );
 	}
     ;
+
+// }}}
+
+// {{{ variableInitializer
 
 variableInitializer returns [String value]
     :   arrayInitializer
@@ -488,6 +541,10 @@ variableInitializer returns [String value]
 	}
     ;
 
+// }}}
+
+// {{{ arrayDeclarator
+
 arrayDeclarator returns [String value]
     :   LBRACK RBRACK
 	{
@@ -495,15 +552,21 @@ arrayDeclarator returns [String value]
 	}
     ;
 
+// }}}
+
+// {{{ arrayDeclaratorList
+
 arrayDeclaratorList returns [String value]
-@init{ int _i = 0; }
     :	{ $value = ""; }
    	^( ARRAY_DECLARATOR_LIST
 	   ( ARRAY_DECLARATOR // This is [] from the grammar
-	     { $value += ( _i++ == 0 ? "[]"
-				     : " " + "[]" ); } )* )
+	     { $value += "[" + "]"; } )* )
     ;
+
+// }}}
     
+// {{{ arrayInitializer
+
 arrayInitializer returns [String value]
 @init{ int _i = 0; }
     :   { $value = " " + "{" + " "; }
@@ -513,6 +576,10 @@ arrayInitializer returns [String value]
 				     : "," + " " + $variableInitializer.value ); } )* )
 	{ $value += " " + "}" + " "; }
     ;
+
+// }}}
+
+// {{{ throwsClause
 
 throwsClause returns [String value]
 @init{ int _i = 0; }
@@ -524,6 +591,10 @@ throwsClause returns [String value]
 				     : " " + $qualifiedIdentifier.value ); } )+ )
     ;
 
+// }}}
+
+// {{{ modifierList
+
 modifierList returns [String value]
 @init{ int _i = 0; }
     :   { $value = ""; }
@@ -531,6 +602,8 @@ modifierList returns [String value]
 	   ( modifier { $value += ( _i++== 0 ? $modifier.value
 					     : " " + $modifier.value ); } )* )
     ;
+
+// }}}
 
 // {{{ modifier
 
@@ -583,6 +656,8 @@ modifier returns [String value]
 
 // }}}
 
+// {{{ localModifierList
+
 localModifierList returns [String value]
 @init{ int _i = 0; }
     :   { $value = ""; }
@@ -591,6 +666,10 @@ localModifierList returns [String value]
 	     { $value += ( _i++ == 0 ? $localModifier.value
 				     : "," + " " + $localModifier.value ); } )* )
     ;
+
+// }}}
+
+// {{{ localModifier
 
 localModifier returns [String value]
     :   FINAL
@@ -602,6 +681,10 @@ localModifier returns [String value]
 		$value = $annotation.value;
 	}
     ;
+
+// }}}
+
+// {{{ type
 
 type returns [String value]
     :   ^(TYPE (primitiveType | qualifiedTypeIdent) arrayDeclaratorList?)
@@ -616,6 +699,8 @@ type returns [String value]
 			   $arrayDeclaratorList.value : "" );
 	}
     ;
+
+// }}}
 
 qualifiedTypeIdent returns [String value]
 @init{ int _i = 0; }
@@ -797,6 +882,8 @@ annotationInitializers returns [String value]
 	}
     ;
     
+// {{{ annotationInitializer
+
 annotationInitializer returns [String value]
     :   ^(IDENT annotationElementValue)
 	{
@@ -804,7 +891,11 @@ annotationInitializer returns [String value]
 			 $annotationElementValue.value;
 	}
     ;
+
+// }}}
     
+// {{{ annotationElementValue
+
 annotationElementValue returns [String value]
 @init{ int _i = 0; }
     :   { $value = ""; }
@@ -822,7 +913,11 @@ annotationElementValue returns [String value]
 		$value = $expression.value;
 	}
     ;
+
+// }}}
     
+// {{{ annotationTopLevelScope
+
 annotationTopLevelScope returns [String value]
 @init{ int _i = 0; }
     :	{ $value = ""; }
@@ -831,7 +926,11 @@ annotationTopLevelScope returns [String value]
 	     { $value += ( _i++ == 0 ? $annotationScopeDeclarations.value
 				     : " " + $annotationScopeDeclarations.value ); } )* )
     ;
+
+// }}}
     
+// {{{ annotationScopeDeclarations
+
 annotationScopeDeclarations returns [String value]
     :   ^( ANNOTATION_METHOD_DECL modifierList
 				  type
@@ -855,7 +954,11 @@ annotationScopeDeclarations returns [String value]
 		$value = $typeDeclaration.value;
 	}
     ;
+
+// }}}
     
+// {{{ annotationDefaultValue
+
 annotationDefaultValue returns [String value]
     :   ^(DEFAULT annotationElementValue)
 	{
@@ -864,7 +967,11 @@ annotationDefaultValue returns [String value]
 	}
     ;
 
+// }}}
+
 // STATEMENTS / BLOCKS
+
+// {{{ block
 
 block returns [String value]
 @init{ int _i = 0; }
@@ -875,6 +982,10 @@ block returns [String value]
 				     : ";" + "\n" + $blockStatement.value ); } )* )
 	{ $value += " " + "}" + "\n"; } // Almost redundant, 'throw new exception(..)' requires it.
     ;
+
+// }}}
+
+// {{{ blockStatement
     
 blockStatement returns [String value]
     :   localVariableDeclaration
@@ -890,7 +1001,11 @@ blockStatement returns [String value]
 		$value = $statement.value;
 	}
     ;
+
+// }}}
     
+// {{{ localVariableDeclaration
+
 localVariableDeclaration returns [String value]
     :   ^(VAR_DECLARATION localModifierList type variableDeclaratorList)
 	{
@@ -899,8 +1014,11 @@ localVariableDeclaration returns [String value]
 			 $variableDeclaratorList.value;
 	}
     ;
-    
-        
+
+// }}}
+
+// {{{ statement
+
 statement returns [String value]
     :   block
 	{
@@ -1010,7 +1128,11 @@ statement returns [String value]
 		$value = $SEMI.text;
 	}
     ;
+
+// }}}
         
+// {{{ catches
+
 catches returns [String value]
 @init{ int _i = 0; }
     :	{ $value = ""; }
@@ -1019,7 +1141,11 @@ catches returns [String value]
 	     { $value += ( _i++ == 0 ? $catchClause.value
 				     : " " + $catchClause.value ); } )+ )
     ;
+
+// }}}
     
+// {{{ catchClause
+
 catchClause returns [String value]
     :   ^(CATCH formalParameterStandardDecl block)
 	{
@@ -1028,6 +1154,10 @@ catchClause returns [String value]
 			 $block.value;
 	}
     ;
+
+// }}}
+
+// {{{ switchBlockLabels
 
 switchBlockLabels returns [String value]
     :   { $value = ""; }
@@ -1042,16 +1172,24 @@ switchBlockLabels returns [String value]
 //					: " " + $b.value ); } )*
 	 )
     ;
+
+// }}}
         
+// {{{ switchCaseLabel
+
 switchCaseLabel returns [String value]
 @init{ int _i = 0; }
     :	^( CASE { $value = " " + $CASE.text; }
 	   expression { $value += " " + $expression.value + ":" + " "; }
 	   ( blockStatement
 	     { $value += ( _i++ == 0 ? $blockStatement.value
-				     : " " + ";" + " " + $blockStatement.value ); } )* )
+				     : " " + $blockStatement.value ); } )* )
     ;
+
+// }}}
     
+// {{{ switchDefaultLabel
+
 switchDefaultLabel returns [String value]
 @init{ int _i = 0; }
     :	^( DEFAULT
@@ -1059,7 +1197,11 @@ switchDefaultLabel returns [String value]
 	     { $value += ( _i++ == 0 ? $blockStatement.value
 				     : " " + $blockStatement.value ); } )* )
     ;
+
+// }}}
     
+// {{{ forInit
+
 forInit returns [String value]
     :   { $value = ""; }
 	^( FOR_INIT
@@ -1069,7 +1211,11 @@ forInit returns [String value]
 	       { $value += ( $value == "" ? $expression.value
 						     : "," + " " + $expression.value ); } )* )? )
     ;
+
+// }}}
     
+// {{{ forCondition
+
 forCondition returns [String value]
     :   ^(FOR_CONDITION expression?)
 	{
@@ -1077,7 +1223,11 @@ forCondition returns [String value]
 			   $expression.value : "" );
 	}
     ;
+
+// }}}
     
+// {{{ forUpdater
+
 forUpdater returns [String value]
 @init{ int _i = 0; }
     :	{ $value = ""; }
@@ -1086,6 +1236,8 @@ forUpdater returns [String value]
 	     { $value += ( _i++ == 0 ? $expression.value
 				     : " " + $expression.value ); } )* )
     ;
+
+// }}}
     
 // EXPRESSIONS
 
@@ -1110,6 +1262,8 @@ expression returns [String value]
 	;
 
 // }}}
+
+// {{{ expr
 
 expr returns [String value]
 	:	^(ASSIGN lhs=expr rhs=expr)
@@ -1287,11 +1441,15 @@ expr returns [String value]
 			$value = $primaryExpression.value;
 		}
 	;
+
+// }}}
     
+// {{{ primaryExpression
+
 primaryExpression returns [String value]
     :   { $value=""; }
-	^(DOT ( a=primaryExpression { $value += $a.value + " "; }
-                { $value += "." + " "; }
+	^(DOT ( a=primaryExpression { $value += $a.value; }
+                { $value += "."; }
                 (   IDENT { $value += $IDENT.text + " "; }
                 |   THIS { $value += $THIS.text + " "; }
                 |   SUPER { $value += $SUPER.text + " "; }
@@ -1315,7 +1473,7 @@ primaryExpression returns [String value]
 	}
     |   ^(METHOD_CALL a=primaryExpression genericTypeArgumentList? arguments)
 	{
-		$value = $a.value + " " + "(" + " " +
+		$value = $a.value + "(" + " " +
 			 ( $genericTypeArgumentList.value != null ?
 			   $genericTypeArgumentList.value : "" ) + " " +
 			 $arguments.value + " " + ")" + " ";
@@ -1326,8 +1484,8 @@ primaryExpression returns [String value]
 	}
     |   ^(ARRAY_ELEMENT_ACCESS a=primaryExpression expression)
 	{
-		$value = $a.value + " " + "[" + " " +
-			 $expression.value + " " + "]" + " ";
+		$value = $a.value + "[" +
+			 $expression.value + "]" + " ";
 	}
     |   literal
 	{
@@ -1350,7 +1508,11 @@ primaryExpression returns [String value]
 		$value = $SUPER.text;
 	}
     ;
+
+// }}}
     
+// {{{ explicitConstructorCall
+
 explicitConstructorCall returns [String value]
     :   ^(THIS_CONSTRUCTOR_CALL genericTypeArgumentList? arguments)
 	{
@@ -1372,6 +1534,10 @@ explicitConstructorCall returns [String value]
 	}
     ;
 
+// }}}
+
+// {{{ arrayTypeDeclarator
+
 arrayTypeDeclarator returns [String value]
     :   ^( ARRAY_DECLARATOR
 	   ( a=arrayTypeDeclarator | qualifiedIdentifier | primitiveType ) )
@@ -1382,6 +1548,10 @@ arrayTypeDeclarator returns [String value]
 			 $primitiveType.value;
 	}
     ;
+
+// }}}
+
+// {{{ newExpression
 
 newExpression returns [String value]
     :   ^(  STATIC_ARRAY_CREATOR
@@ -1416,6 +1586,10 @@ newExpression returns [String value]
 	}
     ;
 
+// }}}
+
+// {{{ innerNewExpression returns
+
 innerNewExpression returns [String value] // something like 'InnerType innerType = outer.new InnerType();'
     :   ^(CLASS_CONSTRUCTOR_CALL genericTypeArgumentList?
 			   IDENT arguments
@@ -1430,20 +1604,30 @@ innerNewExpression returns [String value] // something like 'InnerType innerType
 			   $classTopLevelScope.value : "" );
 	}
     ;
+
+// }}}
     
+// {{{ newArrayConstruction
+
 newArrayConstruction returns [String value]
 @init{ int _i = 0; }
-    :   arrayDeclaratorList arrayInitializer
+    :   arrayDeclaratorList
+	arrayInitializer
 	{
 		$value = $arrayDeclaratorList.value + " " +
 			 $arrayInitializer.value + " ";
 	}
     |   { $value = ""; }
-	( expression { $value += ( _i++ == 0 ? "["+$expression.value+"]"
-		 			        : "" + "["+$expression.value+"]" ); } )+
+	( expression
+	   { $value += ( _i++ == 0 ? "["+$expression.value+"]"
+				   : "" + "["+$expression.value+"]" ); } )+
 	( arrayDeclaratorList
 	  { $value += " " + $arrayDeclaratorList.value; } )?
     ;
+
+// }}}
+
+// {{{ arguments
 
 arguments returns [String value]
 @init{ int _i = 0; }
@@ -1453,6 +1637,8 @@ arguments returns [String value]
 	   { $value += ( _i++ == 0 ? $expression.value
 				   : "," + " " + $expression.value ); } )* )
     ;
+
+// }}}
 
 // {{{ literal
 
