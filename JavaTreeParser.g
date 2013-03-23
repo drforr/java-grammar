@@ -165,14 +165,16 @@ packageDeclaration returns [String value]
 // {{{ importDeclaration
 
 importDeclaration returns [String value]
-    :   ^(IMPORT STATIC? qualifiedIdentifier DOTSTAR?)
+    :   ^(IMPORT STATIC?
+		 qualifiedIdentifier
+		 DOTSTAR?)
 	{
-		$value = $IMPORT.text + " " +
+		$value = $IMPORT.text +
 			 ( $STATIC.text != null ?
-			   $STATIC.text : "" ) + " " +
-			 $qualifiedIdentifier.value + " " +
+			   " " + $STATIC.text : "" ) + " " +
+			 $qualifiedIdentifier.value +
 			 ( $DOTSTAR.text != null ?
-			   $DOTSTAR.text : "" );
+			   " " + $DOTSTAR.text : "" );
 	}
     ;
 
@@ -189,13 +191,13 @@ typeDeclaration returns [String value]
 	{
 		$value = $modifierList.value + " " +
 			 $CLASS.text + " " +
-			 $IDENT.text + " " +
+			 $IDENT.text +
 			 ( $genericTypeParameterList.value != null ?
-			   $genericTypeParameterList.value : "" ) + " " +
+			   " " + $genericTypeParameterList.value : "" ) + " " +
 			 ( $extendsClause.value != null ?
-			   $extendsClause.value : "" ) + " " +
+			   " " + $extendsClause.value : "" ) +
 			 ( $implementsClause.value != null ?
-			   $implementsClause.value : "" ) + " " +
+			   " " + $implementsClause.value : "" ) +
 			 " " + "{" + "\n" +
 			 $classTopLevelScope.value + " " + "}" + "\n";
 	}
@@ -208,9 +210,9 @@ typeDeclaration returns [String value]
 			 $modifierList.value + " " +
 			 $IDENT.text + " " +
 			 ( $genericTypeParameterList.value != null ?
-			   $genericTypeParameterList.value : "" ) + " " +
+			   " " + $genericTypeParameterList.value : "" ) +
 			 ( $extendsClause.value != null ?
-			   $extendsClause.value : "" ) + " " +
+			   " " + $extendsClause.value : "" ) +
 			 $interfaceTopLevelScope.value;
 	}
     |   ^(ENUM modifierList
@@ -221,7 +223,7 @@ typeDeclaration returns [String value]
 			 $modifierList.value + " " +
 			 $IDENT.text + " " +
 			 ( $implementsClause.value != null ?
-			   $implementsClause.value : "" ) + " " +
+			   " " + $implementsClause.value : "" ) +
 			 $enumTopLevelScope.value;
 	}
     |    ^(AT modifierList
@@ -283,9 +285,9 @@ genericTypeParameterList returns [String value]
 genericTypeParameter returns [String value]
     :   ^(IDENT bound?)
 	{
-		$value = $IDENT.text + " " +
+		$value = $IDENT.text +
 			  ( $bound.value != null ?
-			    $bound.value : "" );
+			    " " + $bound.value : "" );
 	}
     ;
 
@@ -326,9 +328,9 @@ enumConstant returns [String value]
 		$value = $IDENT.text + " " +
 			 $annotationList.value + " " +
 			 ( $arguments.value != null ?
-			   $arguments.value : "" ) + " " +
+			   " " + $arguments.value : "" ) +
 			 ( $classTopLevelScope.value != null ?
-			   $classTopLevelScope.value : "" );
+			   " " + $classTopLevelScope.value : "" );
 	}
     ;
 
@@ -366,17 +368,17 @@ classScopeDeclarations returns [String value]
 			       throwsClause?
 			       block?)
 	{
-		$value = $modifierList.value + " " +
+		$value = $modifierList.value +
 			 ( $genericTypeParameterList.value != null ?
-			   $genericTypeParameterList.value : "" ) + " " +
+			   " " + $genericTypeParameterList.value : "" ) + " " +
 			 $type.value + " " +
 			 $IDENT.text + " " +
 			 $formalParameterList.value + " " +
 			 ( $arrayDeclaratorList.value != null ?
-			   $arrayDeclaratorList.value : "" ) + " " +
+			   " " + $arrayDeclaratorList.value : "" ) +
 			 ( $throwsClause.value != null ?
-			   $throwsClause.value : "" ) + " " +
-			 ( $block.value != null ? $block.value : "" );
+			   " " + $throwsClause.value : "" ) +
+			 ( $block.value != null ? " " + $block.value : "" );
 	}
     |   ^(VOID_METHOD_DECL modifierList
 			   genericTypeParameterList?
@@ -386,15 +388,17 @@ classScopeDeclarations returns [String value]
 	{
 		$value = $modifierList.value + " " +
 			 ( $genericTypeParameterList.value != null ?
-			   $genericTypeParameterList.value : "" ) + " " +
+			   " " + $genericTypeParameterList.value : "" ) +
 			 "void" + " " +
 			 $IDENT.text + " " +
 			 $formalParameterList.value + " " +
 			 ( $throwsClause.value != null ?
-			   $throwsClause.value : "" ) + " " +
-			 ( $block.value != null ? $block.value : "" );
+			   " " + $throwsClause.value : "" ) +
+			 ( $block.value != null ? " " + $block.value : "" );
 	}
-    |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
+    |   ^(VAR_DECLARATION modifierList
+			  type
+			  variableDeclaratorList)
 	{
 		$value = $modifierList.value + " " +
 			 $type.value + " " +
@@ -409,10 +413,10 @@ classScopeDeclarations returns [String value]
 		$value = $modifierList.value + " " +
 			 $IDENT.text + " " +
 			 ( $genericTypeParameterList.value != null ?
-			   $genericTypeParameterList.value : "" ) + " " +
+			   " " + $genericTypeParameterList.value : "" ) +
 			 $formalParameterList.value + " " +
 			 ( $throwsClause.value != null ?
-			   $throwsClause.value : "" ) + " " +
+			   " " + $throwsClause.value : "" ) +
 			 $block.value;
 	}
     |   typeDeclaration
@@ -448,12 +452,12 @@ interfaceScopeDeclarations returns [String value]
 	{
 		$value = $modifierList.value + " " +
 			 ( $genericTypeParameterList.value != null ?
-			   $genericTypeParameterList.value : "" ) + " " +
+			   " " + $genericTypeParameterList.value : "" ) +
 			 $type.value + " " +
 			 $IDENT.text + " " +
 			 $formalParameterList.value + " " +
 			 ( $arrayDeclaratorList.value != null ?
-			   $arrayDeclaratorList.value : "" ) + " " +
+			   " " + $arrayDeclaratorList.value : "" ) +
 			 ( $throwsClause.value != null ?
 			   $throwsClause.value : "" );
 	}
@@ -467,13 +471,15 @@ interfaceScopeDeclarations returns [String value]
 	{
 		$value = $modifierList.value + " " +
 			 ( $genericTypeParameterList.value != null ?
-			   $genericTypeParameterList.value : "" ) + " " +
+			   " " + $genericTypeParameterList.value : "" ) +
 			 $IDENT.text + " " +
-			 $formalParameterList.value + " " +
+			 $formalParameterList.value +
 			 ( $throwsClause.value != null ?
-			   $throwsClause.value : "" );
+			   " " + $throwsClause.value : "" );
 	}
-    |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
+    |   ^(VAR_DECLARATION modifierList
+			  type
+			  variableDeclaratorList)
 	{
 		$value = $modifierList.value + " " +
 			 $type.value + " " +
@@ -507,7 +513,7 @@ variableDeclarator returns [String value]
     :   ^(VAR_DECLARATOR variableDeclaratorId
 	  		 variableInitializer?)
 	{
-		$value = $variableDeclaratorId.value + " " +
+		$value = $variableDeclaratorId.value +
 			( $variableInitializer.value != null ?
 			   " " + "=" + " " + $variableInitializer.value : "" );
 	}
@@ -520,9 +526,9 @@ variableDeclarator returns [String value]
 variableDeclaratorId returns [String value]
     :   ^(IDENT arrayDeclaratorList?)
 	{
-		$value = $IDENT.text + " " +
+		$value = $IDENT.text +
 			 ( $arrayDeclaratorList.value != null ?
-			   $arrayDeclaratorList.value : "" );
+			   " " + $arrayDeclaratorList.value : "" );
 	}
     ;
 
@@ -532,13 +538,9 @@ variableDeclaratorId returns [String value]
 
 variableInitializer returns [String value]
     :   arrayInitializer
-	{
-		$value = $arrayInitializer.value;
-	}
+	{ $value = $arrayInitializer.value; }
     |   expression
-	{
-		$value = $expression.value;
-	}
+	{ $value = $expression.value; }
     ;
 
 // }}}
@@ -547,9 +549,7 @@ variableInitializer returns [String value]
 
 arrayDeclarator returns [String value]
     :   LBRACK RBRACK
-	{
-		$value = $LBRACK.text + $RBRACK.text;
-	}
+	{ $value = $LBRACK.text + $RBRACK.text; }
     ;
 
 // }}}
@@ -599,8 +599,9 @@ modifierList returns [String value]
 @init{ int _i = 0; }
     :   { $value = ""; }
 	^( MODIFIER_LIST
-	   ( modifier { $value += ( _i++== 0 ? $modifier.value
-					     : " " + $modifier.value ); } )* )
+	   ( modifier
+	     { $value += ( _i++== 0 ? $modifier.value
+				    : " " + $modifier.value ); } )* )
     ;
 
 // }}}
@@ -609,49 +610,27 @@ modifierList returns [String value]
 
 modifier returns [String value]
 	:	PUBLIC
-		{
-			$value = $PUBLIC.text;
-		}
+		{ $value = $PUBLIC.text; }
 	|	PROTECTED
-		{
-			$value = $PROTECTED.text;
-		}
+		{ $value = $PROTECTED.text; }
 	|	PRIVATE
-		{
-			$value = $PRIVATE.text;
-		}
+		{ $value = $PRIVATE.text; }
 	|	STATIC
-		{
-			$value = $STATIC.text;
-		}
+		{ $value = $STATIC.text; }
 	|	ABSTRACT
-		{
-			$value = $ABSTRACT.text;
-		}
+		{ $value = $ABSTRACT.text; }
 	|	NATIVE
-		{
-			$value = $NATIVE.text;
-		}
+		{ $value = $NATIVE.text; }
 	|	SYNCHRONIZED
-		{
-			$value = $SYNCHRONIZED.text;
-		}
+		{ $value = $SYNCHRONIZED.text; }
 	|	TRANSIENT
-		{
-			$value = $TRANSIENT.text;
-		}
+		{ $value = $TRANSIENT.text; }
 	|	VOLATILE
-		{	
-			$value = $VOLATILE.text;
-		}
+		{ $value = $VOLATILE.text; }
 	|	STRICTFP
-		{
-			$value = $STRICTFP.text;
-		}
+		{ $value = $STRICTFP.text; }
 	|	localModifier
-		{
-			$value = $localModifier.value;
-		}
+		{ $value = $localModifier.value; }
 	;
 
 // }}}
@@ -673,13 +652,9 @@ localModifierList returns [String value]
 
 localModifier returns [String value]
     :   FINAL
-	{
-		$value = $FINAL.text;
-	}
+	{ $value = $FINAL.text; }
     |   annotation
-	{
-		$value = $annotation.value;
-	}
+	{ $value = $annotation.value; }
     ;
 
 // }}}
@@ -694,13 +669,15 @@ type returns [String value]
 		$value = ( $primitiveType.value != null ?
 			   $primitiveType.value :
 			   $qualifiedTypeIdent.value != null ?
-			   $qualifiedTypeIdent.value : "" ) + " " +
+			   $qualifiedTypeIdent.value : "" ) +
 			 ( $arrayDeclaratorList.value != null ?
-			   $arrayDeclaratorList.value : "" );
+			   " " + $arrayDeclaratorList.value : "" );
 	}
     ;
 
 // }}}
+
+// {{{ qualifiedTypeIdent
 
 qualifiedTypeIdent returns [String value]
 @init{ int _i = 0; }
@@ -711,53 +688,45 @@ qualifiedTypeIdent returns [String value]
 				     : "." + $typeIdent.value ); } )+ )
     ;
 
+// }}}
+
+// {{{ typeIdent
+
 typeIdent returns [String value]
     :   ^(IDENT genericTypeArgumentList?)
 	{
-		$value = $IDENT.text + " " +
+		$value = $IDENT.text +
 			 ( $genericTypeArgumentList.value != null ?
-			   $genericTypeArgumentList.value : "" );
+			   " " + $genericTypeArgumentList.value : "" );
 	}
     ;
+
+// }}}
 
 // {{{ primitiveType
 
 primitiveType returns [String value]
 	:	BOOLEAN
-		{
-			$value = $BOOLEAN.text; 
-		}
+		{ $value = $BOOLEAN.text; }
 	|	CHAR
-		{
-			$value = $CHAR.text; 
-		}
+		{ $value = $CHAR.text; }
 	|	BYTE
-		{
-			$value = $BYTE.text; 
-		}
+		{ $value = $BYTE.text; }
 	|	SHORT
-		{
-			$value = $SHORT.text; 
-		}
+		{ $value = $SHORT.text; }
 	|	INT
-		{
-			$value = $INT.text; 
-		}
+		{ $value = $INT.text; }
 	|	LONG
-		{
-			$value = $LONG.text; 
-		}
+		{ $value = $LONG.text; }
 	|	FLOAT
-		{
-			$value = $FLOAT.text; 
-		}
+		{ $value = $FLOAT.text; }
 	|	DOUBLE
-		{
-			$value = $DOUBLE.text; 
-		}
+		{ $value = $DOUBLE.text; }
 	;
 
 // }}}
+
+// {{{ genericTypeArgumentList
 
 genericTypeArgumentList returns [String value]
 @init{ int _i = 0; }
@@ -767,30 +736,36 @@ genericTypeArgumentList returns [String value]
 	     { $value += ( _i++ == 0 ? $genericTypeArgument.value
 				     : "." + $genericTypeArgument.value ); } )+ )
     ;
+
+// }}}
     
+// {{{ genericTypeArgument
+
 genericTypeArgument returns [String value]
     :   type
-	{
-		$value = $type.value;
-	}
+	{ $value = $type.value; }
     |   ^(QUESTION genericWildcardBoundType?)
 	{
-		$value = $QUESTION.text + " " +
+		$value = $QUESTION.text +
 			 ( $genericWildcardBoundType.value != null ?
-			   $genericWildcardBoundType.value : "" );
+			   " " + $genericWildcardBoundType.value : "" );
 	}
     ;
 
+// }}}
+
+// {{{ genericWildcardBoundType
+
 genericWildcardBoundType returns [String value]
     :   ^(EXTENDS type)
-	{
-		$value = $EXTENDS.text + " " + $type.value;
-	}
+	{ $value = $EXTENDS.text + " " + $type.value; }
     |   ^(SUPER type)
-	{
-		$value = $SUPER.text + " " + $type.value;
-	}
+	{ $value = $SUPER.text + " " + $type.value; }
     ;
+
+// }}}
+
+// {{{ formalParameterList
 
 formalParameterList returns [String value]
 @init{ int _i = 0; }
@@ -803,7 +778,11 @@ formalParameterList returns [String value]
 	     { $value += " " + $formalParameterVarargDecl.value; } )? )
 	{ $value += " " + ")" + " "; }
     ;
+
+// }}}
     
+// {{{ formalParameterStandardDecl
+
 formalParameterStandardDecl returns [String value]
     :   ^(FORMAL_PARAM_STD_DECL localModifierList
 				type
@@ -814,7 +793,11 @@ formalParameterStandardDecl returns [String value]
 			 $variableDeclaratorId.value;
 	}
     ;
+
+// }}}
     
+// {{{ formalParameterVarargDecl
+
 formalParameterVarargDecl returns [String value]
     :   ^(FORMAL_PARAM_VARARG_DECL localModifierList
 				   type
@@ -825,23 +808,23 @@ formalParameterVarargDecl returns [String value]
 			 $variableDeclaratorId.value;
 	}
     ;
+
+// }}}
     
 // {{{ qualifiedIdentifier
 
 qualifiedIdentifier returns [String value]
 	:	IDENT
-		{
-			$value = $IDENT.text;
-		}
+		{ $value = $IDENT.text; }
 	|	^(DOT a=qualifiedIdentifier IDENT)
-		{
-			$value = $a.value + $DOT.text + $IDENT.text;
-		}
+		{ $value = $a.value + $DOT.text + $IDENT.text; }
 	;
 
 // }}}
     
 // ANNOTATIONS
+
+// {{{ annotationList
 
 annotationList returns [String value]
 @init{ int _i = 0; }
@@ -852,22 +835,32 @@ annotationList returns [String value]
 				     : "\n" + $annotation.value ); } )* )
     ;
 
+// }}}
+
+// {{{ annotation
+
 annotation returns [String value]
     :   ^(AT qualifiedIdentifier annotationInit?)
 	{
 		$value = $AT.text + " " +
-			 $qualifiedIdentifier.value + " " +
+			 $qualifiedIdentifier.value +
 			 ( $annotationInit.value != null ?
-			   $annotationInit.value : "" );
+			   " " + $annotationInit.value : "" );
 	}
     ;
+
+// }}}
     
+// {{{ annotationInit
+
 annotationInit returns [String value]
     :   ^(ANNOTATION_INIT_BLOCK annotationInitializers)
-{
-	$value = $annotationInitializers.value;
-}
+	{ $value = $annotationInitializers.value; }
     ;
+
+// }}}
+
+// {{{ annotationInitializers
 
 annotationInitializers returns [String value]
 @init{ int _i = 0; }
@@ -877,19 +870,16 @@ annotationInitializers returns [String value]
 	     { $value += ( _i++ == 0 ? $annotationInitializer.value
 				     : "." + $annotationInitializer.value ); } )+ )
     |   ^(ANNOTATION_INIT_DEFAULT_KEY annotationElementValue)
-	{
-		$value = $annotationElementValue.value;
-	}
+	{ $value = $annotationElementValue.value; }
     ;
+
+// }}}
     
 // {{{ annotationInitializer
 
 annotationInitializer returns [String value]
     :   ^(IDENT annotationElementValue)
-	{
-		$value = $IDENT.text + " " +
-			 $annotationElementValue.value;
-	}
+	{ $value = $IDENT.text + " " + $annotationElementValue.value; }
     ;
 
 // }}}
@@ -905,13 +895,9 @@ annotationElementValue returns [String value]
 	     { $value += ( _i++ == 0 ? $a.value
 				     : " " + $a.value ); } )* )
     |   annotation
-	{
-		$value = $annotation.value;
-	}
+	{ $value = $annotation.value; }
     |   expression
-	{
-		$value = $expression.value;
-	}
+	{ $value = $expression.value; }
     ;
 
 // }}}
@@ -939,20 +925,20 @@ annotationScopeDeclarations returns [String value]
 		$value = $ANNOTATION_METHOD_DECL.text + " " +
 			 $modifierList.value + " " +
 			 $type.value + " " +
-			 $IDENT.text + " " +
+			 $IDENT.text +
 			 ( $annotationDefaultValue.value != null ?
-			   $annotationDefaultValue.value : "" );
+			   " " + $annotationDefaultValue.value : "" );
 	}
-    |   ^(VAR_DECLARATION modifierList type variableDeclaratorList)
+    |   ^(VAR_DECLARATION modifierList
+			  type
+			  variableDeclaratorList)
 	{
 		$value = $modifierList.value + " " +
 			 $type.value + " " +
 			 $variableDeclaratorList.value;
 	}
     |   typeDeclaration
-	{
-		$value = $typeDeclaration.value;
-	}
+	{ $value = $typeDeclaration.value; }
     ;
 
 // }}}
@@ -961,10 +947,7 @@ annotationScopeDeclarations returns [String value]
 
 annotationDefaultValue returns [String value]
     :   ^(DEFAULT annotationElementValue)
-	{
-		$value = $DEFAULT.text + " " +
-			 $annotationElementValue.value;
-	}
+	{ $value = $DEFAULT.text + " " + $annotationElementValue.value; }
     ;
 
 // }}}
@@ -989,17 +972,11 @@ block returns [String value]
     
 blockStatement returns [String value]
     :   localVariableDeclaration
-	{
-		$value = $localVariableDeclaration.value;
-	}
+	{ $value = $localVariableDeclaration.value; }
     |   typeDeclaration
-	{
-		$value = $typeDeclaration.value;
-	}
+	{ $value = $typeDeclaration.value; }
     |   statement
-	{
-		$value = $statement.value;
-	}
+	{ $value = $statement.value; }
     ;
 
 // }}}
@@ -1007,7 +984,9 @@ blockStatement returns [String value]
 // {{{ localVariableDeclaration
 
 localVariableDeclaration returns [String value]
-    :   ^(VAR_DECLARATION localModifierList type variableDeclaratorList)
+    :   ^(VAR_DECLARATION localModifierList
+			  type
+			  variableDeclaratorList)
 	{
 		$value = $localModifierList.value + " " +
 			 $type.value + " " +
@@ -1021,25 +1000,29 @@ localVariableDeclaration returns [String value]
 
 statement returns [String value]
     :   block
-	{
-		$value = $block.value;
-	}
-    |   ^(ASSERT a=expression b=expression?) // assert x < 0 : "x negative";
+	{ $value = $block.value; }
+    |   ^(ASSERT a=expression
+		 b=expression?) // assert x < 0 : "x negative";
 	{
 		$value = $ASSERT.text + " " +
 			 $a.value +
 			 ( $b.value != null ?
 			   " " + ":" + " " + $b.value : "" ) + ";" + "\n";
 	}
-    |   ^(IF parenthesizedExpression a=statement b=statement?)
+    |   ^(IF parenthesizedExpression
+	     a=statement
+	     b=statement?)
 	{
 		$value = $IF.text + " " +
 			 $parenthesizedExpression.value + " " +
-			 $a.value + " " +
+			 $a.value +
 			 ( $b.value != null ?
-			   $b.value : "" ) + "\n";
+			   " " + $b.value : "" ) + "\n";
 	}
-    |   ^(FOR forInit forCondition forUpdater a=statement)
+    |   ^(FOR forInit
+	      forCondition 
+	      forUpdater 
+	      a=statement)
 	{
 		$value = $FOR.text + " " + "(" + " " +
 			 $forInit.value + ";" + " " +
@@ -1047,7 +1030,10 @@ statement returns [String value]
 			 $forUpdater.value + " " + ")" + " " +
 			 $a.value + "\n";
 	}
-    |   ^(FOR_EACH localModifierList type IDENT expression a=statement) 
+    |   ^(FOR_EACH localModifierList
+		   type
+	     IDENT expression
+		   a=statement) 
 	{
 		$value = $FOR_EACH.text + " " +
 			 $localModifierList.value + " " +
@@ -1056,7 +1042,8 @@ statement returns [String value]
 			 $expression.value + " " +
 			 $a.value;
 	}
-    |   ^(WHILE parenthesizedExpression a=statement)
+    |   ^(WHILE parenthesizedExpression
+		a=statement)
 	{
 		$value = $WHILE.text + " " +
 			 $parenthesizedExpression.value + " " +
@@ -1069,23 +1056,27 @@ statement returns [String value]
 			 "while" + " " +
 			 $parenthesizedExpression.value + ";" + "\n";
 	}
-    |   ^(TRY a=block catches? b=block?)
+    |   ^(TRY a=block
+	      catches?
+	       b=block?)
 	// The second optional block is the optional finally block.
 	{
 		$value = $TRY.text + " " +
-			 $a.value + " " +
+			 $a.value +
 			 ( $catches.value != null ?
-			   $catches.value : "" ) + " " +
+			   " " + $catches.value : "" ) +
 			 ( $b.value != null ?
-			   $b.value : "" );
+			   " " + $b.value : "" );
 	}
-    |   ^(SWITCH parenthesizedExpression switchBlockLabels)
+    |   ^(SWITCH parenthesizedExpression
+		 switchBlockLabels)
 	{
 		$value = $SWITCH.text + " " +
 			 $parenthesizedExpression.value + " " + "{" + " " +
 			 $switchBlockLabels.value + " " + "}" + "\n";
 	}
-    |   ^(SYNCHRONIZED parenthesizedExpression block)
+    |   ^(SYNCHRONIZED parenthesizedExpression
+		       block)
 	{
 		$value = $SYNCHRONIZED.text + " " +
 			 $parenthesizedExpression.value + " " +
@@ -1093,25 +1084,23 @@ statement returns [String value]
 	}
     |   ^(RETURN expression?)
 	{
-		$value = $RETURN.text + " " +
+		$value = $RETURN.text +
 			 ( $expression.value != null ?
-			   $expression.value : "" ) + ";" + "\n";
+			   " " + $expression.value : "" ) + ";" + "\n";
 	}
     |   ^(THROW expression)
-	{
-		$value = $THROW.text + " " + $expression.value + ";";
-	}
+	{ $value = $THROW.text + " " + $expression.value + ";"; }
     |   ^(BREAK IDENT?)
 	{
-		$value = $BREAK.text + " " +
+		$value = $BREAK.text +
 			 ( $IDENT.text != null ?
-			   $IDENT.text : "" );
+			   " " + $IDENT.text : "" );
 	}
     |   ^(CONTINUE IDENT?)
 	{
-		$value = $CONTINUE.text + " " +
+		$value = $CONTINUE.text +
 			 ( $IDENT.text != null ?
-			   $IDENT.text : "" );
+			   " " + $IDENT.text : "" );
 	}
     |   ^(LABELED_STATEMENT IDENT a=statement)
 	{
@@ -1120,13 +1109,9 @@ statement returns [String value]
 			 $a.value;
 	}
     |   expression
-	{
-		$value = $expression.value + ";";
-	}
+	{ $value = $expression.value + ";"; }
     |   SEMI // Empty statement.
-	{
-		$value = $SEMI.text;
-	}
+	{ $value = $SEMI.text; }
     ;
 
 // }}}
@@ -1209,7 +1194,7 @@ forInit returns [String value]
 	     { $value += " " + $localVariableDeclaration.value; }
 	   | ( expression
 	       { $value += ( $value == "" ? $expression.value
-						     : "," + " " + $expression.value ); } )* )? )
+					  : "," + " " + $expression.value ); } )* )? )
     ;
 
 // }}}
@@ -1245,9 +1230,7 @@ forUpdater returns [String value]
 
 parenthesizedExpression returns [String value]
 	:	^(PARENTESIZED_EXPR expression)
-		{
-			$value = "(" + " " + $expression.value + " " + ")";
-		}
+		{ $value = "(" + " " + $expression.value + " " + ")"; }
 	;
 
 // }}}
@@ -1256,9 +1239,7 @@ parenthesizedExpression returns [String value]
     
 expression returns [String value]
 	:	^(EXPR expr)
-		{
-			$value = $expr.value;
-		}
+		{ $value = $expr.value; }
 	;
 
 // }}}
@@ -1267,169 +1248,87 @@ expression returns [String value]
 
 expr returns [String value]
 	:	^(ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "=" + " " + $rhs.value; }
 	|	^(PLUS_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "+=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "+=" + " " + $rhs.value; }
 	|	^(MINUS_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "-=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "-=" + " " + $rhs.value; }
 	|	^(STAR_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "*=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "*=" + " " + $rhs.value; }
 	|	^(DIV_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "/=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "/=" + " " + $rhs.value; }
 	|	^(AND_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "&=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "&=" + " " + $rhs.value; }
 	|	^(OR_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "|=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "|=" + " " + $rhs.value; }
 	|	^(XOR_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "^=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "^=" + " " + $rhs.value; }
 	|	^(MOD_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "\%=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "\%=" + " " + $rhs.value; }
 	|	^(BIT_SHIFT_RIGHT_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + ">>>=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + ">>>=" + " " + $rhs.value; }
 	|	^(SHIFT_RIGHT_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + ">>=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + ">>=" + " " + $rhs.value; }
 	|	^(SHIFT_LEFT_ASSIGN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "<<=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "<<=" + " " + $rhs.value; }
 	|	^(QUESTION a=expr b=expr c=expr)
-		{
-			$value = $a.value + " ? " + $b.value + " : " + $c.value;
-		}
+		{ $value = $a.value + " ? " + $b.value + " : " + $c.value; }
 	|	^(LOGICAL_OR lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "||" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "||" + " " + $rhs.value; }
 	|	^(LOGICAL_AND lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "&&" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "&&" + " " + $rhs.value; }
 	|	^(OR lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "|" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "|" + " " + $rhs.value; }
 	|	^(XOR lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "^" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "^" + " " + $rhs.value; }
 	|	^(AND lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "&" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "&" + " " + $rhs.value; }
 	|	^(EQUAL lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "==" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "==" + " " + $rhs.value; }
 	|	^(NOT_EQUAL lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "!=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "!=" + " " + $rhs.value; }
 	|	^(INSTANCEOF a=expr type)
-		{
-			$value = $a.value + " instanceof " + $type.value;
-		}
+		{ $value = $a.value + " instanceof " + $type.value; }
 	|	^(LESS_OR_EQUAL lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "<=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "<=" + " " + $rhs.value; }
 	|	^(GREATER_OR_EQUAL lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + ">=" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + ">=" + " " + $rhs.value; }
 	|	^(BIT_SHIFT_RIGHT lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + ">>>" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + ">>>" + " " + $rhs.value; }
 	|	^(SHIFT_RIGHT lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + ">>" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + ">>" + " " + $rhs.value; }
 	|	^(GREATER_THAN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + ">" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + ">" + " " + $rhs.value; }
 	|	^(SHIFT_LEFT lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "<<" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "<<" + " " + $rhs.value; }
 	|	^(LESS_THAN lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "<" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "<" + " " + $rhs.value; }
 	|	^(PLUS lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "+" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "+" + " " + $rhs.value; }
 	|	^(MINUS lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "-" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "-" + " " + $rhs.value; }
 	|	^(STAR lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "*" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "*" + " " + $rhs.value; }
 	|	^(DIV lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "/" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "/" + " " + $rhs.value; }
 	|	^(MOD lhs=expr rhs=expr)
-		{
-			$value = $lhs.value + " " + "\%" + " " + $rhs.value;
-		}
+		{ $value = $lhs.value + " " + "\%" + " " + $rhs.value; }
 	|	^(UNARY_PLUS a=expr)
-		{
-			$value = "+" + $a.value;
-		}
+		{ $value = "+" + $a.value; }
 	|	^(UNARY_MINUS a=expr)
-		{
-			$value = "-" + $a.value;
-		}
+		{ $value = "-" + $a.value; }
 	|	^(PRE_INC a=expr)
-		{
-			$value = "++" + $a.value;
-		}
+		{ $value = "++" + $a.value; }
 	|	^(PRE_DEC a=expr)
-		{
-			$value = "--" + $a.value;
-		}
+		{ $value = "--" + $a.value; }
 	|	^(POST_INC a=expr)
-		{
-			$value = $a.value + "++";
-		}
+		{ $value = $a.value + "++"; }
 	|	^(POST_DEC a=expr)
-		{
-			$value = $a.value + "--";
-		}
+		{ $value = $a.value + "--"; }
 	|	^(NOT a=expr)
-		{
-			$value = "~" + $a.value;
-		}
+		{ $value = "~" + $a.value; }
 	|	^(LOGICAL_NOT a=expr)
-		{
-			$value = "!" + $a.value;
-		}
+		{ $value = "!" + $a.value; }
 	|	^(CAST_EXPR type a=expr)
 		{
 			$value = " " + "(" + " " +
@@ -1437,9 +1336,7 @@ expr returns [String value]
 				 " " + ")" + " " + $a.value;
 		}
 	|	primaryExpression
-	 	{
-			$value = $primaryExpression.value;
-		}
+	 	{ $value = $primaryExpression.value; }
 	;
 
 // }}}
@@ -1464,18 +1361,14 @@ primaryExpression returns [String value]
             )
         )
     |   parenthesizedExpression
-	{
-		$value = $parenthesizedExpression.value;
-	}
+	{ $value = $parenthesizedExpression.value; }
     |   IDENT
-	{
-		$value = $IDENT.text;
-	}
+	{ $value = $IDENT.text; }
     |   ^(METHOD_CALL a=primaryExpression genericTypeArgumentList? arguments)
 	{
-		$value = $a.value + "(" + " " +
+		$value = $a.value + "(" +
 			 ( $genericTypeArgumentList.value != null ?
-			   $genericTypeArgumentList.value : "" ) + " " +
+			   " " + $genericTypeArgumentList.value : "" ) + " " +
 			 $arguments.value + " " + ")" + " ";
 	}
     |   explicitConstructorCall
@@ -1488,25 +1381,15 @@ primaryExpression returns [String value]
 			 $expression.value + "]" + " ";
 	}
     |   literal
-	{
-		$value = $literal.value;
-	}
+	{ $value = $literal.value; }
     |   newExpression
-	{
-		$value = $newExpression.value;
-	}
+	{ $value = $newExpression.value; }
     |   THIS
-	{
-		$value = $THIS.text;
-	}
+	{ $value = $THIS.text; }
     |   arrayTypeDeclarator
-	{
-		$value = $arrayTypeDeclarator.value;
-	}
+	{ $value = $arrayTypeDeclarator.value; }
     |   SUPER
-	{
-		$value = $SUPER.text;
-	}
+	{ $value = $SUPER.text; }
     ;
 
 // }}}
@@ -1516,20 +1399,20 @@ primaryExpression returns [String value]
 explicitConstructorCall returns [String value]
     :   ^(THIS_CONSTRUCTOR_CALL genericTypeArgumentList? arguments)
 	{
-		$value = $THIS_CONSTRUCTOR_CALL.text + " " +
+		$value = $THIS_CONSTRUCTOR_CALL.text +
 			 ( $genericTypeArgumentList.value != null ?
-			   $genericTypeArgumentList.value : "" ) + " " +
+			   " " + $genericTypeArgumentList.value : "" ) + " " +
 			 $arguments.value;
 	}
     |   ^(SUPER_CONSTRUCTOR_CALL primaryExpression?
 				 genericTypeArgumentList?
 				 arguments)
 	{
-		$value = $SUPER_CONSTRUCTOR_CALL.text + " " +
+		$value = $SUPER_CONSTRUCTOR_CALL.text +
 			 ( $primaryExpression.value != null ?
-			   $primaryExpression.value : "" ) + " " +
+			   " " + $primaryExpression.value : "" ) +
 			 ( $genericTypeArgumentList.value != null ?
-			   $genericTypeArgumentList.value : "" ) + " " +
+			   " " + $genericTypeArgumentList.value : "" ) + " " +
 			 $arguments.value;
 	}
     ;
@@ -1567,7 +1450,7 @@ newExpression returns [String value]
 			   $primitiveType.value + " " + $a.value + " " :
 			   $qualifiedTypeIdent.value != null ?
 			   ( $genericTypeArgumentList.value != null ?
-			     $genericTypeArgumentList.value : "" ) + " " +
+			     " " + $genericTypeArgumentList.value : "" ) + " " +
 			   $qualifiedTypeIdent.value + " " +
 			   $b.value : "" );
 	}
@@ -1578,11 +1461,11 @@ newExpression returns [String value]
 	{
 		$value = "new" +
 			 ( $genericTypeArgumentList.value != null ?
-			   $genericTypeArgumentList.value : "" ) + " " +
+			   " " + $genericTypeArgumentList.value : "" ) + " " +
 			 $qualifiedTypeIdent.value + " " + "(" + " " +
-			 $arguments.value + " " + ")" + " " +
+			 $arguments.value + " " + ")" +
 			 ( $classTopLevelScope.value != null ?
-			   $classTopLevelScope.value : "" );
+			   " " + $classTopLevelScope.value : "" );
 	}
     ;
 
@@ -1590,18 +1473,19 @@ newExpression returns [String value]
 
 // {{{ innerNewExpression returns
 
-innerNewExpression returns [String value] // something like 'InnerType innerType = outer.new InnerType();'
+// something like 'InnerType innerType = outer.new InnerType();'
+innerNewExpression returns [String value]
     :   ^(CLASS_CONSTRUCTOR_CALL genericTypeArgumentList?
 			   IDENT arguments
 				 classTopLevelScope?)
 	{
-		$value = $CLASS_CONSTRUCTOR_CALL.text + " " +
+		$value = $CLASS_CONSTRUCTOR_CALL.text +
 			 ( $genericTypeArgumentList.value != null ?
-			   $genericTypeArgumentList.value : "" ) + " " +
+			   " " + $genericTypeArgumentList.value : "" ) + " " +
 			 $IDENT.text + " " +
-			 $arguments.value + " " +
+			 $arguments.value +
 			 ( $classTopLevelScope.value != null ?
-			   $classTopLevelScope.value : "" );
+			   " " + $classTopLevelScope.value : "" );
 	}
     ;
 
@@ -1644,41 +1528,23 @@ arguments returns [String value]
 
 literal returns [String value]
 	:	HEX_LITERAL
-	 	{
-			$value = $HEX_LITERAL.text;
-		}
+	 	{ $value = $HEX_LITERAL.text; }
 	|	OCTAL_LITERAL
-	 	{
-			$value = $OCTAL_LITERAL.text;
-		}
+	 	{ $value = $OCTAL_LITERAL.text; }
 	|	DECIMAL_LITERAL
-	 	{
-			$value = $DECIMAL_LITERAL.text;
-		}
+	 	{ $value = $DECIMAL_LITERAL.text; }
 	|	FLOATING_POINT_LITERAL
-	 	{
-			$value = $FLOATING_POINT_LITERAL.text;
-		}
+	 	{ $value = $FLOATING_POINT_LITERAL.text; }
 	|	CHARACTER_LITERAL
-	 	{
-			$value = $CHARACTER_LITERAL.text;
-		}
+	 	{ $value = $CHARACTER_LITERAL.text; }
 	|	STRING_LITERAL
-	 	{
-			$value = $STRING_LITERAL.text;
-		}
+	 	{ $value = $STRING_LITERAL.text; }
 	|	TRUE
-	 	{
-			$value = $TRUE.text;
-		}
+	 	{ $value = $TRUE.text; }
 	|	FALSE
-	 	{
-			$value = $FALSE.text;
-		}
+	 	{ $value = $FALSE.text; }
 	|	NULL
-	 	{
-			$value = $NULL.text;
-		}
+	 	{ $value = $NULL.text; }
 	;
 
 // }}}
