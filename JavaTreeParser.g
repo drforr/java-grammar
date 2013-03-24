@@ -759,13 +759,9 @@ annotationList returns [String value]
 // {{{ annotation
 
 annotation returns [String value]
-    :   ^( AT qualifiedIdentifier annotationInit? )
-	{
-		$value = $AT.text + " " +
-			 $qualifiedIdentifier.value +
-			 ( $annotationInit.value != null ?
-			   " " + $annotationInit.value : "" );
-	}
+    :   ^( AT { $value = $AT.text; }
+	   qualifiedIdentifier { $value += " " + $qualifiedIdentifier.value; }
+	   ( annotationInit { $value += " " + $annotationInit.value; } )? )
     ;
 
 // }}}
@@ -787,8 +783,8 @@ annotationInitializers returns [String value]
 	   ( annotationInitializer
 	     { $value += ( _i++ == 0 ? $annotationInitializer.value
 				     : "." + $annotationInitializer.value ); } )+ )
-    |   ^(ANNOTATION_INIT_DEFAULT_KEY annotationElementValue)
-	{ $value = $annotationElementValue.value; }
+    |   ^( ANNOTATION_INIT_DEFAULT_KEY annotationElementValue )
+	   { $value = $annotationElementValue.value; }
     ;
 
 // }}}
@@ -796,8 +792,9 @@ annotationInitializers returns [String value]
 // {{{ annotationInitializer
 
 annotationInitializer returns [String value]
-	:	^( IDENT annotationElementValue )
-		{ $value = $IDENT.text + " " + $annotationElementValue.value; }
+	:	^( IDENT { $value = $IDENT.text; }
+	           annotationElementValue 
+		   { $value += " " + $annotationElementValue.value; } )
 	;
 
 // }}}
@@ -806,8 +803,8 @@ annotationInitializer returns [String value]
 
 annotationElementValue returns [String value]
 @init{ int _i = 0; }
-    :   ^( ANNOTATION_INIT_ARRAY_ELEMENT { $value = ""; }
-	   { $value += " " + $ANNOTATION_INIT_ARRAY_ELEMENT.text; }
+    :   ^( ANNOTATION_INIT_ARRAY_ELEMENT
+	   { $value = $ANNOTATION_INIT_ARRAY_ELEMENT.text; }
 	   ( a=annotationElementValue
 	     { $value += ( _i++ == 0 ? $a.value
 				     : " " + $a.value ); } )* )
@@ -845,14 +842,11 @@ annotationScopeDeclarations returns [String value]
 			 ( $annotationDefaultValue.value != null ?
 			   " " + $annotationDefaultValue.value : "" );
 	}
-    |   ^(VAR_DECLARATION modifierList
-			  type
-			  variableDeclaratorList)
-	{
-		$value = $modifierList.value + " " +
-			 $type.value + " " +
-			 $variableDeclaratorList.value;
-	}
+    |   ^( VAR_DECLARATION
+	   modifierList { $value = $modifierList.value; }
+	   type { $value += " " + $type.value; }
+	   variableDeclaratorList
+	   { $value += " " + $variableDeclaratorList.value; } )
     |   typeDeclaration
 	{ $value = $typeDeclaration.value; }
     ;
@@ -862,9 +856,9 @@ annotationScopeDeclarations returns [String value]
 // {{{ annotationDefaultValue
 
 annotationDefaultValue returns [String value]
-	:	^( DEFAULT annotationElementValue )
-		   { $value = $DEFAULT.text + " " +
-			      $annotationElementValue.value; }
+	:	^( DEFAULT { $value = $DEFAULT.text; }
+		   annotationElementValue
+		   { $value += " " + $annotationElementValue.value; } )
 	;
 
 // }}}
@@ -917,113 +911,69 @@ localVariableDeclaration returns [String value]
 statement returns [String value]
     :   block
 	{ $value = $block.value; }
-    |   ^(ASSERT a=expression
-		 b=expression?) // assert x < 0 : "x negative";
-	{
-		$value = $ASSERT.text + " " +
-			 $a.value +
-			 ( $b.value != null ?
-			   " " + ":" + " " + $b.value : "" ) + ";" + "\n";
-	}
-    |   ^(IF parenthesizedExpression
-	     a=statement
-	     b=statement?)
-	{
-		$value = $IF.text + " " +
-			 $parenthesizedExpression.value + " " +
-			 $a.value +
-			 ( $b.value != null ?
-			   " " + $b.value : "" ) + "\n";
-	}
-    |   ^(FOR forInit
-	      forCondition 
-	      forUpdater 
-	      a=statement)
-	{
-		$value = $FOR.text + " " + "(" + " " +
-			 $forInit.value + ";" + " " +
-			 $forCondition.value + ";" + " " +
-			 $forUpdater.value + " " + ")" + " " +
-			 $a.value + "\n";
-	}
-    |   ^(FOR_EACH localModifierList
-		   type
-	     IDENT expression
-		   a=statement) 
-	{
-		$value = $FOR_EACH.text + " " +
-			 $localModifierList.value + " " +
-			 $type.value + " " +
-			 $IDENT.text + " " +
-			 $expression.value + " " +
-			 $a.value;
-	}
-    |   ^(WHILE parenthesizedExpression
-		a=statement)
-	{
-		$value = $WHILE.text + " " +
-			 $parenthesizedExpression.value + " " +
-			 $a.value;
-	}
-    |   ^(DO a=statement parenthesizedExpression)
-	{
-		$value = $DO.text + " " + "{" + "\n" +
-			 $a.value + " " + "}" + " " +
-			 "while" + " " +
-			 $parenthesizedExpression.value + ";" + "\n";
-	}
-    |   ^(TRY a=block
-	      catches?
-	       b=block?)
+    // assert x < 0 : "x negative";
+    |   ^( ASSERT		{ $value = $ASSERT.text; }
+	   a=expression		{ $value += " " + $a.value; }
+	   ( b=expression	{ $value += " " + $b.value; } )? )
+    |   ^( IF { $value = $IF.text; }
+	   parenthesizedExpression
+	   { $value += " " + $parenthesizedExpression.value; }
+	   a=statement { $value += " " + $a.value; }
+	   ( b=statement { $value += " " + $b.value; } )?)
+    |   ^( FOR		{ $value = $FOR.text + " " + "("; }
+	   forInit	{ $value += " " + $forInit.value + ";" ; }
+	   forCondition	{ $value += " " + $forCondition.value + ";"; }
+	   forUpdater	{ $value += " " + $forUpdater.value + " " + ")"; }
+	   a=statement	{ $value += " " + $a.value + "\n"; } )
+    |   ^( FOR_EACH		{ $value = $FOR_EACH.text; }
+	   localModifierList	{ $value += " " + $localModifierList.value; }
+	   type			{ $value += " " + $type.value; }
+	   IDENT		{ $value += " " + $IDENT.text; }
+	   expression		{ $value += " " + $expression.value; }
+	   a=statement		{ $value += " " + $a.value; }
+	 ) 
+    |   ^( WHILE		{ $value = $WHILE.text; }
+	   parenthesizedExpression
+	   { $value += " " + $parenthesizedExpression.value; }
+	   a=statement 		{ $value += " " + $a.value; } )
+    |   ^( DO			{ $value = $DO.text + " " + "{" + "\n"; }
+	   a=statement		{ $value += $a.value + " " + "}" + " "; }
+	   parenthesizedExpression
+	   { $value += " " + "while" + " " +
+		       $parenthesizedExpression.value + ";" + "\n"; }
+	 )
 	// The second optional block is the optional finally block.
-	{
-		$value = $TRY.text + " " +
-			 $a.value +
-			 ( $catches.value != null ?
-			   " " + $catches.value : "" ) +
-			 ( $b.value != null ?
-			   " " + $b.value : "" );
-	}
-    |   ^(SWITCH parenthesizedExpression
-		 switchBlockLabels)
-	{
-		$value = $SWITCH.text + " " +
-			 $parenthesizedExpression.value + " " + "{" + " " +
-			 $switchBlockLabels.value + " " + "}" + "\n";
-	}
-    |   ^(SYNCHRONIZED parenthesizedExpression
-		       block)
-	{
-		$value = $SYNCHRONIZED.text + " " +
-			 $parenthesizedExpression.value + " " +
-			 $block.value;
-	}
-    |   ^(RETURN expression?)
-	{
-		$value = $RETURN.text +
-			 ( $expression.value != null ?
-			   " " + $expression.value : "" ) + ";" + "\n";
-	}
-    |   ^(THROW expression)
-	{ $value = $THROW.text + " " + $expression.value + ";"; }
-    |   ^(BREAK IDENT?)
-	{
-		$value = $BREAK.text +
-			 ( $IDENT.text != null ?
-			   " " + $IDENT.text : "" );
-	}
-    |   ^(CONTINUE IDENT?)
-	{
-		$value = $CONTINUE.text +
-			 ( $IDENT.text != null ?
-			   " " + $IDENT.text : "" );
-	}
-    |   ^(LABELED_STATEMENT IDENT a=statement)
-	{
-		$value = $LABELED_STATEMENT.text + " " +
-			 $IDENT.text + " " +
-			 $a.value;
-	}
+    |   ^( TRY			{ $value = $TRY.text; }
+	   a=block		{ $value += " " + $a.value; }
+	   ( catches		{ $value += " " + $catches.value; } )?
+	   ( b=block		{ $value += " " + $b.value; } )? )
+    |   ^( SWITCH		{ $value = $SWITCH.text; }
+	   parenthesizedExpression
+	   { $value += " " + $parenthesizedExpression.value; }
+	   switchBlockLabels
+	   { $value += " " + "{" + " " + $switchBlockLabels.value +
+		       " " + "}" + "\n"; }
+	 )
+    |   ^( SYNCHRONIZED { $value = $SYNCHRONIZED.text; }
+	   parenthesizedExpression
+	   { $value += " " + $parenthesizedExpression.value; }
+	   block	{ $value += $block.value; } )
+    |   ^( RETURN	{ $value = $RETURN.text; }
+	   ( expression { $value += " " + $expression.value; } )?
+	 )
+	 { $value += ";" + "\n"; }
+    |   ^( THROW { $value = $THROW.text; }
+	   expression { $value += " " + $expression.value + ";"; } )
+    |   ^( BREAK	{ $value = $BREAK.text; }
+	   ( IDENT	{ $value += " " + $IDENT.text; } )?
+	 )
+    |   ^( CONTINUE	{ $value = $CONTINUE.text; }
+	   ( IDENT	{ $value += " " + $IDENT.text; } )?
+	 )
+    |   ^( LABELED_STATEMENT	{ $value = $LABELED_STATEMENT.text; }
+	   IDENT		{ $value += " " + $IDENT.text; }
+	   a=statement		{ $value += " " + $a.value; }
+	 )
     |   expression
 	{ $value = $expression.value + ";"; }
     |   SEMI // Empty statement.
@@ -1078,7 +1028,7 @@ switchBlockLabels returns [String value]
 
 switchCaseLabel returns [String value]
 @init{ int _i = 0; }
-    :	^( CASE { $value = " " + $CASE.text; }
+    :	^( CASE { $value = $CASE.text; }
 	   expression { $value += " " + $expression.value + ":" + " "; }
 	   ( blockStatement
 	     { $value += ( _i++ == 0 ? $blockStatement.value
@@ -1107,7 +1057,8 @@ forInit returns [String value]
 	     { $value += " " + $localVariableDeclaration.value; }
 	   | ( expression
 	       { $value += ( $value == "" ? $expression.value
-					  : "," + " " + $expression.value ); } )* )? )
+					  : "," + " " + $expression.value ); } )* )?
+	 )
     ;
 
 // }}}
@@ -1263,11 +1214,11 @@ primaryExpression returns [String value]
 		    { $value += $innerNewExpression.value + " "; }
                 |   A=CLASS { $value += $A.text + " "; }
                 )
-            |   primitiveType { $value += $primitiveType.value + " "; }
-		B=CLASS { $value += $B.text + " "; }
-            |   VOID { $value += $VOID.text + " "; }
-		C=CLASS { $value += $C.text + " "; }
-            )
+              |   primitiveType { $value += $primitiveType.value + " "; }
+		  B=CLASS { $value += $B.text + " "; }
+              |   VOID { $value += $VOID.text + " "; }
+		  C=CLASS { $value += $C.text + " "; }
+              )
         )
     |   parenthesizedExpression
 	{ $value = $parenthesizedExpression.value; }
