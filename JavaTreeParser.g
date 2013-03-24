@@ -175,15 +175,15 @@ importDeclaration returns [String value]
 // {{{ typeDeclaration
 
 typeDeclaration returns [String value]
-    :   ^(CLASS modifierList
-	  IDENT genericTypeParameterList?
-		extendsClause?
-		implementsClause?
-		classTopLevelScope)
+    :   ^( CLASS modifierList
+	   IDENT genericTypeParameterList?
+		 extendsClause?
+		 implementsClause?
+		 classTopLevelScope )
 	{
-		$value = $modifierList.value + " " +
-			 $CLASS.text + " " +
-			 $IDENT.text +
+		$value = $modifierList.value +
+			 " " + $CLASS.text +
+			 " " + $IDENT.text +
 			 ( $genericTypeParameterList.value != null ?
 			   " " + $genericTypeParameterList.value : "" ) + " " +
 			 ( $extendsClause.value != null ?
@@ -198,33 +198,33 @@ typeDeclaration returns [String value]
 	  	    extendsClause?
 		    interfaceTopLevelScope)
 	{
-		$value = $INTERFACE.text + " " +
-			 $modifierList.value + " " +
-			 $IDENT.text + " " +
+		$value = $INTERFACE.text +
+			 " " + $modifierList.value +
+			 " " + $IDENT.text +
 			 ( $genericTypeParameterList.value != null ?
 			   " " + $genericTypeParameterList.value : "" ) +
 			 ( $extendsClause.value != null ?
 			   " " + $extendsClause.value : "" ) +
-			 $interfaceTopLevelScope.value;
+			 " " + $interfaceTopLevelScope.value;
 	}
     |   ^(ENUM modifierList
 	 IDENT implementsClause?
 	       enumTopLevelScope)
 	{
-		$value = $ENUM.text + " " +
-			 $modifierList.value + " " +
-			 $IDENT.text + " " +
+		$value = $ENUM.text +
+			 " " + $modifierList.value +
+			 " " + $IDENT.text +
 			 ( $implementsClause.value != null ?
 			   " " + $implementsClause.value : "" ) +
-			 $enumTopLevelScope.value;
+			 " " + $enumTopLevelScope.value;
 	}
     |    ^(AT modifierList
 	IDENT annotationTopLevelScope)
 	{
-		$value = $AT.text + " " +
-			 $modifierList.value + " " +
-			 $IDENT.text + " " +
-			 $annotationTopLevelScope.value;
+		$value = $AT.text +
+			 " " + $modifierList.value +
+			 " " + $IDENT.text +
+			 " " + $annotationTopLevelScope.value;
 	}
     ;
 
@@ -299,7 +299,8 @@ enumTopLevelScope returns [String value]
 	   ( enumConstant
 	     { $value += ( _i++ == 0 ? $enumConstant.value
 				     : " " + $enumConstant.value ); } )+
-	   ( classTopLevelScope { $value += " " + $classTopLevelScope.value; } )? )
+	   ( classTopLevelScope
+	     { $value += " " + $classTopLevelScope.value; } )? )
     ;
 
 // }}}
@@ -346,15 +347,16 @@ classScopeDeclarations returns [String value]
 	{
 		$value = $modifierList.value +
 			 ( $genericTypeParameterList.value != null ?
-			   " " + $genericTypeParameterList.value : "" ) + " " +
-			 $type.value + " " +
-			 $IDENT.text + " " +
-			 $formalParameterList.value + " " +
+			   " " + $genericTypeParameterList.value : "" ) + 
+			 " " + $type.value +
+			 " " + $IDENT.text +
+			 " " + $formalParameterList.value +
 			 ( $arrayDeclaratorList.value != null ?
 			   " " + $arrayDeclaratorList.value : "" ) +
 			 ( $throwsClause.value != null ?
 			   " " + $throwsClause.value : "" ) +
-			 ( $block.value != null ? " " + $block.value : "" );
+			 ( $block.value != null ? " " + $block.value
+						: "" );
 	}
     |   ^( VOID_METHOD_DECL modifierList
 			    genericTypeParameterList?
@@ -362,12 +364,12 @@ classScopeDeclarations returns [String value]
 			    throwsClause?
 			    block? )
 	{
-		$value = $modifierList.value + " " +
+		$value = $modifierList.value +
 			 ( $genericTypeParameterList.value != null ?
 			   " " + $genericTypeParameterList.value : "" ) +
-			 "void" + " " +
-			 $IDENT.text + " " +
-			 $formalParameterList.value + " " +
+			 " " + "void" +
+			 " " + $IDENT.text +
+			 " " + $formalParameterList.value +
 			 ( $throwsClause.value != null ?
 			   " " + $throwsClause.value : "" ) +
 			 ( $block.value != null ? " " + $block.value : "" );
@@ -376,9 +378,9 @@ classScopeDeclarations returns [String value]
 			   type
 			   variableDeclaratorList )
 	{
-		$value = $modifierList.value + " " +
-			 $type.value + " " +
-			 $variableDeclaratorList.value + ";";
+		$value = $modifierList.value +
+			 " " + $type.value +
+			 " " + $variableDeclaratorList.value + ";";
 	}
     |   ^( CONSTRUCTOR_DECL
 		      IDENT modifierList
@@ -387,14 +389,14 @@ classScopeDeclarations returns [String value]
 			    throwsClause?
 			    block )
 	{
-		$value = $modifierList.value + " " +
-			 $IDENT.text + " " +
+		$value = $modifierList.value +
+			 " " + $IDENT.text +
 			 ( $genericTypeParameterList.value != null ?
 			   " " + $genericTypeParameterList.value : "" ) +
-			 $formalParameterList.value + " " +
+			 " " + $formalParameterList.value +
 			 ( $throwsClause.value != null ?
 			   " " + $throwsClause.value : "" ) +
-			 $block.value;
+			 " " + $block.value;
 	}
     |   typeDeclaration
 	{ $value = $typeDeclaration.value; }
@@ -424,16 +426,16 @@ interfaceScopeDeclarations returns [String value]
 			        arrayDeclaratorList?
 			        throwsClause?)
 	{
-		$value = $modifierList.value + " " +
+		$value = $modifierList.value +
 			 ( $genericTypeParameterList.value != null ?
 			   " " + $genericTypeParameterList.value : "" ) +
-			 $type.value + " " +
-			 $IDENT.text + " " +
-			 $formalParameterList.value + " " +
+			 " " + $type.value +
+			 " " + $IDENT.text +
+			 " " + $formalParameterList.value +
 			 ( $arrayDeclaratorList.value != null ?
 			   " " + $arrayDeclaratorList.value : "" ) +
 			 ( $throwsClause.value != null ?
-			   $throwsClause.value : "" );
+			   " " + $throwsClause.value : "" );
 	}
     |   ^( VOID_METHOD_DECL modifierList
 			    genericTypeParameterList?
@@ -443,11 +445,11 @@ interfaceScopeDeclarations returns [String value]
         // declarations by 'java.g'; the parser has already checked that
         // there's an obligatory initializer.
 	{
-		$value = $modifierList.value + " " +
+		$value = $modifierList.value +
 			 ( $genericTypeParameterList.value != null ?
 			   " " + $genericTypeParameterList.value : "" ) +
-			 $IDENT.text + " " +
-			 $formalParameterList.value +
+			 " " + $IDENT.text +
+			 " " + $formalParameterList.value +
 			 ( $throwsClause.value != null ?
 			   " " + $throwsClause.value : "" );
 	}
@@ -455,9 +457,9 @@ interfaceScopeDeclarations returns [String value]
 			   type
 			   variableDeclaratorList )
 	{
-		$value = $modifierList.value + " " +
-			 $type.value + " " +
-			 $variableDeclaratorList.value + "{;}";
+		$value = $modifierList.value +
+			 " " + $type.value +
+			 " " + $variableDeclaratorList.value + ";";
 	}
     |   typeDeclaration
 	{ $value = $typeDeclaration.value; }
@@ -482,7 +484,7 @@ variableDeclaratorList returns [String value]
 
 variableDeclarator returns [String value]
     :   ^( VAR_DECLARATOR
-	   variableDeclaratorId { $value = $variableDeclaratorId.value + " "; }
+	   variableDeclaratorId { $value = $variableDeclaratorId.value; }
 	   ( variableInitializer
 	     { $value += " " + "=" + " " + $variableInitializer.value; } )?
 	 )
@@ -608,9 +610,9 @@ localModifier returns [String value]
 // {{{ type
 
 type returns [String value]
-	:	^( TYPE { $value = ""; }
-		   ( primitiveType { $value += $primitiveType.value; }
-		   | qualifiedTypeIdent { $value += $qualifiedTypeIdent.value; }
+	:	^( TYPE
+		   ( primitiveType { $value = $primitiveType.value; }
+		   | qualifiedTypeIdent { $value = $qualifiedTypeIdent.value; }
 		   )
 		   ( arrayDeclaratorList
 		     { $value += " " + $arrayDeclaratorList.value; } )?
@@ -720,14 +722,11 @@ formalParameterStandardDecl returns [String value]
 // {{{ formalParameterVarargDecl
 
 formalParameterVarargDecl returns [String value]
-    :   ^(FORMAL_PARAM_VARARG_DECL localModifierList
-				   type
-				   variableDeclaratorId)
-	{
-		$value = $localModifierList.value + " " +
-			 $type.value + " " +
-			 $variableDeclaratorId.value;
-	}
+    :   ^( FORMAL_PARAM_VARARG_DECL
+	   localModifierList { $value = $localModifierList.value; }
+	   type { $value += " " + $type.value; }
+	   variableDeclaratorId { $value += " " + $variableDeclaratorId.value; }
+	 )
     ;
 
 // }}}
