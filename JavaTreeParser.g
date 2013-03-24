@@ -1224,13 +1224,12 @@ primaryExpression returns [String value]
 	{ $value = $parenthesizedExpression.value; }
     |   IDENT
 	{ $value = $IDENT.text; }
-    |   ^(METHOD_CALL a=primaryExpression genericTypeArgumentList? arguments)
-	{
-		$value = $a.value + "(" +
-			 ( $genericTypeArgumentList.value != null ?
-			   " " + $genericTypeArgumentList.value : "" ) + " " +
-			 $arguments.value + " " + ")" + " ";
-	}
+    |   ^( METHOD_CALL
+	   a=primaryExpression { $value = $a.value + "("; }
+	   ( genericTypeArgumentList
+	     { $value += " " + $genericTypeArgumentList.value; } )?
+	   arguments { $value += " " + $arguments.value + " " + ")"; }
+	 )
     |   explicitConstructorCall
 	{ $value = $explicitConstructorCall.value; }
     |   ^(ARRAY_ELEMENT_ACCESS a=primaryExpression expression)
@@ -1256,17 +1255,14 @@ explicitConstructorCall returns [String value]
 	   ( genericTypeArgumentList
 	     { $value += " " + $genericTypeArgumentList.value; } )?
 	     arguments { $value += " " + $arguments.value; } )
-    |   ^( SUPER_CONSTRUCTOR_CALL primaryExpression?
-				  genericTypeArgumentList?
-				  arguments)
-	{
-		$value = $SUPER_CONSTRUCTOR_CALL.text +
-			 ( $primaryExpression.value != null ?
-			   " " + $primaryExpression.value : "" ) +
-			 ( $genericTypeArgumentList.value != null ?
-			   " " + $genericTypeArgumentList.value : "" ) + " " +
-			 $arguments.value;
-	}
+    |   ^( SUPER_CONSTRUCTOR_CALL
+	   { $value = $SUPER_CONSTRUCTOR_CALL.text; }
+	   ( primaryExpression
+	     { $value += " " + $primaryExpression.value; } )?
+	   ( genericTypeArgumentList
+	     { $value += " " + $genericTypeArgumentList.value; } )?
+	   arguments { $value += " " + $arguments.value; }
+	 )
     ;
 
 // }}}
@@ -1274,10 +1270,10 @@ explicitConstructorCall returns [String value]
 // {{{ arrayTypeDeclarator
 
 arrayTypeDeclarator returns [String value]
-    :   ^( ARRAY_DECLARATOR { $value = $ARRAY_DECLARATOR.text + " "; }
-	   ( a=arrayTypeDeclarator { $value += $a.value; }
-	   | qualifiedIdentifier { $value += $qualifiedIdentifier.value; }
-	   | primitiveType { $value += $primitiveType.value; }
+    :   ^( ARRAY_DECLARATOR 
+	   ( a=arrayTypeDeclarator { $value = $a.value; }
+	   | qualifiedIdentifier { $value = $qualifiedIdentifier.value; }
+	   | primitiveType { $value = $primitiveType.value + "[" + "]"; }
 	   )
 	 )
     ;
@@ -1287,37 +1283,26 @@ arrayTypeDeclarator returns [String value]
 // {{{ newExpression
 
 newExpression returns [String value]
-    :   ^(  STATIC_ARRAY_CREATOR
-            (   primitiveType
-		a=newArrayConstruction
-            |   genericTypeArgumentList?
-		qualifiedTypeIdent
-		b=newArrayConstruction
+    :   ^( STATIC_ARRAY_CREATOR
+	   { $value = "new"; }
+            ( primitiveType { $value += " " + $primitiveType.value; }
+	      a=newArrayConstruction { $value += " " + $a.value; }
+            | ( genericTypeArgumentList
+		{ $value += " " + $genericTypeArgumentList.value; } )?
+	      qualifiedTypeIdent { $value += " " + $qualifiedTypeIdent.value; }
+	      b=newArrayConstruction { $value += " " + $b.value; }
             )
         )
-	{
-		$value = "new" +
-			 ( $primitiveType.value != null ?
-			   " " + $primitiveType.value + " " + $a.value :
-			   $qualifiedTypeIdent.value != null ?
-			   ( $genericTypeArgumentList.value != null ?
-			     " " + $genericTypeArgumentList.value : "" ) + " " +
-			   $qualifiedTypeIdent.value + " " +
-			   $b.value : "" );
-	}
-    |   ^(CLASS_CONSTRUCTOR_CALL genericTypeArgumentList?
-				 qualifiedTypeIdent
-				 arguments
-				 classTopLevelScope?)
-	{
-		$value = "new" +
-			 ( $genericTypeArgumentList.value != null ?
-			   " " + $genericTypeArgumentList.value : "" ) + " " +
-			 $qualifiedTypeIdent.value + " " + "(" + " " +
-			 $arguments.value + " " + ")" +
-			 ( $classTopLevelScope.value != null ?
-			   " " + $classTopLevelScope.value : "" );
-	}
+    |   ^( CLASS_CONSTRUCTOR_CALL
+	   { $value = "new"; }
+	   ( genericTypeArgumentList
+	     { $value += " " + $genericTypeArgumentList.value; } )?
+	   qualifiedTypeIdent
+	   { $value += " " + $qualifiedTypeIdent.value + " " + "("; }
+	   arguments { $value += " " + $arguments.value + " " + ")"; }
+	   ( classTopLevelScope
+	     { $value += " " + $classTopLevelScope.value; })?
+	 )
     ;
 
 // }}}
@@ -1326,18 +1311,14 @@ newExpression returns [String value]
 
 // something like 'InnerType innerType = outer.new InnerType();'
 innerNewExpression returns [String value]
-    :   ^(CLASS_CONSTRUCTOR_CALL genericTypeArgumentList?
-			   IDENT arguments
-				 classTopLevelScope?)
-	{
-		$value = $CLASS_CONSTRUCTOR_CALL.text +
-			 ( $genericTypeArgumentList.value != null ?
-			   " " + $genericTypeArgumentList.value : "" ) + " " +
-			 $IDENT.text + " " +
-			 $arguments.value +
-			 ( $classTopLevelScope.value != null ?
-			   " " + $classTopLevelScope.value : "" );
-	}
+    :   ^( CLASS_CONSTRUCTOR_CALL
+	   { $value = $CLASS_CONSTRUCTOR_CALL.text; }
+	   ( genericTypeArgumentList
+	     { $value += " " + $genericTypeArgumentList.value; } )?
+	   IDENT { $value += " " + $IDENT.text; }
+	   arguments { $value += " " + $arguments.value; }
+	   ( classTopLevelScope
+	     { $value += " " + $classTopLevelScope.value; } )? )
     ;
 
 // }}}
