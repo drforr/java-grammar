@@ -8,6 +8,8 @@ test:	Test.class
 	javac IfThenElse.java
 	java Test < corpus/Loops.java > Loops.java
 	javac Loops.java
+	java Test < corpus/Arrays.java > Arrays.java
+	javac Arrays.java
 
 clean:
 	rm -f *.class *.tokens JavaLexer* JavaParser* JavaTreeParser.java

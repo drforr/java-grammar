@@ -683,10 +683,10 @@ arrayDeclaratorList returns [String v]
 @init{ int _i = 0; }
 	: { $v = ""; }
 	^( ARRAY_DECLARATOR_LIST
-	   ( ARRAY_DECLARATOR {
+	   ( arrayDeclarator {
 	     $v += ( _i++ == 0 ? "" : "/* arrayDeclaratorList */" )
-		 + $ARRAY_DECLARATOR.text;
-	   } )*
+		 + $arrayDeclarator.v;
+	   } )+
 	 )
 	;
 
@@ -697,12 +697,14 @@ arrayDeclaratorList returns [String v]
 arrayInitializer returns [String v]
 @init{ int _i = 0; }
 	: { $v = ""; }
+	{ $v += "{"; }
 	^( ARRAY_INITIALIZER
 	   ( variableInitializer {
-	     $v += ( _i++ == 0 ? "" : "/* arrayInitializer */" )
+	     $v += ( _i++ == 0 ? "" : ", " )
 		 + $variableInitializer.v;
 	   } )*
 	 )
+	{ $v += "}"; }
 	;
 
 // }}}
@@ -1206,10 +1208,16 @@ block returns [String v]
 	     $v += ( _i == 0 ? "" : "/* block */" )
 		  + $blockStatement.v;
 // XXX Hack to suppress trailing semicolon on {}
+// XXX Aha, and here's how it fails. Array initializers have trailing braces.
+// XXX Time to reword the condition.
+// XXX
 String last = $v.substring($v.length()-1,$v.length());
 //if( last != "}" ) {
 if( !( $v.endsWith( "}" ) ) ) {
   $v += ";/* XXX(1) ('" + last + "') */";
+}
+else {
+  $v += "/* XXX(1) ('}') suppressing */";
 }
 	   } )*
 	 )
@@ -2145,7 +2153,9 @@ primaryExpression returns [String v]
 	     $v = $a.v;
 	   } )
 	   ( expression {
+	     $v+="[";
 	     $v += $expression.v;
+	     $v+="]";
 	   } )
 	 )
 	| ( literal {
@@ -2289,6 +2299,7 @@ newArrayConstruction returns [String v]
 	  ( arrayInitializer {
 	    $v = $arrayInitializer.v;
 	  } )
+	  { $v += ";"; }
 	| { $v = ""; }
 	  ( expression {
 	    $v += ( _i++ == 0 ? "" : "/* newArrayConstruction */" )

@@ -521,7 +521,6 @@ variableInitializer
 
 arrayDeclarator
     :   LBRACK RBRACK
-        ->  ^(ARRAY_DECLARATOR)
     ;
 
 arrayDeclaratorList
