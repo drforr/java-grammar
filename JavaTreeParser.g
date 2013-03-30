@@ -139,10 +139,10 @@ options {
 
 javaSource returns [String v]
 @init{ int _i = 0, _j = 0; }
-	: { $v = ""; }
+	:
 	^( JAVA_SOURCE
 	   ( annotationList {
-	     $v += " " + $annotationList.v;
+	     $v = $annotationList.v;
 	   } )
 	   ( packageDeclaration {
 	     $v += " " + $packageDeclaration.v;
@@ -164,8 +164,12 @@ javaSource returns [String v]
 
 packageDeclaration returns [String v]
 	:
-	^( ( PACKAGE { $v = $PACKAGE.text; } )
-	   ( qualifiedIdentifier { $v += $qualifiedIdentifier.v; } )
+	^( ( PACKAGE {
+	     $v = $PACKAGE.text;
+	   } )
+	   ( qualifiedIdentifier {
+	     $v += $qualifiedIdentifier.v;
+	   } )
 	 )
 	;
 
@@ -175,10 +179,18 @@ packageDeclaration returns [String v]
 
 importDeclaration returns [String v]
 	:
-	^( ( IMPORT { $v = $IMPORT.text; } )
-	   ( STATIC { $v += $STATIC.text; } )?
-	   ( qualifiedIdentifier { $v += $qualifiedIdentifier.v; } )
-	   ( DOTSTAR { $v += $DOTSTAR.text; } )?
+	^( ( IMPORT {
+	     $v = $IMPORT.text;
+	   } )
+	   ( STATIC {
+	     $v += $STATIC.text;
+	   } )?
+	   ( qualifiedIdentifier {
+	     $v += $qualifiedIdentifier.v;
+	   } )
+	   ( DOTSTAR {
+	     $v += $DOTSTAR.text;
+	   } )?
 	 )
 	;
 
@@ -188,7 +200,9 @@ importDeclaration returns [String v]
 
 typeDeclaration returns [String v]
 	:
-	^( ( CLASS { $v = $CLASS.text; } )
+	^( ( CLASS {
+	     $v = $CLASS.text;
+	   } )
 	   ( modifierList {
 	     $v += " " + $modifierList.v;
 	   } )
@@ -209,9 +223,11 @@ typeDeclaration returns [String v]
 	   } )
 	 )
 	|
-	^( INTERFACE
+	^( ( INTERFACE {
+	     $v = $INTERFACE.text;
+	   } )
 	   ( modifierList {
-	     $v = $modifierList.v;
+	     $v += $modifierList.v;
 	   } )
 	   ( IDENT {
 	     $v += $IDENT.text;
@@ -227,7 +243,9 @@ typeDeclaration returns [String v]
 	   } )
 	 )
 	|
-	^( ENUM
+	^( ( ENUM {
+	     $v = $ENUM.text;
+	   } )
 	   ( modifierList {
 	     $v += " " + $modifierList.v;
 	   } )
@@ -242,7 +260,9 @@ typeDeclaration returns [String v]
 	   } )
 	 )
 	|
-	^( AT
+	^( ( AT {
+	     $v = $AT.text;
+	   } )
 	   ( modifierList {
 	     $v += " " + $modifierList.v;
 	   } )
@@ -266,8 +286,8 @@ extendsClause returns [String v]
 	: { $v = ""; }
 	^( EXTENDS_CLAUSE
 	   ( type {
-	     $v += _i == 0 ? $type.v
-			   : "/* extendsClause */" + $type.v;
+	     $v += (_i == 0 ? "" : "/* extendsClause */" )
+		 + $type.v;
 	   } )+
 	 )
 	;
@@ -281,8 +301,8 @@ implementsClause returns [String v]
 	: { $v = ""; }
 	^( IMPLEMENTS_CLAUSE
 	   ( type {
-	     $v += _i == 0 ? $type.v
-			   : "/* implementsClause */" + $type.v;
+	     $v += ( _i == 0 ? "" : "/* implementsClause */" )
+		 + $type.v;
 	   } )+
 	 )
 	;
@@ -296,8 +316,8 @@ genericTypeParameterList returns [String v]
 	: { $v = ""; }
 	^( GENERIC_TYPE_PARAM_LIST
 	   ( genericTypeParameter {
-	     $v += _i == 0 ? $genericTypeParameter.v
-			   : "/* genericTypeParameter */" + $genericTypeParameter.v;
+	     $v += ( _i == 0 ? "" : "/* genericTypeParameter */" )
+		 + $genericTypeParameter.v;
 	   } )+
 	 )
 	;
@@ -326,8 +346,8 @@ bound returns [String v]
 	: { $v = ""; }
 	^( EXTENDS_BOUND_LIST
 	   ( type {
-	     $v += _i == 0 ? $type.v
-			   : "/* bound */" + $type.v;
+	     $v += ( _i == 0 ? "" : "/* bound */" )
+		 + $type.v;
 	   } )+
 	 )
 	;
@@ -383,8 +403,8 @@ classTopLevelScope returns [String v]
 	{ $v += "\n"; }
 	^( CLASS_TOP_LEVEL_SCOPE
 	   ( classScopeDeclarations
-	     { $v += _i == 0 ? $classScopeDeclarations.v
-			     : "/* classTopLevelScope */" + $classScopeDeclarations.v; } )*
+	     { $v += ( _i == 0 ? "" : "/* classTopLevelScope */" )
+		   + $classScopeDeclarations.v; } )*
 	 )
 	{ $v += "}"; }
 	;
@@ -733,8 +753,8 @@ localModifierList returns [String v]
 	: { $v = ""; }
 	^( LOCAL_MODIFIER_LIST
 	   ( localModifier {
-	     $v += _i == 0 ? $localModifier.v
-			   : "/* localModifierList */" + $localModifier.v;
+	     $v += ( _i == 0 ? "" : "/* localModifierList */" )
+		 + $localModifier.v;
 	   } )*
 	 )
 	;
@@ -793,7 +813,9 @@ qualifiedTypeIdent returns [String v]
 
 typeIdent returns [String v]
 	:
-	^( ( IDENT { $v = $IDENT.text; } )
+	^( ( IDENT {
+	     $v = $IDENT.text;
+	   } )
 	   ( genericTypeArgumentList {
 	     $v += " " + $genericTypeArgumentList.v;
 	   } )?
@@ -982,7 +1004,9 @@ annotationList returns [String v]
 
 annotation returns [String v]
 	:
-	^( ( AT { $v = $AT.text; } )
+	^( ( AT {
+	     $v = $AT.text;
+	   } )
 	   ( qualifiedIdentifier {
  	     $v += " " + $qualifiedIdentifier.v;
 	   } )
@@ -1140,8 +1164,8 @@ block returns [String v]
 	{ $v += "\n"; }
 	^( BLOCK_SCOPE
 	   ( blockStatement {
-	     $v += _i == 0 ? $blockStatement.v
-			   : "/* block */" + $blockStatement.v;
+	     $v += ( _i == 0 ? "" : "/* block */" )
+		  + $blockStatement.v;
 // XXX Hack to suppress trailing semicolon on {}
 String last = $v.substring($v.length()-1,$v.length());
 //if( last != "}" ) {
@@ -1270,14 +1294,26 @@ if( !( $v.endsWith( "}" ) ) ) {
 	   } )
 	 ) 
 	|
-	^( ( WHILE { $v = $WHILE.text; } )
-	   ( parenthesizedExpression { $v += $parenthesizedExpression.v; } )
-	   ( a=statement { $v += $a.v; } )
+	^( ( WHILE {
+	     $v = $WHILE.text;
+	   } )
+	   ( parenthesizedExpression {
+	     $v += $parenthesizedExpression.v;
+	   } )
+	   ( a=statement {
+	     $v += $a.v;
+	   } )
 	 )
 	|
-	^( ( DO { $v = $DO.text; } )
-	   ( a=statement { $v += $a.v; } )
-	   ( parenthesizedExpression { $v += $parenthesizedExpression.v; } )
+	^( ( DO {
+	     $v = $DO.text;
+	   } )
+	   ( a=statement {
+	     $v += $a.v;
+	   } )
+	   ( parenthesizedExpression {
+	     $v += $parenthesizedExpression.v;
+	   } )
 	 )
 	|
 	// The second optional block is the optional finally block.
@@ -1330,8 +1366,8 @@ catches returns [String v]
 	: { $v = ""; }
 	^( CATCH_CLAUSE_LIST
 	   ( catchClause {
-	     $v += _i == 0 ? $catchClause.v
-			   : "/* catches */" + $catchClause.v;
+	     $v += ( _i == 0 ? "" : "/* catches */" )
+		 + $catchClause.v;
 	   } )+
 	 )
 	;
@@ -1346,7 +1382,9 @@ catchClause returns [String v]
 	   ( formalParameterStandardDecl {
 	     $v += $formalParameterStandardDecl.v;
 	   } )
-	   ( block { $v += $block.v; } )
+	   ( block {
+	     $v += $block.v;
+	   } )
 	 )
 	;
 
@@ -1362,7 +1400,9 @@ switchBlockLabels returns [String v]
 	     $v += ( _i++ == 0 ? "" : "/* switchBlockLabels */" )
 		 + $a.v;
 	   } )*
-	   ( switchDefaultLabel { $v += $switchDefaultLabel.v; } )?
+	   ( switchDefaultLabel {
+	     $v += $switchDefaultLabel.v;
+	   } )?
 	   ( b=switchCaseLabel {
 	     $v += ( _j++ == 0 ? "" : "/* switchBlockLabels */" )
 		 + $b.v;
@@ -1377,11 +1417,15 @@ switchBlockLabels returns [String v]
 switchCaseLabel returns [String v]
 @init{ int _i = 0; }
 	:
-	^( ( CASE { $v = $CASE.text; } )
-	   ( expression { $v += $expression.v; } )
+	^( ( CASE {
+	     $v = $CASE.text;
+	   } )
+	   ( expression {
+	     $v += $expression.v;
+	   } )
 	   ( blockStatement {
-	     $v += _i == 0 ? $blockStatement.v
-			   : "/* switchCaseLabel */" + $blockStatement.v;
+	     $v += ( _i == 0 ? "" : "/* switchCaseLabel */" )
+		 + $blockStatement.v;
 	   } )*
 	 )
 	;
@@ -1395,8 +1439,8 @@ switchDefaultLabel returns [String v]
 	: { $v = ""; }
 	^( DEFAULT
 	   ( blockStatement {
-	     $v += _i == 0 ? $blockStatement.v
-			   : "/* switchDefaultLabel */" + $blockStatement.v;
+	     $v += ( _i == 0 ? "" : "/* switchDefaultLabel */" )
+		 + $blockStatement.v;
 	   } )*
 	 )
 	;
@@ -1442,8 +1486,8 @@ forUpdater returns [String v]
 	: { $v = ""; }
 	^( FOR_UPDATE
 	   ( expression {
-	     $v += _i == 0 ? $expression.v
-			   : "/* forUpdater */" + $expression.v;
+	     $v += ( _i == 0 ? "" : "/* forUpdater */" )
+		 + $expression.v;
 	   } )*
 	 )
 	;
@@ -1457,7 +1501,11 @@ forUpdater returns [String v]
 parenthesizedExpression returns [String v]
 	:
 	{ $v = "("; }
-	^( PARENTESIZED_EXPR ( expression { $v += $expression.v; } ))
+	^( PARENTESIZED_EXPR
+	   ( expression {
+	     $v += $expression.v;
+	   } )
+	 )
 	{ $v += ")"; }
 	;
 
@@ -1467,7 +1515,11 @@ parenthesizedExpression returns [String v]
 
 expression returns [String v]
 	:
-	^( EXPR ( expr { $v = $expr.v; } ) )
+	^( EXPR
+	   ( expr {
+	     $v = $expr.v;
+	   } )
+	 )
 	;
 
 // }}}
@@ -1573,7 +1625,9 @@ expr returns [String v]
 
 primaryExpression returns [String v]
 	:
-	^( ( DOT { $v = $DOT.text; } )
+	^( ( DOT {
+	     $v = $DOT.text;
+	   } )
            ( ( a=primaryExpression {
 	       $v += $a.v;
 	     } )
@@ -1782,7 +1836,10 @@ newArrayConstruction returns [String v]
 	  ( expression {
 	    $v += ( _i++ == 0 ? "" : "/* newArrayConstruction */" )
 		+ $expression.v;
-	  } )+ arrayDeclaratorList?
+	  } )+
+	  ( arrayDeclaratorList {
+	    $v += $arrayDeclaratorList.v;
+	  } )?
 	;
 
 // }}}
