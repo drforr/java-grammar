@@ -39,6 +39,8 @@
 
 tree grammar JavaTreeParser;
 
+// {{{ options
+
 options {
     backtrack = true; 
     memoize = true;
@@ -46,11 +48,17 @@ options {
     ASTLabelType = CommonTree;
 }
 
+// }}}
+
+// {{{ @header
+
 @header {
     import java.util.Map;
     import java.util.HashMap;
     import java.math.BigInteger;
 }
+
+// }}}
 
 // {{{ @treeparser::members
 
@@ -731,17 +739,39 @@ modifierList returns [String v]
 // {{{ modifier
 
 modifier returns [String v]
-	: ( PUBLIC		{ $v = $PUBLIC.text; } )
-	| ( PROTECTED		{ $v = $PROTECTED.text; } )
-	| ( PRIVATE		{ $v = $PRIVATE.text; } )
-	| ( STATIC		{ $v = $STATIC.text; } )
-	| ( ABSTRACT		{ $v = $ABSTRACT.text; } )
-	| ( NATIVE		{ $v = $NATIVE.text; } )
-	| ( SYNCHRONIZED	{ $v = $SYNCHRONIZED.text; } )
-	| ( TRANSIENT		{ $v = $TRANSIENT.text; } )
-	| ( VOLATILE		{ $v = $VOLATILE.text; } )
-	| ( STRICTFP		{ $v = $STRICTFP.text; } )
-	| ( localModifier	{ $v = $localModifier.v; } )
+	: ( PUBLIC {
+	    $v = $PUBLIC.text;
+	  } )
+	| ( PROTECTED {
+	     $v = $PROTECTED.text;
+	  } )
+	| ( PRIVATE {
+	     $v = $PRIVATE.text;
+	  } )
+	| ( STATIC {
+	     $v = $STATIC.text;
+	  } )
+	| ( ABSTRACT {
+	     $v = $ABSTRACT.text;
+	  } )
+	| ( NATIVE {
+	     $v = $NATIVE.text;
+	  } )
+	| ( SYNCHRONIZED {
+	     $v = $SYNCHRONIZED.text;
+	  } )
+	| ( TRANSIENT {
+	     $v = $TRANSIENT.text;
+	  } )
+	| ( VOLATILE {
+	     $v = $VOLATILE.text;
+	  } )
+	| ( STRICTFP {
+	     $v = $STRICTFP.text;
+	  } )
+	| ( localModifier {
+	     $v = $localModifier.v;
+	  } )
 	;
 
 // }}}
@@ -893,12 +923,20 @@ genericTypeArgument returns [String v]
 
 genericWildcardBoundType returns [String v]
 	:
-	^( ( EXTENDS { $v = $EXTENDS.text; } )
-	   ( type { $v += $type.v; } )
+	^( ( EXTENDS {
+	     $v = $EXTENDS.text;
+	   } )
+	   ( type {
+	     $v += $type.v;
+	   } )
 	 )
 	|
-	^( ( SUPER { $v = $SUPER.text; } )
-	   ( type { $v += $type.v; } )
+	^( ( SUPER {
+	     $v = $SUPER.text;
+	   } )
+	   ( type {
+	     $v += $type.v;
+	   } )
 	 )
 	;
 
@@ -1317,44 +1355,90 @@ if( !( $v.endsWith( "}" ) ) ) {
 	 )
 	|
 	// The second optional block is the optional finally block.
-	^( ( TRY { $v = $TRY.text; } )
-	   ( a=block { $v += $a.v; } )
-	   ( catches { $v += $catches.v; } )?
-	   ( b=block { $v += $b.v; } )?
+	^( ( TRY {
+	     $v = $TRY.text;
+	   } )
+	   ( a=block {
+	     $v += $a.v;
+	   } )
+	   ( catches {
+	     $v += $catches.v;
+	   } )?
+	   ( b=block {
+	     $v += $b.v;
+	   } )?
 	 )
 	|
-	^( ( SWITCH { $v = $SWITCH.text; } )
-	   ( parenthesizedExpression { $v += $parenthesizedExpression.v; } )
-	   ( switchBlockLabels { $v += $switchBlockLabels.v; } )
+	^( ( SWITCH {
+	     $v = $SWITCH.text;
+	   } )
+	   ( parenthesizedExpression {
+	     $v += $parenthesizedExpression.v;
+	   } )
+	   ( switchBlockLabels {
+	     $v += $switchBlockLabels.v;
+	   } )
 	 )
 	|
-	^( ( SYNCHRONIZED { $v = $SYNCHRONIZED.text; } )
-	   ( parenthesizedExpression { $v += $parenthesizedExpression.v; } )
-	   ( block { $v += $block.v; } )
+	^( ( SYNCHRONIZED {
+	     $v = $SYNCHRONIZED.text;
+	   } )
+	   ( parenthesizedExpression {
+	     $v += $parenthesizedExpression.v;
+	   } )
+	   ( block {
+	     $v += $block.v;
+	   } )
 	 )
 	|
-	^( ( RETURN { $v = $RETURN.text; } )
-	   ( expression { $v += $expression.v; } )?
+	^( ( RETURN {
+	     $v = $RETURN.text;
+	   } )
+	   ( expression {
+	     $v += $expression.v;
+	   } )?
 	 )
 	|
-	^( ( THROW { $v = $THROW.text; } )
-	   ( expression { $v += $expression.v; } )
+	^( ( THROW {
+	     $v = $THROW.text;
+	   } )
+	   ( expression {
+	     $v += $expression.v;
+	   } )
 	 )
 	|
-	^( ( BREAK { $v = $BREAK.text; } )
-	   ( IDENT { $v += $IDENT.text; } )?
+	^( ( BREAK {
+	     $v = $BREAK.text;
+	   } )
+	   ( IDENT {
+	     $v += $IDENT.text;
+	   } )?
 	 )
 	|
-	^( ( CONTINUE { $v = $CONTINUE.text; } )
-	   ( IDENT { $v += $IDENT.text; } )?
+	^( ( CONTINUE {
+	     $v = $CONTINUE.text;
+	   } )
+	   ( IDENT {
+	     $v += $IDENT.text;
+	   } )?
 	 )
 	|
-	^( ( LABELED_STATEMENT { $v = $LABELED_STATEMENT.text; } )
-	   ( IDENT { $v += $IDENT.text; } )
-	   ( a=statement { $v += $a.v; } )
+	^( ( LABELED_STATEMENT {
+	     $v = $LABELED_STATEMENT.text;
+	   } )
+	   ( IDENT {
+	     $v += $IDENT.text;
+	   } )
+	   ( a=statement {
+	     $v += $a.v;
+	   } )
 	 )
-	| ( expression { $v = $expression.v; } )
-	| ( SEMI { $v = $SEMI.text; } ) // Empty statement.
+	| ( expression {
+	    $v = $expression.v;
+	  } )
+	| ( SEMI {
+	    $v = $SEMI.text;
+	  } ) // Empty statement.
 	;
 
 // }}}
@@ -1378,7 +1462,9 @@ catches returns [String v]
 
 catchClause returns [String v]
 	:
-	^( ( CATCH { $v = $CATCH.text; } )
+	^( ( CATCH {
+	     $v = $CATCH.text;
+	   } )
 	   ( formalParameterStandardDecl {
 	     $v += $formalParameterStandardDecl.v;
 	   } )
@@ -1527,96 +1613,453 @@ expression returns [String v]
 // {{{ expr
 
 expr returns [String v]
-	:	^(ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "=" + " " + $rhs.v; }
-	|	^(PLUS_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "+=" + " " + $rhs.v; }
-	|	^(MINUS_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "-=" + " " + $rhs.v; }
-	|	^(STAR_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "*=" + " " + $rhs.v; }
-	|	^(DIV_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "/=" + " " + $rhs.v; }
-	|	^(AND_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "&=" + " " + $rhs.v; }
-	|	^(OR_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "|=" + " " + $rhs.v; }
-	|	^(XOR_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "^=" + " " + $rhs.v; }
-	|	^(MOD_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "\%=" + " " + $rhs.v; }
-	|	^(BIT_SHIFT_RIGHT_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + ">>>=" + " " + $rhs.v; }
-	|	^(SHIFT_RIGHT_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + ">>=" + " " + $rhs.v; }
-	|	^(SHIFT_LEFT_ASSIGN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "<<=" + " " + $rhs.v; }
-	|	^(QUESTION a=expr b=expr c=expr)
+	:
+	^( ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( PLUS_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "+="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( MINUS_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "-="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( STAR_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "*="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( DIV_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "/="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( AND_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "&="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( OR_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "|="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( XOR_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "^="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( MOD_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "\%="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( BIT_SHIFT_RIGHT_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += ">>>="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( SHIFT_RIGHT_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += ">>="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( SHIFT_LEFT_ASSIGN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "<<="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^(QUESTION a=expr b=expr c=expr)
 		{ $v = $a.v + " ? " + $b.v + " : " + $c.v; }
-	|	^(LOGICAL_OR lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "||" + " " + $rhs.v; }
-	|	^(LOGICAL_AND lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "&&" + " " + $rhs.v; }
-	|	^(OR lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "|" + " " + $rhs.v; }
-	|	^(XOR lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "^" + " " + $rhs.v; }
-	|	^(AND lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "&" + " " + $rhs.v; }
-	|	^(EQUAL lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "==" + " " + $rhs.v; }
-	|	^(NOT_EQUAL lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "!=" + " " + $rhs.v; }
-	|	^(INSTANCEOF a=expr type)
-		{ $v = $a.v + " instanceof " + $type.v; }
-	|	^(LESS_OR_EQUAL lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "<=" + " " + $rhs.v; }
-	|	^(GREATER_OR_EQUAL lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + ">=" + " " + $rhs.v; }
-	|	^(BIT_SHIFT_RIGHT lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + ">>>" + " " + $rhs.v; }
-	|	^(SHIFT_RIGHT lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + ">>" + " " + $rhs.v; }
-	|	^(GREATER_THAN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + ">" + " " + $rhs.v; }
-	|	^(SHIFT_LEFT lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "<<" + " " + $rhs.v; }
-	|	^(LESS_THAN lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "<" + " " + $rhs.v; }
-	|	^(PLUS lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "+" + " " + $rhs.v; }
-	|	^(MINUS lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "-" + " " + $rhs.v; }
-	|	^(STAR lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "*" + " " + $rhs.v; }
-	|	^(DIV lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "/" + " " + $rhs.v; }
-	|	^(MOD lhs=expr rhs=expr)
-		{ $v = $lhs.v + " " + "\%" + " " + $rhs.v; }
-	|	^(UNARY_PLUS a=expr)
-		{ $v = "+" + $a.v; }
-	|	^(UNARY_MINUS a=expr)
-		{ $v = "-" + $a.v; }
-	|	^(PRE_INC a=expr)
-		{ $v = "++" + $a.v; }
-	|	^(PRE_DEC a=expr)
-		{ $v = "--" + $a.v; }
-	|	^(POST_INC a=expr)
-		{ $v = $a.v + "++"; }
-	|	^(POST_DEC a=expr)
-		{ $v = $a.v + "--"; }
-	|	^(NOT a=expr)
-		{ $v = "~" + $a.v; }
-	|	^(LOGICAL_NOT a=expr)
-		{ $v = "!" + $a.v; }
-	|	^(CAST_EXPR type a=expr)
+	|
+	^( LOGICAL_OR
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "||"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( LOGICAL_AND
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "&&"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( OR
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "|"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( XOR
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "^"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( AND
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "&"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( EQUAL
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "=="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( NOT_EQUAL
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "!="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( LESS_OR_EQUAL
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "instanceof"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( LESS_OR_EQUAL
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "<="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( GREATER_THAN_OR_EQUAL
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += ">="; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( BIT_SHIFT_RIGHT
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += ">>>"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( SHIFT_RIGHT
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += ">>"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( GREATER_THAN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += ">"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( SHIFT_LEFT
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "<<"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( LESS_THAN
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "<"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( PLUS
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "+"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( MINUS
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "-"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( STAR
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "*"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( DIV
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "/"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( MOD
+	   ( lhs=expr {
+	     $v = $lhs.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "\%"; }
+	   { $v += " "; }
+	   ( rhs=expr {
+	     $v += $rhs.v;
+	   } )
+	 )
+	|
+	^( UNARY_PLUS
+	   ( a=expr {
+	     $v = "+" + $a.v;
+	   } )
+	 )
+	|
+	^( UNARY_MINUS
+	   ( a=expr {
+	     $v = "-" + $a.v;
+	   } )
+	 )
+	|
+	^( PRE_INC
+	   ( a=expr {
+	     $v = "++" + $a.v;
+	   } )
+	 )
+	|
+	^( PRE_DEC
+	   ( a=expr {
+	     $v = "--" + $a.v;
+	   } )
+	 )
+	|
+	^( POST_INC
+	   ( a=expr {
+	     $v = $a.v + "++";
+	   } )
+	 )
+	|
+	^( POST_DEC
+	   ( a=expr {
+	     $v = $a.v + "--";
+	   } )
+	 )
+	|
+	^( NOT
+	   ( a=expr {
+	     $v = "~" + $a.v;
+	   } )
+	 )
+	|
+	^( LOGICAL_NOT
+	   ( a=expr {
+	     $v = "!" + $a.v;
+	   } )
+	 )
+	|
+	^( CAST_EXPR type a=expr
 		{
 			$v = " " + "(" + " " +
 			         $type.v +
 				 " " + ")" + " " + $a.v;
 		}
-	|	primaryExpression
-	 	{ $v = $primaryExpression.v; }
+	 )
+	|
+	( primaryExpression {
+	  $v = $primaryExpression.v;
+	} )
 	;
 
 // }}}
@@ -1864,15 +2307,33 @@ arguments returns [String v]
 // {{{ literal
 
 literal returns [String v]
-	: ( HEX_LITERAL { $v = $HEX_LITERAL.text; } )
-	| ( OCTAL_LITERAL { $v = $OCTAL_LITERAL.text; } )
-	| ( DECIMAL_LITERAL { $v = $DECIMAL_LITERAL.text; } )
-	| ( FLOATING_POINT_LITERAL { $v = $FLOATING_POINT_LITERAL.text; } )
-	| ( CHARACTER_LITERAL { $v = $CHARACTER_LITERAL.text; } )
-	| ( STRING_LITERAL { $v = $STRING_LITERAL.text; } )
-	| ( TRUE { $v = $TRUE.text; } )
-	| ( FALSE { $v = $FALSE.text; } )
-	| ( NULL { $v = $NULL.text; } )
+	: ( HEX_LITERAL {
+	    $v = $HEX_LITERAL.text;
+	  } )
+	| ( OCTAL_LITERAL {
+	    $v = $OCTAL_LITERAL.text;
+	  } )
+	| ( DECIMAL_LITERAL {
+	    $v = $DECIMAL_LITERAL.text;
+	  } )
+	| ( FLOATING_POINT_LITERAL {
+	    $v = $FLOATING_POINT_LITERAL.text;
+	  } )
+	| ( CHARACTER_LITERAL {
+	    $v = $CHARACTER_LITERAL.text;
+	  } )
+	| ( STRING_LITERAL {
+	    $v = $STRING_LITERAL.text;
+	  } )
+	| ( TRUE {
+	    $v = $TRUE.text;
+	  } )
+	| ( FALSE {
+	    $v = $FALSE.text;
+	  } )
+	| ( NULL {
+	    $v = $NULL.text;
+	  } )
 	;
 
 // }}}
