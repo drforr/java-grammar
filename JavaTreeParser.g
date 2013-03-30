@@ -415,6 +415,7 @@ classTopLevelScope returns [String v]
 		   + $classScopeDeclarations.v; } )*
 	 )
 	{ $v += "}"; }
+	{ $v += "\n"; }
 	;
 
 // }}}
@@ -489,7 +490,7 @@ classScopeDeclarations returns [String v]
 	     $v = $modifierList.v;
 	   } )
 	   ( type {
-	     $v = $type.v;
+	     $v += $type.v;
 	   } )
 	   ( variableDeclaratorId {
 	     $v += $variableDeclaratorId.v;
@@ -610,7 +611,7 @@ variableDeclaratorList returns [String v]
 	: { $v = ""; }
 	^( VAR_DECLARATOR_LIST
 	   ( variableDeclarator {
-	     $v += ( _i++ == 0 ? "" : "/* variableDeclaratorList */" )
+	     $v += ( _i++ == 0 ? "" : ", " )
 	         + $variableDeclarator.v;
 	   } )+
 	 )
@@ -627,7 +628,7 @@ variableDeclarator returns [String v]
 	     $v = $variableDeclaratorId.v;
 	   } )
 	   ( variableInitializer {
-	     $v += $variableInitializer.v;
+	     $v += " " + "=" + " " + $variableInitializer.v;
 	   } )?
 	 )
 	;
@@ -1234,6 +1235,7 @@ blockStatement returns [String v]
 // }}}
     
 // {{{ localVariableDeclaration
+// int i;
 
 localVariableDeclaration returns [String v]
 	:
@@ -1244,6 +1246,7 @@ localVariableDeclaration returns [String v]
 	   ( type {
 	     $v += $type.v;
 	   } )
+	   { $v += " "; }
 	   ( variableDeclaratorList {
 	     $v += $variableDeclaratorList.v;
 	   } )
@@ -1298,15 +1301,19 @@ if( !( $v.endsWith( "}" ) ) ) {
 	^( ( FOR {
 	     $v = $FOR.text;
 	   } )
+	   { $v += "("; }
 	   ( forInit {
 	     $v += $forInit.v;
 	   } )
+	   { $v += ";"; }
 	   ( forCondition {
 	     $v += $forCondition.v;
 	   } )
+	   { $v += ";"; }
 	   ( forUpdater {
 	     $v += $forUpdater.v;
 	   } )
+	   { $v += ")"; }
 	   ( a=statement {
 	     $v += $a.v;
 	   } )
@@ -1347,8 +1354,15 @@ if( !( $v.endsWith( "}" ) ) ) {
 	     $v = $DO.text;
 	   } )
 	   ( a=statement {
-	     $v += $a.v;
+	     $v += " " + $a.v;
+// XXX Hack to suppress trailing semicolon on {}
+String last = $v.substring($v.length()-1,$v.length());
+//if( last != "}" ) {
+if( !( $v.endsWith( "}" ) ) ) {
+  $v += ";/* XXX(1) ('" + last + "') */";
+}
 	   } )
+	   { $v += " " + "while" + " "; }
 	   ( parenthesizedExpression {
 	     $v += $parenthesizedExpression.v;
 	   } )
@@ -1556,9 +1570,9 @@ forInit returns [String v]
 
 forCondition returns [String v]
 	: { $v = ""; }
-	^( FOR_UPDATE
+	^( FOR_CONDITION
 	   ( expression {
-	     $v = $expression.v;
+	     $v += $expression.v;
 	   } )?
 	 )
 	;
