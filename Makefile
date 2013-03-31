@@ -1,7 +1,7 @@
 all:
 	antlr3 Java.g
 	antlr3 JavaTreeParser.g
-	javac JavaLexer.java JavaParser.java JavaTreeParser.java Test.java
+	javac JavaLexer.java JavaParser.java JavaTreeParser.java Statement.java Test.java
 
 test:	Test.class
 	java Test < corpus/IfThenElse.java > IfThenElse.java

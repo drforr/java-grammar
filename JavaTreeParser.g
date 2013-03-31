@@ -426,13 +426,13 @@ classScopeDeclarations returns [String v]
 	:
 	^( CLASS_INSTANCE_INITIALIZER
 	   ( block {
-	     $v = $block.v;
+	     $v = $block.s.string;
 	   } )?
 	 )
 	|
 	^( CLASS_STATIC_INITIALIZER
 	   ( block {
-	     $v = $block.v;
+	     $v = $block.s.string;
 	   } )?
 	 )
 	|
@@ -459,7 +459,7 @@ classScopeDeclarations returns [String v]
 	     $v += " " + $throwsClause.v;
 	   } )?
 	   ( block {
-	     $v = $block.v;
+	     $v = $block.s.string;
 	   } )?
 	  )
 	|
@@ -481,7 +481,7 @@ classScopeDeclarations returns [String v]
 	     $v += " " + $throwsClause.v;
 	   } )?
 	   ( block {
-	     $v += " " + $block.v;
+	     $v += " " + $block.s.string;
 	   } )?
 	 )
 	|
@@ -511,7 +511,7 @@ classScopeDeclarations returns [String v]
 	     $v += " " + $throwsClause.v;
 	   } )?
 	   ( block {
-	     $v += " " + $block.v;
+	     $v += " " + $block.s.string;
 	   } )
 	 )
 	| ( typeDeclaration {
@@ -1198,45 +1198,49 @@ annotationDefaultValue returns [String v]
 
 // {{{ block
 
-block returns [String v]
+block returns [Statement s]
 @init{ int _i = 0; }
-	: { $v = ""; }
-	{ $v += "{"; }
-	{ $v += "\n"; }
+	: { $s = new Statement(); $s.string = ""; }
+	{ $s.string += "{"; }
+	{ $s.string += "\n"; }
 	^( BLOCK_SCOPE
 	   ( blockStatement {
-	     $v += ( _i == 0 ? "" : "/* block */" )
-		  + $blockStatement.v;
+	     $s.string += ( _i == 0 ? "" : "/* block */" )
+		  + $blockStatement.s.string;
 // XXX Hack to suppress trailing semicolon on {}
 // XXX Aha, and here's how it fails. Array initializers have trailing braces.
 // XXX Time to reword the condition.
 // XXX
-String last = $v.substring($v.length()-1,$v.length());
-//if( last != "}" ) {
-if( !( $v.endsWith( "}" ) ) ) {
-  $v += ";/* XXX(1) ('" + last + "') */";
+String last = $s.string.substring($s.string.length()-1,$s.string.length());
+if( !( $s.string.endsWith( "}" ) ) ) {
+  //$s.string += ";/* XXX(1) ('" + last + "') */";
+  $s.string += ";";
 }
 else {
-  $v += "/* XXX(1) ('}') suppressing */";
+  //$s.string += "/* XXX(1) ('}') suppressing */";
+  $s.string += "";
 }
 	   } )*
 	 )
-	{ $v += "}"; }
+	{ $s.string += "}"; }
 	;
 
 // }}}
     
 // {{{ blockStatement
 
-blockStatement returns [String v]
+blockStatement returns [Statement s]
 	: ( localVariableDeclaration {
-	    $v = $localVariableDeclaration.v;
+	    $s = new Statement();
+	    $s.string = $localVariableDeclaration.v;
 	  } )
 	| ( typeDeclaration {
-	    $v = $typeDeclaration.v;
+	    $s = new Statement();
+	    $s.string = $typeDeclaration.v;
 	  } )
 	| ( statement {
-	    $v = $statement.v;
+	    $s = new Statement();
+	    $s.string = $statement.s.string;
 	  } )
 	;
 
@@ -1265,201 +1269,222 @@ localVariableDeclaration returns [String v]
 
 // {{{ statement
         
-statement returns [String v]
+statement returns [Statement s]
 	: ( block {
-	    $v = $block.v;
+	    $s = new Statement();
+	    $s.string = $block.s.string;
 	  } )
 	|
 	^( ( ASSERT {
-	     $v = $ASSERT.text;
+	     $s = new Statement();
+	     $s.string = $ASSERT.text;
 	   } )
 	   ( aExpression=expression {
-	     $v += $aExpression.v;
+	     $s.string += $aExpression.v;
 	   } )
 	   ( bExpression=expression {
-	     $v += $bExpression.v;
+	     $s.string += $bExpression.v;
 	   } )?
 	 )
 	|
 	^( ( IF {
-	     $v = $IF.text;
+	     $s = new Statement();
+	     $s.string = $IF.text;
 	   } )
 	   ( parenthesizedExpression {
-	     $v += $parenthesizedExpression.v;
+	     $s.string += $parenthesizedExpression.v;
 	   } )
 	   ( cStatement=statement {
-	     $v += $cStatement.v;
+	     $s.string += $cStatement.s.string;
 	   } )
 {
 // XXX Hack to suppress trailing semicolon on {}
-String last = $v.substring($v.length()-1,$v.length());
+String last = $s.string.substring($s.string.length()-1,$s.string.length());
 //if( last != "}" ) {
-if( !( $v.endsWith( "}" ) ) ) {
-  $v += ";/* XXX(2) ('" + last + "') */";
+if( !( $s.string.endsWith( "}" ) ) ) {
+  //$s.string += ";/* XXX(2) ('" + last + "') */";
+  $s.string += ";";
+}
+else {
 }
 }
 	   ( dStatement=statement {
-	     $v += " ";
-	     $v += "else";
-	     $v += " ";
-	     $v += $dStatement.v;
+	     $s.string += " ";
+	     $s.string += "else";
+	     $s.string += " ";
+	     $s.string += $dStatement.s.string;
 	   } )?
 	 )
 	|
 	^( ( FOR {
-	     $v = $FOR.text;
+	     $s = new Statement();
+	     $s.string = $FOR.text;
 	   } )
-	   { $v += "("; }
+	   { $s.string += "("; }
 	   ( forInit {
-	     $v += $forInit.v;
+	     $s.string += $forInit.v;
 	   } )
-	   { $v += ";"; }
+	   { $s.string += ";"; }
 	   ( forCondition {
-	     $v += $forCondition.v;
+	     $s.string += $forCondition.v;
 	   } )
-	   { $v += ";"; }
+	   { $s.string += ";"; }
 	   ( forUpdater {
-	     $v += $forUpdater.v;
+	     $s.string += $forUpdater.v;
 	   } )
-	   { $v += ")"; }
+	   { $s.string += ")"; }
 	   ( eStatement=statement {
-	     $v += $eStatement.v;
+	     $s.string += $eStatement.s.string;
 	   } )
 	 )
 	|
 	^( ( FOR_EACH {
-	     $v = $FOR_EACH.text;
+	     $s = new Statement();
+	     $s.string = $FOR_EACH.text;
 	   } )
 	   ( localModifierList {
-	     $v += $localModifierList.v;
+	     $s.string += $localModifierList.v;
 	   } )
 	   ( type {
-	     $v += $type.v;
+	     $s.string += $type.v;
 	   } )
 	   ( IDENT {
-	     $v += $IDENT.text;
+	     $s.string += $IDENT.text;
 	   } )
 	   ( expression {
-	     $v += $expression.v;
+	     $s.string += $expression.v;
 	   } )
 	   ( fStatement=statement {
-	     $v += $fStatement.v;
+	     $s.string += $fStatement.s.string;
 	   } )
 	 ) 
 	|
 	^( ( WHILE {
-	     $v = $WHILE.text;
+	     $s = new Statement();
+	     $s.string = $WHILE.text;
 	   } )
 	   ( parenthesizedExpression {
-	     $v += $parenthesizedExpression.v;
+	     $s.string += $parenthesizedExpression.v;
 	   } )
 	   ( gStatement=statement {
-	     $v += $gStatement.v;
+	     $s.string += $gStatement.s.string;
 	   } )
 	 )
 	|
 	^( ( DO {
-	     $v = $DO.text;
+	     $s = new Statement();
+	     $s.string = $DO.text;
 	   } )
 	   ( hStatement=statement {
-	     $v += " " + $hStatement.v;
+	     $s.string += " " + $hStatement.s.string;
 // XXX Hack to suppress trailing semicolon on {}
-String last = $v.substring($v.length()-1,$v.length());
+String last = $s.string.substring($s.string.length()-1,$s.string.length());
 //if( last != "}" ) {
-if( !( $v.endsWith( "}" ) ) ) {
-  $v += ";/* XXX(1) ('" + last + "') */";
+if( !( $s.string.endsWith( "}" ) ) ) {
+  //$s.string += ";/* XXX(1) ('" + last + "') */";
+  $s.string += ";";
 }
 	   } )
-	   { $v += " " + "while" + " "; }
+	   { $s.string += " " + "while" + " "; }
 	   ( parenthesizedExpression {
-	     $v += $parenthesizedExpression.v;
+	     $s.string += $parenthesizedExpression.v;
 	   } )
 	 )
 	|
 	// The second optional block is the optional finally block.
 	^( ( TRY {
-	     $v = $TRY.text;
+	     $s = new Statement();
+	     $s.string = $TRY.text;
 	   } )
 	   ( iBlock=block {
-	     $v += $iBlock.v;
+	     $s.string += $iBlock.s.string;
 	   } )
 	   ( catches {
-	     $v += $catches.v;
+	     $s.string += $catches.v;
 	   } )?
 	   ( jBlock=block {
-	     $v += $jBlock.v;
+	     $s.string += $jBlock.s.string;
 	   } )?
 	 )
 	|
 	^( ( SWITCH {
-	     $v = $SWITCH.text;
+	     $s = new Statement();
+	     $s.string = $SWITCH.text;
 	   } )
 	   ( parenthesizedExpression {
-	     $v += $parenthesizedExpression.v;
+	     $s.string += $parenthesizedExpression.v;
 	   } )
 	   ( switchBlockLabels {
-	     $v += $switchBlockLabels.v;
+	     $s.string += $switchBlockLabels.v;
 	   } )
 	 )
 	|
 	^( ( SYNCHRONIZED {
-	     $v = $SYNCHRONIZED.text;
+	     $s = new Statement();
+	     $s.string = $SYNCHRONIZED.text;
 	   } )
 	   ( parenthesizedExpression {
-	     $v += $parenthesizedExpression.v;
+	     $s.string += $parenthesizedExpression.v;
 	   } )
 	   ( block {
-	     $v += $block.v;
+	     $s.string += $block.s.string;
 	   } )
 	 )
 	|
 	^( ( RETURN {
-	     $v = $RETURN.text;
+	     $s = new Statement();
+	     $s.string = $RETURN.text;
 	   } )
 	   ( expression {
-	     $v += $expression.v;
+	     $s.string += $expression.v;
 	   } )?
 	 )
 	|
 	^( ( THROW {
-	     $v = $THROW.text;
+	     $s = new Statement();
+	     $s.string = $THROW.text;
 	   } )
 	   ( expression {
-	     $v += $expression.v;
+	     $s.string += $expression.v;
 	   } )
 	 )
 	|
 	^( ( BREAK {
-	     $v = $BREAK.text;
+	     $s = new Statement();
+	     $s.string = $BREAK.text;
 	   } )
 	   ( IDENT {
-	     $v += $IDENT.text;
+	     $s.string += $IDENT.text;
 	   } )?
 	 )
 	|
 	^( ( CONTINUE {
-	     $v = $CONTINUE.text;
+	     $s = new Statement();
+	     $s.string = $CONTINUE.text;
 	   } )
 	   ( IDENT {
-	     $v += $IDENT.text;
+	     $s.string += $IDENT.text;
 	   } )?
 	 )
 	|
 	^( ( LABELED_STATEMENT {
-	     $v = $LABELED_STATEMENT.text;
+	     $s = new Statement();
+	     $s.string = $LABELED_STATEMENT.text;
 	   } )
 	   ( IDENT {
-	     $v += $IDENT.text;
+	     $s.string += $IDENT.text;
 	   } )
 	   ( kStatement=statement {
-	     $v += $kStatement.v;
+	     $s.string += $kStatement.s.string;
 	   } )
 	 )
 	| ( expression {
-	    $v = $expression.v;
+	    $s = new Statement();
+	    $s.string = $expression.v;
 	  } )
 	| ( SEMI {
-	    $v = $SEMI.text;
+	    $s = new Statement();
+	    $s.string = $SEMI.text;
 	  } ) // Empty statement.
 	;
 
@@ -1491,7 +1516,7 @@ catchClause returns [String v]
 	     $v += $formalParameterStandardDecl.v;
 	   } )
 	   ( block {
-	     $v += $block.v;
+	     $v += $block.s.string;
 	   } )
 	 )
 	;
@@ -1533,7 +1558,7 @@ switchCaseLabel returns [String v]
 	   } )
 	   ( blockStatement {
 	     $v += ( _i == 0 ? "" : "/* switchCaseLabel */" )
-		 + $blockStatement.v;
+		 + $blockStatement.s.string;
 	   } )*
 	 )
 	;
@@ -1548,7 +1573,7 @@ switchDefaultLabel returns [String v]
 	^( DEFAULT
 	   ( blockStatement {
 	     $v += ( _i == 0 ? "" : "/* switchDefaultLabel */" )
-		 + $blockStatement.v;
+		 + $blockStatement.s.string;
 	   } )*
 	 )
 	;
