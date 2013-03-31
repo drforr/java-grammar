@@ -1013,8 +1013,8 @@ qualifiedIdentifier returns [String v]
 	^( ( DOT {
 	     $v = $DOT.text;
 	   } )
-	   ( a=qualifiedIdentifier {
-	     $v += " " + $a.text;
+	   ( aQualifiedIdentifier=qualifiedIdentifier {
+	     $v += " " + $aQualifiedIdentifier.text;
 	   } )
 	   ( IDENT {
 	     $v += " " + $IDENT.text;
@@ -1085,8 +1085,8 @@ annotationInitializers returns [String v]
 	|
 	^( ANNOTATION_INIT_DEFAULT_KEY
 	   ( annotationElementValue {
-	     $v += _i++ == 0 ? $annotationElementValue.v
-			     : "/* annotationElementValue 1 */" + $annotationElementValue.v;
+	     $v += ( _i++ == 0 ? "" : "/* annotationElementValue 1 */" )
+		 + $annotationElementValue.v;
 	   } )+
 	 )
 	;
@@ -1113,8 +1113,8 @@ annotationInitializer returns [String v]
 annotationElementValue returns [String v]
 	:
 	^( ANNOTATION_INIT_ARRAY_ELEMENT
-	   ( a=annotationElementValue {
-	     $v += $a.v;
+	   ( aAnnotationElementValue=annotationElementValue {
+	     $v += $aAnnotationElementValue.v;
 	   } )*
 	 )
 	|
@@ -1273,11 +1273,11 @@ statement returns [String v]
 	^( ( ASSERT {
 	     $v = $ASSERT.text;
 	   } )
-	   ( a=expression {
-	     $v += $a.v;
+	   ( aExpression=expression {
+	     $v += $aExpression.v;
 	   } )
-	   ( b=expression {
-	     $v += $b.v;
+	   ( bExpression=expression {
+	     $v += $bExpression.v;
 	   } )?
 	 )
 	|
@@ -1287,8 +1287,8 @@ statement returns [String v]
 	   ( parenthesizedExpression {
 	     $v += $parenthesizedExpression.v;
 	   } )
-	   ( a=statement {
-	     $v += $a.v;
+	   ( cStatement=statement {
+	     $v += $cStatement.v;
 	   } )
 {
 // XXX Hack to suppress trailing semicolon on {}
@@ -1298,11 +1298,11 @@ if( !( $v.endsWith( "}" ) ) ) {
   $v += ";/* XXX(2) ('" + last + "') */";
 }
 }
-	   ( b=statement {
+	   ( dStatement=statement {
 	     $v += " ";
 	     $v += "else";
 	     $v += " ";
-	     $v += $b.v;
+	     $v += $dStatement.v;
 	   } )?
 	 )
 	|
@@ -1322,8 +1322,8 @@ if( !( $v.endsWith( "}" ) ) ) {
 	     $v += $forUpdater.v;
 	   } )
 	   { $v += ")"; }
-	   ( a=statement {
-	     $v += $a.v;
+	   ( eStatement=statement {
+	     $v += $eStatement.v;
 	   } )
 	 )
 	|
@@ -1342,8 +1342,8 @@ if( !( $v.endsWith( "}" ) ) ) {
 	   ( expression {
 	     $v += $expression.v;
 	   } )
-	   ( a=statement {
-	     $v += $a.v;
+	   ( fStatement=statement {
+	     $v += $fStatement.v;
 	   } )
 	 ) 
 	|
@@ -1353,16 +1353,16 @@ if( !( $v.endsWith( "}" ) ) ) {
 	   ( parenthesizedExpression {
 	     $v += $parenthesizedExpression.v;
 	   } )
-	   ( a=statement {
-	     $v += $a.v;
+	   ( gStatement=statement {
+	     $v += $gStatement.v;
 	   } )
 	 )
 	|
 	^( ( DO {
 	     $v = $DO.text;
 	   } )
-	   ( a=statement {
-	     $v += " " + $a.v;
+	   ( hStatement=statement {
+	     $v += " " + $hStatement.v;
 // XXX Hack to suppress trailing semicolon on {}
 String last = $v.substring($v.length()-1,$v.length());
 //if( last != "}" ) {
@@ -1380,14 +1380,14 @@ if( !( $v.endsWith( "}" ) ) ) {
 	^( ( TRY {
 	     $v = $TRY.text;
 	   } )
-	   ( a=block {
-	     $v += $a.v;
+	   ( iBlock=block {
+	     $v += $iBlock.v;
 	   } )
 	   ( catches {
 	     $v += $catches.v;
 	   } )?
-	   ( b=block {
-	     $v += $b.v;
+	   ( jBlock=block {
+	     $v += $jBlock.v;
 	   } )?
 	 )
 	|
@@ -1451,8 +1451,8 @@ if( !( $v.endsWith( "}" ) ) ) {
 	   ( IDENT {
 	     $v += $IDENT.text;
 	   } )
-	   ( a=statement {
-	     $v += $a.v;
+	   ( kStatement=statement {
+	     $v += $kStatement.v;
 	   } )
 	 )
 	| ( expression {
@@ -1504,16 +1504,16 @@ switchBlockLabels returns [String v]
 @init{ int _i = 0, _j = 0; }
 	: { $v = ""; }
 	^( SWITCH_BLOCK_LABEL_LIST
-	   ( a=switchCaseLabel {
+	   ( aSwitchCaseLabel=switchCaseLabel {
 	     $v += ( _i++ == 0 ? "" : "/* switchBlockLabels */" )
-		 + $a.v;
+		 + $aSwitchCaseLabel.v;
 	   } )*
 	   ( switchDefaultLabel {
 	     $v += $switchDefaultLabel.v;
 	   } )?
-	   ( b=switchCaseLabel {
+	   ( bSwitchCaseLabel=switchCaseLabel {
 	     $v += ( _j++ == 0 ? "" : "/* switchBlockLabels */" )
-		 + $b.v;
+		 + $bSwitchCaseLabel.v;
 	   } )*
 	 )
 	;
@@ -1637,446 +1637,447 @@ expression returns [String v]
 expr returns [String v]
 	:
 	^( ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( aExpr=expr {
+	     $v = $aExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( bExpr=expr {
+	     $v += $bExpr.v;
 	   } )
 	 )
 	|
 	^( PLUS_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( cExpr=expr {
+	     $v = $cExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "+="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( dExpr=expr {
+	     $v += $dExpr.v;
 	   } )
 	 )
 	|
 	^( MINUS_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( eExpr=expr {
+	     $v = $eExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "-="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( fExpr=expr {
+	     $v += $fExpr.v;
 	   } )
 	 )
 	|
 	^( STAR_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( gExpr=expr {
+	     $v = $gExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "*="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( hExpr=expr {
+	     $v += $hExpr.v;
 	   } )
 	 )
 	|
 	^( DIV_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( iExpr=expr {
+	     $v = $iExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "/="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( jExpr=expr {
+	     $v += $jExpr.v;
 	   } )
 	 )
 	|
 	^( AND_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( kExpr=expr {
+	     $v = $kExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "&="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( lExpr=expr {
+	     $v += $lExpr.v;
 	   } )
 	 )
 	|
 	^( OR_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( mExpr=expr {
+	     $v = $mExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "|="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( nExpr=expr {
+	     $v += $nExpr.v;
 	   } )
 	 )
 	|
 	^( XOR_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( oExpr=expr {
+	     $v = $oExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "^="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( pExpr=expr {
+	     $v += $pExpr.v;
 	   } )
 	 )
 	|
 	^( MOD_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( qExpr=expr {
+	     $v = $qExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "\%="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( rExpr=expr {
+	     $v += $rExpr.v;
 	   } )
 	 )
 	|
 	^( BIT_SHIFT_RIGHT_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( sExpr=expr {
+	     $v = $sExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += ">>>="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( tExpr=expr {
+	     $v += $tExpr.v;
 	   } )
 	 )
 	|
 	^( SHIFT_RIGHT_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( uExpr=expr {
+	     $v = $uExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += ">>="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( vExpr=expr {
+	     $v += $vExpr.v;
 	   } )
 	 )
 	|
 	^( SHIFT_LEFT_ASSIGN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( wExpr=expr {
+	     $v = $wExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "<<="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( xExpr=expr {
+	     $v += $xExpr.v;
 	   } )
 	 )
 	|
-	^(QUESTION a=expr b=expr c=expr)
-		{ $v = $a.v + " ? " + $b.v + " : " + $c.v; }
+	^(QUESTION yExpr=expr zExpr=expr aaExpr=expr)
+		{ $v = $yExpr.v + " ? " + $zExpr.v + " : " + $aaExpr.v; }
 	|
 	^( LOGICAL_OR
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( abExpr=expr {
+	     $v = $abExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "||"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( acExpr=expr {
+	     $v += $acExpr.v;
 	   } )
 	 )
 	|
 	^( LOGICAL_AND
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( adExpr=expr {
+	     $v = $adExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "&&"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( aeExpr=expr {
+	     $v += $aeExpr.v;
 	   } )
 	 )
 	|
 	^( OR
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( afExpr=expr {
+	     $v = $afExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "|"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( agExpr=expr {
+	     $v += $agExpr.v;
 	   } )
 	 )
 	|
 	^( XOR
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( ahExpr=expr {
+	     $v = $ahExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "^"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( aiExpr=expr {
+	     $v += $aiExpr.v;
 	   } )
 	 )
 	|
 	^( AND
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( ajExpr=expr {
+	     $v = $ajExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "&"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( akExpr=expr {
+	     $v += $akExpr.v;
 	   } )
 	 )
 	|
 	^( EQUAL
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( alExpr=expr {
+	     $v = $alExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "=="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( amExpr=expr {
+	     $v += $amExpr.v;
 	   } )
 	 )
 	|
 	^( NOT_EQUAL
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( anExpr=expr {
+	     $v = $anExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "!="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( aoExpr=expr {
+	     $v += $aoExpr.v;
 	   } )
 	 )
 	|
 	^( LESS_OR_EQUAL
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( apExpr=expr {
+	     $v = $apExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "instanceof"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( aqExpr=expr {
+	     $v += $aqExpr.v;
 	   } )
 	 )
 	|
 	^( LESS_OR_EQUAL
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( arExpr=expr {
+	     $v = $arExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "<="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( asExpr=expr {
+	     $v += $asExpr.v;
 	   } )
 	 )
 	|
 	^( GREATER_THAN_OR_EQUAL
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( atExpr=expr {
+	     $v = $atExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += ">="; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( auExpr=expr {
+	     $v += $auExpr.v;
 	   } )
 	 )
 	|
 	^( BIT_SHIFT_RIGHT
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( avExpr=expr {
+	     $v = $avExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += ">>>"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( awExpr=expr {
+	     $v += $awExpr.v;
 	   } )
 	 )
 	|
 	^( SHIFT_RIGHT
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( axExpr=expr {
+	     $v = $axExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += ">>"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( ayExpr=expr {
+	     $v += $ayExpr.v;
 	   } )
 	 )
 	|
 	^( GREATER_THAN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( azExpr=expr {
+	     $v = $azExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += ">"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( baExpr=expr {
+	     $v += $baExpr.v;
 	   } )
 	 )
 	|
 	^( SHIFT_LEFT
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( bbExpr=expr {
+	     $v = $bbExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "<<"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( bcExpr=expr {
+	     $v += $bcExpr.v;
 	   } )
 	 )
 	|
 	^( LESS_THAN
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( bdExpr=expr {
+	     $v = $bdExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "<"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( beExpr=expr {
+	     $v += $beExpr.v;
 	   } )
 	 )
 	|
 	^( PLUS
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( bfExpr=expr {
+	     $v = $bfExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "+"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( bgExpr=expr {
+	     $v += $bgExpr.v;
 	   } )
 	 )
 	|
 	^( MINUS
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( bhExpr=expr {
+	     $v = $bhExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "-"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( biIexpr=expr {
+	     $v += $biIexpr.v;
 	   } )
 	 )
 	|
 	^( STAR
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( bjExpr=expr {
+	     $v = $bjExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "*"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( bkExpr=expr {
+	     $v += $bkExpr.v;
 	   } )
 	 )
 	|
 	^( DIV
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( blExpr=expr {
+	     $v = $blExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "/"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( bmExpr=expr {
+	     $v += $bmExpr.v;
 	   } )
 	 )
 	|
 	^( MOD
-	   ( lhs=expr {
-	     $v = $lhs.v;
+	   ( bnExpr=expr {
+	     $v = $bnExpr.v;
 	   } )
 	   { $v += " "; }
 	   { $v += "\%"; }
 	   { $v += " "; }
-	   ( rhs=expr {
-	     $v += $rhs.v;
+	   ( boExpr=expr {
+	     $v += $boExpr.v;
 	   } )
 	 )
 	|
 	^( UNARY_PLUS
-	   ( a=expr {
-	     $v = "+" + $a.v;
+	   ( bpExpr=expr {
+	     $v = "+" + $bpExpr.v;
 	   } )
 	 )
 	|
 	^( UNARY_MINUS
-	   ( a=expr {
-	     $v = "-" + $a.v;
+	   ( bqExpr=expr {
+	     $v = "-" + $bqExpr.v;
 	   } )
 	 )
 	|
 	^( PRE_INC
-	   ( a=expr {
-	     $v = "++" + $a.v;
+	   ( brExpr=expr {
+	     $v = "++" + $brExpr.v;
 	   } )
 	 )
 	|
 	^( PRE_DEC
-	   ( a=expr {
-	     $v = "--" + $a.v;
+	   ( bsExpr=expr {
+	     $v = "--" + $bsExpr.v;
 	   } )
 	 )
 	|
 	^( POST_INC
-	   ( a=expr {
-	     $v = $a.v + "++";
+	   ( btExpr=expr {
+	     $v = $btExpr.v + "++";
 	   } )
 	 )
 	|
 	^( POST_DEC
-	   ( a=expr {
-	     $v = $a.v + "--";
+	   ( buExpr=expr {
+	     $v = $buExpr.v + "--";
 	   } )
 	 )
 	|
 	^( NOT
-	   ( a=expr {
-	     $v = "~" + $a.v;
+	   ( bvExpr=expr {
+	     $v = "~" + $bvExpr.v;
 	   } )
 	 )
 	|
 	^( LOGICAL_NOT
-	   ( a=expr {
-	     $v = "!" + $a.v;
+	   ( bwExpr=expr {
+	     $v = "!" + $bwExpr.v;
 	   } )
 	 )
 	|
-	^( CAST_EXPR type a=expr
-		{
-			$v = " " + "(" + " " +
-			         $type.v +
-				 " " + ")" + " " + $a.v;
-		}
+	^( CAST_EXPR
+	   ( type {
+	     $v = " " + "(" + " " + $type.v;
+	   } )
+	   ( bxExpr=expr {
+	     $v += " " + ")" + " " + $bxExpr.v;
+	   } )
 	 )
 	|
 	( primaryExpression {
@@ -2093,8 +2094,8 @@ primaryExpression returns [String v]
 	^( ( DOT {
 	     $v = $DOT.text;
 	   } )
-           ( ( a=primaryExpression {
-	       $v += $a.v;
+           ( ( aPrimaryExpression=primaryExpression {
+	       $v += $aPrimaryExpression.v;
 	     } )
              ( ( IDENT {
 	         $v += $IDENT.text;
@@ -2108,21 +2109,21 @@ primaryExpression returns [String v]
              | ( innerNewExpression {
 	         $v += $innerNewExpression.v;
 	       } )
-             | ( A=CLASS {
-	         $v += $A.text;
+             | ( bCLASS=CLASS {
+	         $v += $bCLASS.text;
 	       } )
              )
            | ( primitiveType {
 	       $v += $primitiveType.v;
 	     } )
-             ( B=CLASS {
-	       $v += $B.text;
+             ( cCLASS=CLASS {
+	       $v += $cCLASS.text;
 	     } )
            | ( VOID {
 	       $v += $VOID.text;
 	     } )
-             ( C=CLASS {
-	       $v += $C.text;
+             ( dCLASS=CLASS {
+	       $v += $dCLASS.text;
 	     } )
            )
         )
@@ -2134,8 +2135,8 @@ primaryExpression returns [String v]
 	  } )
 	|
 	^( METHOD_CALL
-	   ( a=primaryExpression {
-	     $v = $a.v;
+	   ( ePrimaryExpression=primaryExpression {
+	     $v = $ePrimaryExpression.v;
 	   } )
 	   ( genericTypeArgumentList {
 	     $v += $genericTypeArgumentList.v;
@@ -2149,8 +2150,8 @@ primaryExpression returns [String v]
 	  } )
 	|
 	^( ARRAY_ELEMENT_ACCESS
-	   ( a=primaryExpression {
-	     $v = $a.v;
+	   ( fPrimaryExpression=primaryExpression {
+	     $v = $fPrimaryExpression.v;
 	   } )
 	   ( expression {
 	     $v+="[";
@@ -2210,8 +2211,8 @@ explicitConstructorCall returns [String v]
 arrayTypeDeclarator returns [String v]
 	:
 	^( ARRAY_DECLARATOR
-	   ( ( a=arrayTypeDeclarator {
-	       $v = $a.v;
+	   ( ( aArrayTypeDeclarator=arrayTypeDeclarator {
+	       $v = $aArrayTypeDeclarator.v;
 	     } )
 	   | ( qualifiedIdentifier {
 	       $v = $qualifiedIdentifier.v;
@@ -2233,8 +2234,8 @@ newExpression returns [String v]
 	   ( ( primitiveType {
 	       $v = $primitiveType.v;
 	     } )
-	     ( a=newArrayConstruction {
-	       $v += $a.v;
+	     ( aNewArrayConstruction=newArrayConstruction {
+	       $v += $aNewArrayConstruction.v;
 	     } )
 	   | ( genericTypeArgumentList {
 	       $v = $genericTypeArgumentList.v;
@@ -2242,8 +2243,8 @@ newExpression returns [String v]
 	     ( qualifiedTypeIdent {
 	       $v += $qualifiedTypeIdent.v;
 	     } )
-	     ( b=newArrayConstruction {
-	       $v += $b.v;
+	     ( bNewArrayConstruction=newArrayConstruction {
+	       $v += $bNewArrayConstruction.v;
 	     } )
 	   )
 	 )
