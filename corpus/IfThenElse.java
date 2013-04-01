@@ -1,54 +1,43 @@
 class IfThenElse {
-  public void a ( ) {
-    if ( 1 == 1 )
-      stuff();
-    if ( 1 == 1 ) {
-      stuffInt(2);
+  public int aTest = 0;
+  public void a ( ) { // if, statement
+    if ( aTest++ == 0 )
+      aTest++;
+  }
+
+  public void b ( ) { // if, block.
+    if ( aTest++ == 0 ) {
+      aTest++;
     }
   }
-  public void b ( ) {
-    if ( 1 == 1 )
-      stuff();
+
+  public void c ( ) { // if, statement, else, statement
+    if ( aTest++ == 0 )
+      aTest++;
     else
-      stuff();
-    if ( 1 == 1 ) {
-      stuff();
-    }
-    else
-      stuff();
-    if ( 1 == 1 )
-      stuff();
+      aTest = 99;
+  }
+
+  public void d ( ) { // if, block, else, statement
+    if ( aTest++ == 0 ) {
+      aTest++;
+    } else
+      aTest = 99;
+  }
+
+  public void e ( ) { // if, statement, else, block
+    if ( aTest++ == 0 )
+      aTest++;
     else {
-      stuff();
+      aTest = 99;
     }
-    if ( 1 == 1 ) {
-      stuff();
+  }
+
+  public void f ( ) { // if, block, else, block
+    if ( aTest++ == 0 ) {
+      aTest++;
     } else {
-      stuff();
+      aTest = 99;
     }
-  }
-  public void c ( ) {
-    if ( 1 == 1 )
-      stuff();
-    else if ( 2 == 2 )
-      stuff();
-    if ( 1 == 1 ) {
-      stuff();
-    } else if ( 2 == 2 )
-      stuff();
-    if ( 1 == 1 )
-      stuff();
-    else if ( 2 == 2 ) {
-      stuff();
-    }
-    if ( 1 == 1 ) {
-      stuff();
-    } else if ( 2 == 2 ) {
-      stuff();
-    }
-  }
-  public void stuff ( ) {
-  }
-  public void stuffInt ( int i ) {
   }
 }

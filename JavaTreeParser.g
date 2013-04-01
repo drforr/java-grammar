@@ -73,8 +73,8 @@ options {
   /** Set up an evaluator with a node stream; and a set of
    *  function definition ASTs.
    */
-  public JavaTreeParser(CommonTreeNodeStream nodes,
-                        List<CommonTree> functionDefinitions) {
+  public JavaTreeParser( CommonTreeNodeStream nodes,
+                         List<CommonTree> functionDefinitions ) {
     this(nodes);
     this.functionDefinitions = functionDefinitions;
   }
@@ -92,10 +92,10 @@ options {
    *
    * @param pNewState <code>true</code> if error messages should be collected.
    */
-  public void enableErrorMessageCollection(boolean pNewState) {
+  public void enableErrorMessageCollection( boolean pNewState ) {
     mMessageCollectionEnabled = pNewState;
-    if (mMessages == null && mMessageCollectionEnabled) {
-      mMessages = new ArrayList<String>();
+    if ( mMessages == null && mMessageCollectionEnabled ) {
+      mMessages = new ArrayList<String>( );
     }
   }
   
@@ -109,11 +109,11 @@ options {
    *  @param pMessage  The error message.
    */
    @Override
-  public void emitErrorMessage(String pMessage) {
-    if (mMessageCollectionEnabled) {
-      mMessages.add(pMessage);
+  public void emitErrorMessage( String pMessage ) {
+    if ( mMessageCollectionEnabled ) {
+      mMessages.add( pMessage );
     } else {
-      super.emitErrorMessage(pMessage);
+      super.emitErrorMessage( pMessage );
     }
   }
   
@@ -124,7 +124,7 @@ options {
    *           collecting error messages hasn't been enabled. Of course, this
    *           list may be empty if no error message has been emited.
    */
-  public List<String> getMessages() {
+  public List<String> getMessages( ) {
     return mMessages;
   }
   
@@ -134,7 +134,7 @@ options {
    *  @return  <code>true</code> if parsing a Java source has caused at
    *           least one error message.
    */
-  public boolean hasErrors() {
+  public boolean hasErrors( ) {
     return mHasErrors;
   }
 }
@@ -989,6 +989,7 @@ formalParameterList returns [String v]
 @init{ int _i = 0; }
 	:
 	{ $v = "("; }
+	{ $v += " "; }
 	^( FORMAL_PARAM_LIST
 	   ( formalParameterStandardDecl {
 	     $v += ( _i++ == 0 ? "" : "/* formalParameterList */" )
@@ -998,6 +999,7 @@ formalParameterList returns [String v]
 	     $v += $formalParameterVarargDecl.v;
 	   } )?
 	 )
+	{ $v += " "; }
 	{ $v += ")"; }
 	;
 
@@ -2425,12 +2427,14 @@ arguments returns [String v]
 @init{ int _i = 0; }
 	:
 	{ $v = "("; }
+	{ $v += " "; }
 	^( ARGUMENT_LIST
 	   ( expression {
 	     $v += ( _i++ == 0 ? "" : "/* arguments */" )
 		 + $expression.v;
 	   } )*
 	 )
+	{ $v += " "; }
 	{ $v += ")"; }
 	;
 
