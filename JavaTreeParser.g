@@ -42,10 +42,10 @@ tree grammar JavaTreeParser;
 // {{{ options
 
 options {
-    backtrack = true; 
-    memoize = true;
-    tokenVocab = Java;
-    ASTLabelType = CommonTree;
+  backtrack = true; 
+  memoize = true;
+  tokenVocab = Java;
+  ASTLabelType = CommonTree;
 }
 
 // }}}
@@ -53,9 +53,9 @@ options {
 // {{{ @header
 
 @header {
-    import java.util.Map;
-    import java.util.HashMap;
-    import java.math.BigInteger;
+  import java.util.Map;
+  import java.util.HashMap;
+  import java.math.BigInteger;
 }
 
 // }}}
@@ -63,80 +63,80 @@ options {
 // {{{ @treeparser::members
 
 @treeparser::members {
-    /** Points to functions tracked by tree builder. */
-    private List<CommonTree> functionDefinitions;
-    
-    boolean mMessageCollectionEnabled = false;
-    private boolean mHasErrors = false;
-    List<String> mMessages;
+  /** Points to functions tracked by tree builder. */
+  private List<CommonTree> functionDefinitions;
+  
+  boolean mMessageCollectionEnabled = false;
+  private boolean mHasErrors = false;
+  List<String> mMessages;
 
-    /** Set up an evaluator with a node stream; and a set of
-     *  function definition ASTs.
-     */
-    public JavaTreeParser(CommonTreeNodeStream nodes,
-                          List<CommonTree> functionDefinitions) {
-        this(nodes);
-        this.functionDefinitions = functionDefinitions;
-    }
+  /** Set up an evaluator with a node stream; and a set of
+   *  function definition ASTs.
+   */
+  public JavaTreeParser(CommonTreeNodeStream nodes,
+                        List<CommonTree> functionDefinitions) {
+    this(nodes);
+    this.functionDefinitions = functionDefinitions;
+  }
 
-    /**
-     *  Switches error message collection on or off.
-     *
-     * The standard destination for parser error messages is
-     * <code>System.err</code>.
-     * However, if <code>true</code> gets passed to this method this default
-     * behaviour will be switched off and all error messages will be collected
-     * instead of written to anywhere.
-     *
-     * The default value is <code>false</code>.
-     *
-     * @param pNewState <code>true</code> if error messages should be collected.
-     */
-    public void enableErrorMessageCollection(boolean pNewState) {
-        mMessageCollectionEnabled = pNewState;
-        if (mMessages == null && mMessageCollectionEnabled) {
-            mMessages = new ArrayList<String>();
-        }
+  /**
+   *  Switches error message collection on or off.
+   *
+   * The standard destination for parser error messages is
+   * <code>System.err</code>.
+   * However, if <code>true</code> gets passed to this method this default
+   * behaviour will be switched off and all error messages will be collected
+   * instead of written to anywhere.
+   *
+   * The default value is <code>false</code>.
+   *
+   * @param pNewState <code>true</code> if error messages should be collected.
+   */
+  public void enableErrorMessageCollection(boolean pNewState) {
+    mMessageCollectionEnabled = pNewState;
+    if (mMessages == null && mMessageCollectionEnabled) {
+      mMessages = new ArrayList<String>();
     }
-    
-    /**
-     *  Collects an error message or passes the error message to <code>
-     *  super.emitErrorMessage(...)</code>.
-     *
-     *  The actual behaviour depends on whether collecting error messages
-     *  has been enabled or not.
-     *
-     *  @param pMessage  The error message.
-     */
-     @Override
-    public void emitErrorMessage(String pMessage) {
-        if (mMessageCollectionEnabled) {
-            mMessages.add(pMessage);
-        } else {
-            super.emitErrorMessage(pMessage);
-        }
+  }
+  
+  /**
+   *  Collects an error message or passes the error message to <code>
+   *  super.emitErrorMessage(...)</code>.
+   *
+   *  The actual behaviour depends on whether collecting error messages
+   *  has been enabled or not.
+   *
+   *  @param pMessage  The error message.
+   */
+   @Override
+  public void emitErrorMessage(String pMessage) {
+    if (mMessageCollectionEnabled) {
+      mMessages.add(pMessage);
+    } else {
+      super.emitErrorMessage(pMessage);
     }
-    
-    /**
-     *  Returns collected error messages.
-     *
-     *  @return  A list holding collected error messages or <code>null</code> if
-     *           collecting error messages hasn't been enabled. Of course, this
-     *           list may be empty if no error message has been emited.
-     */
-    public List<String> getMessages() {
-        return mMessages;
-    }
-    
-    /**
-     *  Tells if parsing a Java source has caused any error messages.
-     *
-     *  @return  <code>true</code> if parsing a Java source has caused at
-     *           least one error message.
-     */
-    public boolean hasErrors() {
-        return mHasErrors;
-    }
+  }
+  
+  /**
+   *  Returns collected error messages.
+   *
+   *  @return  A list holding collected error messages or <code>null</code> if
+   *           collecting error messages hasn't been enabled. Of course, this
+   *           list may be empty if no error message has been emited.
+   */
+  public List<String> getMessages() {
+    return mMessages;
+  }
+  
+  /**
+   *  Tells if parsing a Java source has caused any error messages.
+   *
+   *  @return  <code>true</code> if parsing a Java source has caused at
+   *           least one error message.
+   */
+  public boolean hasErrors() {
+    return mHasErrors;
+  }
 }
 
 // }}}
@@ -291,7 +291,8 @@ typeDeclaration returns [String v]
 
 extendsClause returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( EXTENDS_CLAUSE
 	   ( type {
 	     $v += (_i == 0 ? "" : "/* extendsClause */" )
@@ -306,7 +307,8 @@ extendsClause returns [String v]
 
 implementsClause returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( IMPLEMENTS_CLAUSE
 	   ( type {
 	     $v += ( _i == 0 ? "" : "/* implementsClause */" )
@@ -321,7 +323,8 @@ implementsClause returns [String v]
 
 genericTypeParameterList returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( GENERIC_TYPE_PARAM_LIST
 	   ( genericTypeParameter {
 	     $v += ( _i == 0 ? "" : "/* genericTypeParameter */" )
@@ -351,7 +354,8 @@ genericTypeParameter returns [String v]
 
 bound returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( EXTENDS_BOUND_LIST
 	   ( type {
 	     $v += ( _i == 0 ? "" : "/* bound */" )
@@ -406,7 +410,7 @@ enumConstant returns [String v]
 
 classTopLevelScope returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
 	{ $v = "{"; }
 	{ $v += "\n"; }
 	^( CLASS_TOP_LEVEL_SCOPE
@@ -514,9 +518,10 @@ classScopeDeclarations returns [String v]
 	     $v += " " + $block.s.string;
 	   } )
 	 )
-	| ( typeDeclaration {
-	    $v = $typeDeclaration.v;
-	  } )
+	|
+	( typeDeclaration {
+	  $v = $typeDeclaration.v;
+	} )
     ;
 
 // }}}
@@ -525,7 +530,8 @@ classScopeDeclarations returns [String v]
 
 interfaceTopLevelScope returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( INTERFACE_TOP_LEVEL_SCOPE
 	   ( interfaceScopeDeclarations {
 	     $v += ( _i++ == 0 ? "" : "/* interfaceTopLevelScope */" )
@@ -608,7 +614,8 @@ interfaceScopeDeclarations returns [String v]
 
 variableDeclaratorList returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( VAR_DECLARATOR_LIST
 	   ( variableDeclarator {
 	     $v += ( _i++ == 0 ? "" : ", " )
@@ -653,12 +660,14 @@ variableDeclaratorId returns [String v]
 // {{{ variableInitializer
 
 variableInitializer returns [String v]
-	: ( arrayInitializer {
-	    $v = $arrayInitializer.v;
-	  } )
-	| ( expression {
-	    $v = $expression.v;
-	  } )
+	:
+	( arrayInitializer {
+	  $v = $arrayInitializer.v;
+	} )
+	|
+	( expression {
+	  $v = $expression.v;
+	} )
 	;
 
 // }}}
@@ -681,7 +690,8 @@ arrayDeclarator returns [String v]
 
 arrayDeclaratorList returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( ARRAY_DECLARATOR_LIST
 	   ( arrayDeclarator {
 	     $v += ( _i++ == 0 ? "" : "/* arrayDeclaratorList */" )
@@ -696,14 +706,16 @@ arrayDeclaratorList returns [String v]
 
 arrayInitializer returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
-	{ $v += "{"; }
+	:
+	{ $v = "{"; }
+	{ $v += " "; }
 	^( ARRAY_INITIALIZER
 	   ( variableInitializer {
 	     $v += ( _i++ == 0 ? "" : ", " )
 		 + $variableInitializer.v;
 	   } )*
 	 )
+	{ $v += " "; }
 	{ $v += "}"; }
 	;
 
@@ -713,7 +725,8 @@ arrayInitializer returns [String v]
 
 throwsClause returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( THROWS_CLAUSE
 	   ( qualifiedIdentifier {
 	     $v += ( _i++ == 0 ? "" : "/* throwsClause */" )
@@ -728,7 +741,8 @@ throwsClause returns [String v]
 
 modifierList returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( MODIFIER_LIST
 	   ( modifier {
 	     $v += ( _i == 0 ? "" : "/* modifierList */" )
@@ -742,39 +756,50 @@ modifierList returns [String v]
 // {{{ modifier
 
 modifier returns [String v]
-	: ( PUBLIC {
-	    $v = $PUBLIC.text;
-	  } )
-	| ( PROTECTED {
-	     $v = $PROTECTED.text;
-	  } )
-	| ( PRIVATE {
-	     $v = $PRIVATE.text;
-	  } )
-	| ( STATIC {
-	     $v = $STATIC.text;
-	  } )
-	| ( ABSTRACT {
-	     $v = $ABSTRACT.text;
-	  } )
-	| ( NATIVE {
-	     $v = $NATIVE.text;
-	  } )
-	| ( SYNCHRONIZED {
-	     $v = $SYNCHRONIZED.text;
-	  } )
-	| ( TRANSIENT {
-	     $v = $TRANSIENT.text;
-	  } )
-	| ( VOLATILE {
-	     $v = $VOLATILE.text;
-	  } )
-	| ( STRICTFP {
-	     $v = $STRICTFP.text;
-	  } )
-	| ( localModifier {
-	     $v = $localModifier.v;
-	  } )
+	:
+	( PUBLIC {
+	  $v = $PUBLIC.text;
+	} )
+	|
+	( PROTECTED {
+	  $v = $PROTECTED.text;
+	} )
+	|
+	( PRIVATE {
+	  $v = $PRIVATE.text;
+	} )
+	|
+	( STATIC {
+	  $v = $STATIC.text;
+	} )
+	|
+	( ABSTRACT {
+	  $v = $ABSTRACT.text;
+	} )
+	|
+	( NATIVE {
+	  $v = $NATIVE.text;
+	} )
+	|
+	( SYNCHRONIZED {
+	  $v = $SYNCHRONIZED.text;
+	} )
+	|
+	( TRANSIENT {
+	  $v = $TRANSIENT.text;
+	} )
+	|
+	( VOLATILE {
+	  $v = $VOLATILE.text;
+	} )
+	|
+	( STRICTFP {
+	  $v = $STRICTFP.text;
+	} )
+	|
+	( localModifier {
+	  $v = $localModifier.v;
+	} )
 	;
 
 // }}}
@@ -783,7 +808,8 @@ modifier returns [String v]
 
 localModifierList returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( LOCAL_MODIFIER_LIST
 	   ( localModifier {
 	     $v += ( _i == 0 ? "" : "/* localModifierList */" )
@@ -797,12 +823,14 @@ localModifierList returns [String v]
 // {{{ localModifier
 
 localModifier returns [String v]
-	: ( FINAL {
-	    $v = $FINAL.text;
-	  } )
-	| ( annotation {
-	    $v = $annotation.v;
-	  } )
+	:
+	( FINAL {
+	  $v = $FINAL.text;
+	} )
+	|
+	( annotation {
+	  $v = $annotation.v;
+	} )
 	;
 
 // }}}
@@ -831,7 +859,8 @@ type returns [String v]
 
 qualifiedTypeIdent returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( QUALIFIED_TYPE_IDENT
 	   ( typeIdent {
 	     $v += ( _i++ == 0 ? "" : "/* qualifiedTypeIdent */" )
@@ -860,30 +889,38 @@ typeIdent returns [String v]
 // {{{ primitiveType
 
 primitiveType returns [String v]
-	: ( BOOLEAN {
-	    $v = $BOOLEAN.text;
-	  } )
-	| ( CHAR {
-	    $v = $CHAR.text;
-	  } )
-	| ( BYTE {
-	    $v = $BYTE.text;
-	  } )
-	| ( SHORT {
-	    $v = $SHORT.text;
-	  } )
-	| ( INT {
-	    $v = $INT.text;
-	  } )
-	| ( LONG {
-	    $v = $LONG.text;
-	  } )
-	| ( FLOAT {
-	    $v = $FLOAT.text;
-	  } )
-	| ( DOUBLE {
-	    $v = $DOUBLE.text;
-	  } )
+	:
+	( BOOLEAN {
+	  $v = $BOOLEAN.text;
+	} )
+	|
+	( CHAR {
+	  $v = $CHAR.text;
+	} )
+	|
+	( BYTE {
+	  $v = $BYTE.text;
+	} )
+	|
+	( SHORT {
+	  $v = $SHORT.text;
+	} )
+	|
+	( INT {
+	  $v = $INT.text;
+	} )
+	|
+	( LONG {
+	  $v = $LONG.text;
+	} )
+	|
+	( FLOAT {
+	  $v = $FLOAT.text;
+	} )
+	|
+	( DOUBLE {
+	  $v = $DOUBLE.text;
+	} )
 	;
 
 // }}}
@@ -892,7 +929,8 @@ primitiveType returns [String v]
 
 genericTypeArgumentList returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( GENERIC_TYPE_ARG_LIST
 	   ( genericTypeArgument {
 	     $v += ( _i++ == 0 ? "" : "/* genericTypeArgumentList */" )
@@ -949,7 +987,7 @@ genericWildcardBoundType returns [String v]
 
 formalParameterList returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
 	{ $v = "("; }
 	^( FORMAL_PARAM_LIST
 	   ( formalParameterStandardDecl {
@@ -1030,7 +1068,8 @@ qualifiedIdentifier returns [String v]
 
 annotationList returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( ANNOTATION_LIST
 	   ( annotation {
 	     $v += ( _i++ == 0 ? "" : "/* annotationList */" )
@@ -1075,7 +1114,8 @@ annotationInit returns [String v]
 
 annotationInitializers returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( ANNOTATION_INIT_KEY_LIST
 	   ( annotationInitializer {
 	     $v += ( _i++ == 0 ? "" : "/* annotationInitializer 1 */" )
@@ -1200,7 +1240,10 @@ annotationDefaultValue returns [String v]
 
 block returns [Statement s]
 @init{ int _i = 0; }
-	: { $s = new Statement(); $s.string = ""; }
+	:
+	{ $s = new Statement();
+	  $s.string = "";
+	}
 	{ $s.string += "{"; }
 	{ $s.string += "\n"; }
 	^( BLOCK_SCOPE
@@ -1230,18 +1273,21 @@ else {
 // {{{ blockStatement
 
 blockStatement returns [Statement s]
-	: ( localVariableDeclaration {
-	    $s = new Statement();
-	    $s.string = $localVariableDeclaration.v;
-	  } )
-	| ( typeDeclaration {
-	    $s = new Statement();
-	    $s.string = $typeDeclaration.v;
-	  } )
-	| ( statement {
-	    $s = new Statement();
-	    $s.string = $statement.s.string;
-	  } )
+	:
+	( localVariableDeclaration {
+	  $s = new Statement();
+	  $s.string = $localVariableDeclaration.v;
+	} )
+	|
+	( typeDeclaration {
+	  $s = new Statement();
+	  $s.string = $typeDeclaration.v;
+	} )
+	|
+	( statement {
+	  $s = new Statement();
+	  $s.string = $statement.s.string;
+	} )
 	;
 
 // }}}
@@ -1270,10 +1316,11 @@ localVariableDeclaration returns [String v]
 // {{{ statement
         
 statement returns [Statement s]
-	: ( block {
-	    $s = new Statement();
-	    $s.string = $block.s.string;
-	  } )
+	:
+	( block {
+	  $s = new Statement();
+	  $s.string = $block.s.string;
+	} )
 	|
 	^( ( ASSERT {
 	     $s = new Statement();
@@ -1478,14 +1525,16 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	     $s.string += $kStatement.s.string;
 	   } )
 	 )
-	| ( expression {
-	    $s = new Statement();
-	    $s.string = $expression.v;
-	  } )
-	| ( SEMI {
-	    $s = new Statement();
-	    $s.string = $SEMI.text;
-	  } ) // Empty statement.
+	|
+	( expression {
+	  $s = new Statement();
+	  $s.string = $expression.v;
+	} )
+	|
+	( SEMI { // Empty statement.
+	  $s = new Statement();
+	  $s.string = $SEMI.text;
+	} )
 	;
 
 // }}}
@@ -1494,7 +1543,8 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 
 catches returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( CATCH_CLAUSE_LIST
 	   ( catchClause {
 	     $v += ( _i == 0 ? "" : "/* catches */" )
@@ -1527,7 +1577,8 @@ catchClause returns [String v]
 
 switchBlockLabels returns [String v]
 @init{ int _i = 0, _j = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( SWITCH_BLOCK_LABEL_LIST
 	   ( aSwitchCaseLabel=switchCaseLabel {
 	     $v += ( _i++ == 0 ? "" : "/* switchBlockLabels */" )
@@ -1569,7 +1620,8 @@ switchCaseLabel returns [String v]
 
 switchDefaultLabel returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( DEFAULT
 	   ( blockStatement {
 	     $v += ( _i == 0 ? "" : "/* switchDefaultLabel */" )
@@ -1584,7 +1636,8 @@ switchDefaultLabel returns [String v]
 
 forInit returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( FOR_INIT
 	   ( ( localVariableDeclaration {
 	       $v = $localVariableDeclaration.v;
@@ -1602,7 +1655,8 @@ forInit returns [String v]
 // {{{ forCondition
 
 forCondition returns [String v]
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( FOR_CONDITION
 	   ( expression {
 	     $v += $expression.v;
@@ -1616,7 +1670,8 @@ forCondition returns [String v]
 
 forUpdater returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( FOR_UPDATE
 	   ( expression {
 	     $v += ( _i == 0 ? "" : "/* forUpdater */" )
@@ -1805,8 +1860,23 @@ expr returns [String v]
 	   } )
 	 )
 	|
-	^(QUESTION yExpr=expr zExpr=expr aaExpr=expr)
-		{ $v = $yExpr.v + " ? " + $zExpr.v + " : " + $aaExpr.v; }
+	^( QUESTION
+	   ( yExpr=expr {
+	     $v = $yExpr.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "?"; }
+	   { $v += " "; }
+	   ( zExpr=expr {
+	     $v += $zExpr.v;
+	   } )
+	   { $v += " "; }
+	   { $v += "?"; }
+	   { $v += " "; }
+	   ( aaExpr=expr {
+	     $v += $aaExpr.v;
+	   } )
+	 )
 	|
 	^( LOGICAL_OR
 	   ( abExpr=expr {
@@ -2152,12 +2222,14 @@ primaryExpression returns [String v]
 	     } )
            )
         )
-	| ( parenthesizedExpression {
-	    $v = $parenthesizedExpression.v;
-	  } )
-	| ( IDENT {
-	    $v = $IDENT.text;
-	  } )
+	|
+	( parenthesizedExpression {
+	  $v = $parenthesizedExpression.v;
+	} )
+	|
+	( IDENT {
+	  $v = $IDENT.text;
+	} )
 	|
 	^( METHOD_CALL
 	   ( ePrimaryExpression=primaryExpression {
@@ -2170,9 +2242,10 @@ primaryExpression returns [String v]
 	     $v += $arguments.v;
 	   } )
 	 )
-	| ( explicitConstructorCall {
-	    $v = $explicitConstructorCall.v;
-	  } )
+	|
+	( explicitConstructorCall {
+	  $v = $explicitConstructorCall.v;
+	} )
 	|
 	^( ARRAY_ELEMENT_ACCESS
 	   ( fPrimaryExpression=primaryExpression {
@@ -2184,22 +2257,27 @@ primaryExpression returns [String v]
 	     $v+="]";
 	   } )
 	 )
-	| ( literal {
-	    $v = $literal.v;
-	  } )
-	| ( newExpression {
-	    $v = $newExpression.v;
-	  } )
-	| ( THIS {
-	    $v = $THIS.text;
-	  } )
-	| ( arrayTypeDeclarator {
-	    $v = $arrayTypeDeclarator.v;
-	  } )
-	| ( SUPER {
-	    $v = $SUPER.text;
-	  } )
-    ;
+	|
+	( literal {
+	  $v = $literal.v;
+	} )
+	|
+	( newExpression {
+	  $v = $newExpression.v;
+	} )
+	|
+	( THIS {
+	  $v = $THIS.text;
+	} )
+	|
+	( arrayTypeDeclarator {
+	  $v = $arrayTypeDeclarator.v;
+	} )
+	|
+	( SUPER {
+	  $v = $SUPER.text;
+	} )
+	;
 
 // }}}
     
@@ -2296,7 +2374,8 @@ newExpression returns [String v]
 // something like 'InnerType innerType = outer.new InnerType();'
 
 innerNewExpression returns [String v]
-	: { $v = ""; }
+	:
+	{ $v = ""; }
 	^( CLASS_CONSTRUCTOR_CALL
 	   ( genericTypeArgumentList {
 	     $v += " " + $genericTypeArgumentList.v;
@@ -2319,21 +2398,23 @@ innerNewExpression returns [String v]
 
 newArrayConstruction returns [String v]
 @init{ int _i = 0; }
-	: ( arrayDeclaratorList {
-	    $v = $arrayDeclaratorList.v;
-	  } )
-	  ( arrayInitializer {
-	    $v = $arrayInitializer.v;
-	  } )
-	  { $v += ";"; }
-	| { $v = ""; }
-	  ( expression {
-	    $v += ( _i++ == 0 ? "" : "/* newArrayConstruction */" )
-		+ $expression.v;
-	  } )+
-	  ( arrayDeclaratorList {
-	    $v += $arrayDeclaratorList.v;
-	  } )?
+	:
+	( arrayDeclaratorList {
+	  $v = $arrayDeclaratorList.v;
+	} )
+	( arrayInitializer {
+	  $v = $arrayInitializer.v;
+	} )
+	{ $v += ";"; }
+	|
+	{ $v = ""; }
+	( expression {
+	  $v += ( _i++ == 0 ? "" : "/* newArrayConstruction */" )
+	      + $expression.v;
+	} )+
+	( arrayDeclaratorList {
+	  $v += $arrayDeclaratorList.v;
+	} )?
 	;
 
 // }}}
@@ -2342,8 +2423,8 @@ newArrayConstruction returns [String v]
 
 arguments returns [String v]
 @init{ int _i = 0; }
-	: { $v = ""; }
-	{ $v += "("; }
+	:
+	{ $v = "("; }
 	^( ARGUMENT_LIST
 	   ( expression {
 	     $v += ( _i++ == 0 ? "" : "/* arguments */" )
@@ -2358,33 +2439,42 @@ arguments returns [String v]
 // {{{ literal
 
 literal returns [String v]
-	: ( HEX_LITERAL {
-	    $v = $HEX_LITERAL.text;
-	  } )
-	| ( OCTAL_LITERAL {
-	    $v = $OCTAL_LITERAL.text;
-	  } )
-	| ( DECIMAL_LITERAL {
-	    $v = $DECIMAL_LITERAL.text;
-	  } )
-	| ( FLOATING_POINT_LITERAL {
-	    $v = $FLOATING_POINT_LITERAL.text;
-	  } )
-	| ( CHARACTER_LITERAL {
-	    $v = $CHARACTER_LITERAL.text;
-	  } )
-	| ( STRING_LITERAL {
-	    $v = $STRING_LITERAL.text;
-	  } )
-	| ( TRUE {
-	    $v = $TRUE.text;
-	  } )
-	| ( FALSE {
-	    $v = $FALSE.text;
-	  } )
-	| ( NULL {
-	    $v = $NULL.text;
-	  } )
+	:
+	( HEX_LITERAL {
+	  $v = $HEX_LITERAL.text;
+	} )
+	|
+	( OCTAL_LITERAL {
+	  $v = $OCTAL_LITERAL.text;
+	} )
+	|
+	( DECIMAL_LITERAL {
+	  $v = $DECIMAL_LITERAL.text;
+	} )
+	|
+	( FLOATING_POINT_LITERAL {
+	  $v = $FLOATING_POINT_LITERAL.text;
+	} )
+	|
+	( CHARACTER_LITERAL {
+	  $v = $CHARACTER_LITERAL.text;
+	} )
+	|
+	( STRING_LITERAL {
+	  $v = $STRING_LITERAL.text;
+	} )
+	|
+	( TRUE {
+	  $v = $TRUE.text;
+	} )
+	|
+	( FALSE {
+	  $v = $FALSE.text;
+	} )
+	|
+	( NULL {
+	  $v = $NULL.text;
+	} )
 	;
 
 // }}}
