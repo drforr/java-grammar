@@ -494,11 +494,12 @@ classScopeDeclarations returns [String v]
 	     $v = $modifierList.v;
 	   } )
 	   ( type {
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
-	   ( variableDeclaratorId {
-	     $v += $variableDeclaratorId.v;
+	   ( variableDeclaratorList {
+	     $v += " " + $variableDeclaratorList.v;
 	   } )
+	   { $v += ";"; }
 	 )
 	|
 	^( CONSTRUCTOR_DECL
@@ -650,7 +651,7 @@ variableDeclaratorId returns [String v]
 	     $v = $IDENT.text;
 	   } )
 	   ( arrayDeclaratorList {
-	     $v += $arrayDeclaratorList.v;
+	     $v += " " + $arrayDeclaratorList.v;
 	   } )?
 	 )
 	;
@@ -1216,9 +1217,10 @@ annotationScopeDeclarations returns [String v]
 	     $v += $variableDeclaratorList.v;
 	   } )
 	 )
-	| ( typeDeclaration {
-	    $v = $typeDeclaration.v;
-	  } )
+	|
+	( typeDeclaration {
+	  $v = $typeDeclaration.v;
+	} )
 	;
 
 // }}}

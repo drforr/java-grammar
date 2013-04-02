@@ -1,15 +1,17 @@
 all:
 	antlr3 Java.g
 	antlr3 JavaTreeParser.g
-	javac JavaLexer.java JavaParser.java JavaTreeParser.java Statement.java Test.java
+	javac JavaLexer.java JavaParser.java JavaTreeParser.java Statement.java Converter.java
 
-test:	Test.class
-	java Test < corpus/IfThenElse.java > IfThenElse.java
-	javac IfThenElse.java
-	java Test < corpus/Loops.java > Loops.java
-	javac Loops.java
-	java Test < corpus/Arrays.java > Arrays.java
-	javac Arrays.java
+Class.java:
+	java Converter < corpus/Class.java > Class.java
+Attribute.java: corpus/Attribute.java
+	java Converter < corpus/Attribute.java > Attribute.java
+	
+
+test:	Class.java Attribute.java Tester.java
+	javac Class.java Attribute.java Tester.java
+	java Tester
 
 clean:
-	rm -f *.class *.tokens JavaLexer* JavaParser* JavaTreeParser.java
+	rm -f *.class *.tokens JavaLexer* JavaParser* JavaTreeParser.java Class.java Attribute.java

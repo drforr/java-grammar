@@ -5,6 +5,7 @@ class IfThenElse {
       aTest++;
   }
 
+/*
   public void b ( ) { // if, block.
     if ( aTest++ == 0 ) {
       aTest++;
@@ -40,4 +41,5 @@ class IfThenElse {
       aTest = 99;
     }
   }
+*/
 }
