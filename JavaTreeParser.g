@@ -141,8 +141,6 @@ options {
 
 // }}}
 
-/* Just get IfThenElse to display itself cleanly. */
-
 // {{{ javaSource
 
 javaSource returns [String v]
@@ -418,6 +416,7 @@ classTopLevelScope returns [String v]
 	     { $v += ( _i == 0 ? "" : "/* classTopLevelScope */" )
 		   + $classScopeDeclarations.v; } )*
 	 )
+	{ $v += "\n"; }
 	{ $v += "}"; }
 	{ $v += "\n"; }
 	;
@@ -448,7 +447,7 @@ classScopeDeclarations returns [String v]
 	     $v += " " + $genericTypeParameterList.v;
 	   } )?
 	   ( type {
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
 	   ( IDENT {
 	     $v += " " + $IDENT.text;
@@ -463,7 +462,7 @@ classScopeDeclarations returns [String v]
 	     $v += " " + $throwsClause.v;
 	   } )?
 	   ( block {
-	     $v = $block.s.string;
+	     $v += " " + $block.s.string;
 	   } )?
 	  )
 	|
@@ -1269,7 +1268,9 @@ else {
 }
 	   } )*
 	 )
+	{ $s.string += "\n"; }
 	{ $s.string += "}"; }
+	{ $s.string += "\n"; }
 	;
 
 // }}}
@@ -1487,7 +1488,7 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	     $s.string = $RETURN.text;
 	   } )
 	   ( expression {
-	     $s.string += $expression.v;
+	     $s.string += " " + $expression.v;
 	   } )?
 	 )
 	|

@@ -1,0 +1,6 @@
+README
+
+All of the Java files in this directory are meant to be converted by the
+converter program at the top level. The files have to compile, and as such,
+the test suite mostly checks whether all of the code in the files exists
+after conversion, and returns the right result.

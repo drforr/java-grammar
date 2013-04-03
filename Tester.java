@@ -8,8 +8,8 @@ class Tester {
       System.out.println( "not ok 1" );
     }
 
-    Attribute testAttribute = new Attribute();
-    System.out.println( testAttribute.aTest == 42 ? "ok 2" : "not ok 2" );
-    System.out.println( testAttribute.bTest == -7 ? "ok 3" : "not ok 3" );
+    Method testMethod = new Method();
+    System.out.println( testMethod.aTest() == 42 ? "ok 2" : "not ok 2" );
+    System.out.println( testMethod.cTest() == -7 ? "ok 3" : "not ok 3" );
   }
 }
