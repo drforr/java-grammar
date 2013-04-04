@@ -32,5 +32,13 @@ class Tester {
     System.out.println(
       testIfThenElse.fTest() == 42 ? "ok 10" : "not ok 10"
     );
+
+    Attribute testAttribute = new Attribute();
+    System.out.println(
+      testAttribute.aTest == 42 ? "ok 11" : "not ok 11"
+    );
+    System.out.println(
+      testAttribute.cTest() == -7 ? "ok 12" : "not ok 12"
+    );
   }
 }

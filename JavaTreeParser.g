@@ -488,7 +488,7 @@ classScopeDeclarations returns [String v]
 	   } )?
 	 )
 	|
-	^( VAR_DECLARATION
+	^( VAR_DECLARATION // XXX public int aTest = 42;
 	   ( modifierList {
 	     $v = $modifierList.v;
 	   } )
@@ -498,7 +498,7 @@ classScopeDeclarations returns [String v]
 	   ( variableDeclaratorList {
 	     $v += " " + $variableDeclaratorList.v;
 	   } )
-	   { $v += "/*;1*/" + "\n"; }
+	   { $v += ";" + "\n"; }
 	 )
 	|
 	^( CONSTRUCTOR_DECL
@@ -1259,7 +1259,7 @@ $s.id = 1;
 $s.string +=
   ( $blockStatement.s.id == 2 ? ";" : "" ) +
   ( $blockStatement.s.id == 14 ? ";" : "" ) +
-  "/* 1 " + ( $blockStatement.s.isBlock ? "BLOCK" : "STATEMENT" ) + " (" + $blockStatement.s.id + ") */";
+  "/* 1 (" + $blockStatement.s.id + ") */";
 
 
 	   } )*
@@ -1357,7 +1357,7 @@ $s.string +=
   // XXX Not id=5, that's the block
   // XXX not id=14, while it 
   ( $cStatement.s.id == 14 ? ";" : "" ) +
-  "/* 2 " + ( $cStatement.s.isBlock ? "BLOCK" : "STATEMENT" ) + " (" + $cStatement.s.id + ") */";
+  "/* 2 (" + $cStatement.s.id + ") */";
 
 }
 	   ( dStatement=statement {
@@ -1369,7 +1369,7 @@ $s.string +=
   // XXX Not id=5, that's the block
   // XXX not id=14, while it 
   ( $dStatement.s.id == 14 ? ";" : "" ) +
-  "/* 3 " + ( $dStatement.s.isBlock ? "BLOCK" : "STATEMENT" ) + " (" + $dStatement.s.id + ") */";
+  "/* 3 (" + $dStatement.s.id + ") */";
 	   } )?
 	 )
 	|
