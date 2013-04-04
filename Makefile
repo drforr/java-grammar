@@ -6,9 +6,10 @@ all:
 conversion:
 	java Converter < corpus/Class.java > Class.java
 	java Converter < corpus/Method.java > Method.java
+	java Converter < corpus/IfThenElse.java > IfThenElse.java
 	
 
-test:	Class.java Method.java Tester.java
+test:	Class.java Method.java IfThenElse.java Tester.java
 	javac Class.java Tester.java
 	java Tester
 

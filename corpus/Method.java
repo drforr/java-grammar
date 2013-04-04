@@ -15,4 +15,8 @@ class Method {
   public int cTest ( ) {
     return bTest();
   }
+  public int dTest ( ) {
+    int i = 41;
+    return ++i;
+  }
 }

@@ -1,45 +1,45 @@
 class IfThenElse {
-  public int aTest = 0;
-  public void a ( ) { // if, statement
-    if ( aTest++ == 0 )
-      aTest++;
+  public int aTest ( ) {
+    int i = 40;
+    if ( ++i == 41 )
+      return ++i;
+    return 0;
   }
-
-/*
-  public void b ( ) { // if, block.
-    if ( aTest++ == 0 ) {
-      aTest++;
+  public int bTest ( ) {
+    int i = 40;
+    if ( ++i == 41 ) {
+      return ++i;
     }
+    return 0;
   }
-
-  public void c ( ) { // if, statement, else, statement
-    if ( aTest++ == 0 )
-      aTest++;
+  public int cTest ( ) {
+    int i = 40;
+    if ( ++i == 40 )
+      return --i;
     else
-      aTest = 99;
+      return ++i;
   }
-
-  public void d ( ) { // if, block, else, statement
-    if ( aTest++ == 0 ) {
-      aTest++;
+  public int dTest ( ) {
+    int i = 40;
+    if ( ++i == 40 ) {
+      return --i;
     } else
-      aTest = 99;
+      return ++i;
   }
-
-  public void e ( ) { // if, statement, else, block
-    if ( aTest++ == 0 )
-      aTest++;
+  public int eTest ( ) {
+    int i = 40;
+    if ( ++i == 40 )
+      return --i;
     else {
-      aTest = 99;
+      return ++i;
     }
   }
-
-  public void f ( ) { // if, block, else, block
-    if ( aTest++ == 0 ) {
-      aTest++;
+  public int fTest ( ) {
+    int i = 40;
+    if ( ++i == 40 ) {
+      return --i;
     } else {
-      aTest = 99;
+      return ++i;
     }
   }
-*/
 }

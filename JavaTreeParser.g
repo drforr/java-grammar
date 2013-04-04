@@ -498,7 +498,7 @@ classScopeDeclarations returns [String v]
 	   ( variableDeclaratorList {
 	     $v += " " + $variableDeclaratorList.v;
 	   } )
-	   { $v += ";"; }
+	   { $v += "/*;1*/" + "\n"; }
 	 )
 	|
 	^( CONSTRUCTOR_DECL
@@ -1245,6 +1245,7 @@ block returns [Statement s]
 @init{ int _i = 0; }
 	:
 	{ $s = new Statement();
+$s.id = 1;
 	  $s.string = "";
 	}
 	{ $s.string += "{"; }
@@ -1253,19 +1254,14 @@ block returns [Statement s]
 	   ( blockStatement {
 	     $s.string += ( _i == 0 ? "" : "/* block */" )
 		  + $blockStatement.s.string;
-// XXX Hack to suppress trailing semicolon on {}
-// XXX Aha, and here's how it fails. Array initializers have trailing braces.
-// XXX Time to reword the condition.
-// XXX
-String last = $s.string.substring($s.string.length()-1,$s.string.length());
-if( !( $s.string.endsWith( "}" ) ) ) {
-  //$s.string += ";/* XXX(1) ('" + last + "') */";
-  $s.string += ";";
-}
-else {
-  //$s.string += "/* XXX(1) ('}') suppressing */";
-  $s.string += "";
-}
+
+
+$s.string +=
+  ( $blockStatement.s.id == 2 ? ";" : "" ) +
+  ( $blockStatement.s.id == 14 ? ";" : "" ) +
+  "/* 1 " + ( $blockStatement.s.isBlock ? "BLOCK" : "STATEMENT" ) + " (" + $blockStatement.s.id + ") */";
+
+
 	   } )*
 	 )
 	{ $s.string += "\n"; }
@@ -1279,19 +1275,23 @@ else {
 
 blockStatement returns [Statement s]
 	:
-	( localVariableDeclaration {
+	( localVariableDeclaration { // XXX 'int i = 40;'
 	  $s = new Statement();
+          $s.id = 2;
 	  $s.string = $localVariableDeclaration.v;
 	} )
 	|
 	( typeDeclaration {
 	  $s = new Statement();
+$s.id = 3;
 	  $s.string = $typeDeclaration.v;
 	} )
 	|
 	( statement {
 	  $s = new Statement();
+//$s.id = 4;
 	  $s.string = $statement.s.string;
+$s.id = $statement.s.id;
 	} )
 	;
 
@@ -1324,11 +1324,13 @@ statement returns [Statement s]
 	:
 	( block {
 	  $s = new Statement();
+$s.id = 5;
 	  $s.string = $block.s.string;
 	} )
 	|
 	^( ( ASSERT {
 	     $s = new Statement();
+$s.id = 6;
 	     $s.string = $ASSERT.text;
 	   } )
 	   ( aExpression=expression {
@@ -1341,6 +1343,7 @@ statement returns [Statement s]
 	|
 	^( ( IF {
 	     $s = new Statement();
+$s.id = 7;
 	     $s.string = $IF.text;
 	   } )
 	   ( parenthesizedExpression {
@@ -1350,26 +1353,29 @@ statement returns [Statement s]
 	     $s.string += $cStatement.s.string;
 	   } )
 {
-// XXX Hack to suppress trailing semicolon on {}
-String last = $s.string.substring($s.string.length()-1,$s.string.length());
-//if( last != "}" ) {
-if( !( $s.string.endsWith( "}" ) ) ) {
-  //$s.string += ";/* XXX(2) ('" + last + "') */";
-  $s.string += ";";
-}
-else {
-}
+$s.string +=
+  // XXX Not id=5, that's the block
+  // XXX not id=14, while it 
+  ( $cStatement.s.id == 14 ? ";" : "" ) +
+  "/* 2 " + ( $cStatement.s.isBlock ? "BLOCK" : "STATEMENT" ) + " (" + $cStatement.s.id + ") */";
+
 }
 	   ( dStatement=statement {
 	     $s.string += " ";
 	     $s.string += "else";
 	     $s.string += " ";
 	     $s.string += $dStatement.s.string;
+$s.string +=
+  // XXX Not id=5, that's the block
+  // XXX not id=14, while it 
+  ( $dStatement.s.id == 14 ? ";" : "" ) +
+  "/* 3 " + ( $dStatement.s.isBlock ? "BLOCK" : "STATEMENT" ) + " (" + $dStatement.s.id + ") */";
 	   } )?
 	 )
 	|
 	^( ( FOR {
 	     $s = new Statement();
+$s.id = 7;
 	     $s.string = $FOR.text;
 	   } )
 	   { $s.string += "("; }
@@ -1392,6 +1398,7 @@ else {
 	|
 	^( ( FOR_EACH {
 	     $s = new Statement();
+$s.id = 8;
 	     $s.string = $FOR_EACH.text;
 	   } )
 	   ( localModifierList {
@@ -1413,6 +1420,7 @@ else {
 	|
 	^( ( WHILE {
 	     $s = new Statement();
+$s.id = 9;
 	     $s.string = $WHILE.text;
 	   } )
 	   ( parenthesizedExpression {
@@ -1425,6 +1433,7 @@ else {
 	|
 	^( ( DO {
 	     $s = new Statement();
+$s.id = 10;
 	     $s.string = $DO.text;
 	   } )
 	   ( hStatement=statement {
@@ -1434,7 +1443,7 @@ String last = $s.string.substring($s.string.length()-1,$s.string.length());
 //if( last != "}" ) {
 if( !( $s.string.endsWith( "}" ) ) ) {
   //$s.string += ";/* XXX(1) ('" + last + "') */";
-  $s.string += ";";
+  $s.string += "/*;4*/" + "\n";
 }
 	   } )
 	   { $s.string += " " + "while" + " "; }
@@ -1446,6 +1455,7 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	// The second optional block is the optional finally block.
 	^( ( TRY {
 	     $s = new Statement();
+$s.id = 11;
 	     $s.string = $TRY.text;
 	   } )
 	   ( iBlock=block {
@@ -1461,6 +1471,7 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	|
 	^( ( SWITCH {
 	     $s = new Statement();
+$s.id = 12;
 	     $s.string = $SWITCH.text;
 	   } )
 	   ( parenthesizedExpression {
@@ -1473,6 +1484,7 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	|
 	^( ( SYNCHRONIZED {
 	     $s = new Statement();
+$s.id = 13;
 	     $s.string = $SYNCHRONIZED.text;
 	   } )
 	   ( parenthesizedExpression {
@@ -1483,8 +1495,9 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	   } )
 	 )
 	|
-	^( ( RETURN {
+	^( ( RETURN { // XXX 'return 0;'
 	     $s = new Statement();
+             $s.id = 14;
 	     $s.string = $RETURN.text;
 	   } )
 	   ( expression {
@@ -1494,6 +1507,7 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	|
 	^( ( THROW {
 	     $s = new Statement();
+$s.id = 15;
 	     $s.string = $THROW.text;
 	   } )
 	   ( expression {
@@ -1503,6 +1517,7 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	|
 	^( ( BREAK {
 	     $s = new Statement();
+$s.id = 16;
 	     $s.string = $BREAK.text;
 	   } )
 	   ( IDENT {
@@ -1512,6 +1527,7 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	|
 	^( ( CONTINUE {
 	     $s = new Statement();
+$s.id = 17;
 	     $s.string = $CONTINUE.text;
 	   } )
 	   ( IDENT {
@@ -1521,6 +1537,7 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	|
 	^( ( LABELED_STATEMENT {
 	     $s = new Statement();
+$s.id = 18;
 	     $s.string = $LABELED_STATEMENT.text;
 	   } )
 	   ( IDENT {
@@ -1533,11 +1550,13 @@ if( !( $s.string.endsWith( "}" ) ) ) {
 	|
 	( expression {
 	  $s = new Statement();
+$s.id = 19;
 	  $s.string = $expression.v;
 	} )
 	|
 	( SEMI { // Empty statement.
 	  $s = new Statement();
+$s.id = 20;
 	  $s.string = $SEMI.text;
 	} )
 	;
@@ -2410,7 +2429,7 @@ newArrayConstruction returns [String v]
 	( arrayInitializer {
 	  $v = $arrayInitializer.v;
 	} )
-	{ $v += ";"; }
+	{ $v += "/*;5*/" + "\n"; }
 	|
 	{ $v = ""; }
 	( expression {
