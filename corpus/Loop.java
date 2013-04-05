@@ -20,19 +20,20 @@ class Loop {
       i++;
     return i;
   }
-/*
-  public void c ( ) {
-    int i = 10, j = 10;
-    while ( i-- > 0 )
-      stuff();
-    while ( j-- > 0 ) {
-      stuff();
-    }
+  public int dTest ( ) {
+    int i = 0;
+    int j = 0;
+    do
+      i++;
+    while ( j++ < 41 );
+    return i;
   }
-  public void d ( ) {
-    int i = 10;
-    do stuff();
-    while ( i-- > 0 );
+  public int eTest ( ) {
+    int i = 0;
+    int j = 0;
+    do {
+      i++;
+    } while ( j++ < 41 );
+    return i;
   }
-*/
 }

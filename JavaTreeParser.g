@@ -1258,6 +1258,7 @@ $s.id = 1;
 
 $s.string +=
   ( $blockStatement.s.id == 2 ? ";" : "" ) +
+  ( $blockStatement.s.id == 10 ? ";" : "" ) + // while ( j++ )
   ( $blockStatement.s.id == 14 ? ";" : "" ) +
   ( $blockStatement.s.id == 19 ? ";" : "" ) +
   ( $blockStatement.s.id == 21 ? ";" : "" ) +
@@ -1440,13 +1441,9 @@ $s.id = 10;
 	   } )
 	   ( hStatement=statement {
 	     $s.string += " " + $hStatement.s.string;
-// XXX Hack to suppress trailing semicolon on {}
-String last = $s.string.substring($s.string.length()-1,$s.string.length());
-//if( last != "}" ) {
-if( !( $s.string.endsWith( "}" ) ) ) {
-  //$s.string += ";/* XXX(1) ('" + last + "') */";
-  $s.string += "/*;4*/" + "\n";
-}
+$s.string +=
+  ( $hStatement.s.id == 19 ? ";" : "" ) +
+  "/* 4 (" + $hStatement.s.id + ") */";
 	   } )
 	   { $s.string += " " + "while" + " "; }
 	   ( parenthesizedExpression {

@@ -51,5 +51,11 @@ class Tester {
     System.out.println(
       testLoop.cTest() == 7 ? "ok 15" : "not ok 15"
     );
+    System.out.println(
+      testLoop.dTest() == 42 ? "ok 16" : "not ok 16"
+    );
+    System.out.println(
+      testLoop.eTest() == 42 ? "ok 17" : "not ok 17"
+    );
   }
 }
