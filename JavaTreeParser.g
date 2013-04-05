@@ -1259,6 +1259,8 @@ $s.id = 1;
 $s.string +=
   ( $blockStatement.s.id == 2 ? ";" : "" ) +
   ( $blockStatement.s.id == 14 ? ";" : "" ) +
+  ( $blockStatement.s.id == 19 ? ";" : "" ) +
+  ( $blockStatement.s.id == 21 ? ";" : "" ) +
   "/* 1 (" + $blockStatement.s.id + ") */";
 
 
@@ -1375,7 +1377,7 @@ $s.string +=
 	|
 	^( ( FOR {
 	     $s = new Statement();
-$s.id = 7;
+$s.id = 21;
 	     $s.string = $FOR.text;
 	   } )
 	   { $s.string += "("; }

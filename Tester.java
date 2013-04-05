@@ -40,5 +40,16 @@ class Tester {
     System.out.println(
       testAttribute.cTest() == -7 ? "ok 12" : "not ok 12"
     );
+
+    Loop testLoop = new Loop();
+    System.out.println(
+      testLoop.aTest() == 42 ? "ok 13" : "not ok 13"
+    );
+    System.out.println(
+      testLoop.bTest() == -7 ? "ok 14" : "not ok 14"
+    );
+    System.out.println(
+      testLoop.cTest() == 7 ? "ok 15" : "not ok 15"
+    );
   }
 }

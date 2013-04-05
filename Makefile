@@ -8,9 +8,10 @@ conversion:
 	java Converter < corpus/Method.java > Method.java
 	java Converter < corpus/Attribute.java > Attribute.java
 	java Converter < corpus/IfThenElse.java > IfThenElse.java
+	java Converter < corpus/Loop.java > Loop.java
 	
 
-test:	Class.java Method.java Attribute.java IfThenElse.java Tester.java
+test:	Class.java Method.java Attribute.java IfThenElse.java Loop.java Tester.java
 	javac Class.java Tester.java
 	java Tester
 
