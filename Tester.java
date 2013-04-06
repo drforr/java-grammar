@@ -73,5 +73,14 @@ class Tester {
     System.out.println(
       testArray.dTest()[0] == 42 ? "ok 22" : "not ok 22"
     );
+    System.out.println(
+      testArray.eTest() == 42 ? "ok 23" : "not ok 23"
+    );
+    System.out.println(
+      testArray.fTest() == 42 ? "ok 24" : "not ok 24"
+    );
+    System.out.println(
+      testArray.gTest( testArray.bTest ) == 42 ? "ok 25" : "not ok 25"
+    );
   }
 }

@@ -233,19 +233,19 @@ typeDeclaration returns [String v]
 	     $v = $INTERFACE.text;
 	   } )
 	   ( modifierList {
-	     $v += $modifierList.v;
+	     $v += " " + $modifierList.v;
 	   } )
 	   ( IDENT {
-	     $v += $IDENT.text;
+	     $v += " " + $IDENT.text;
 	   } )
 	   ( genericTypeParameterList {
-	     $v += $genericTypeParameterList.v;
+	     $v += " " + $genericTypeParameterList.v;
 	   } )?
 	   ( extendsClause {
-	     $v += $extendsClause.v;
+	     $v += " " + $extendsClause.v;
 	   } )?
 	   ( interfaceTopLevelScope {
-	     $v += $interfaceTopLevelScope.v;
+	     $v += " " + $interfaceTopLevelScope.v;
 	   } )
 	 )
 	|
@@ -2357,21 +2357,22 @@ arrayTypeDeclarator returns [String v]
 
 newExpression returns [String v]
 	:
+	{ $v = ""; }
 	^( STATIC_ARRAY_CREATOR
 	   ( ( primitiveType {
 	       $v = $primitiveType.v;
 	     } )
 	     ( aNewArrayConstruction=newArrayConstruction {
-	       $v += $aNewArrayConstruction.v;
+	       $v += " " + $aNewArrayConstruction.v;
 	     } )
 	   | ( genericTypeArgumentList {
 	       $v = $genericTypeArgumentList.v;
 	     } )?
 	     ( qualifiedTypeIdent {
-	       $v += $qualifiedTypeIdent.v;
+	       $v += " " + $qualifiedTypeIdent.v;
 	     } )
 	     ( bNewArrayConstruction=newArrayConstruction {
-	       $v += $bNewArrayConstruction.v;
+	       $v += " " + $bNewArrayConstruction.v;
 	     } )
 	   )
 	 )
@@ -2381,13 +2382,13 @@ newExpression returns [String v]
 	     $v = $genericTypeArgumentList.v;
 	   } )?
 	   ( qualifiedTypeIdent {
-	     $v += $qualifiedTypeIdent.v;
+	     $v += " " + $qualifiedTypeIdent.v;
 	   } )
 	   ( arguments {
-	     $v += $arguments.v;
+	     $v += " " + $arguments.v;
 	   } )
 	   ( classTopLevelScope {
-	     $v += $classTopLevelScope.v;
+	     $v += " " + $classTopLevelScope.v;
 	   } )?
 	 )
 	;
@@ -2402,13 +2403,13 @@ innerNewExpression returns [String v]
 	{ $v = ""; }
 	^( CLASS_CONSTRUCTOR_CALL
 	   ( genericTypeArgumentList {
-	     $v += " " + $genericTypeArgumentList.v;
+	     $v += $genericTypeArgumentList.v;
 	   } )?
 	   ( IDENT {
-	     $v += $IDENT.text;
+	     $v += " " + $IDENT.text;
 	   } )
 	   ( arguments {
-	     $v += $arguments.v;
+	     $v += " " + $arguments.v;
 	   } )
 	   ( classTopLevelScope {
 	     $v += " " + $classTopLevelScope.v;
@@ -2427,11 +2428,10 @@ newArrayConstruction returns [String v]
 	  $v = $arrayDeclaratorList.v;
 	} )
 	( arrayInitializer {
-	  $v = $arrayInitializer.v;
+	  $v += $arrayInitializer.v;
 	} )
 	{ $v += "/*;5*/" + "\n"; }
 	|
-	{ $v = ""; }
 	( expression {
 	  $v += ( _i++ == 0 ? "" : "/* newArrayConstruction */" )
 	      + $expression.v;
