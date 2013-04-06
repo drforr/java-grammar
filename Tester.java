@@ -35,27 +35,40 @@ class Tester {
 
     Attribute testAttribute = new Attribute();
     System.out.println(
-      testAttribute.aTest == 42 ? "ok 11" : "not ok 11"
+      testAttribute.a == 0 ? "ok 11" : "not ok 11"
     );
     System.out.println(
-      testAttribute.cTest() == -7 ? "ok 12" : "not ok 12"
+      testAttribute.aTest == 42 ? "ok 12" : "not ok 12"
+    );
+    System.out.println(
+      testAttribute.cTest() == -7 ? "ok 13" : "not ok 13"
     );
 
     Loop testLoop = new Loop();
     System.out.println(
-      testLoop.aTest() == 42 ? "ok 13" : "not ok 13"
+      testLoop.aTest() == 42 ? "ok 14" : "not ok 14"
     );
     System.out.println(
-      testLoop.bTest() == -7 ? "ok 14" : "not ok 14"
+      testLoop.bTest() == -7 ? "ok 15" : "not ok 15"
     );
     System.out.println(
-      testLoop.cTest() == 7 ? "ok 15" : "not ok 15"
+      testLoop.cTest() == 7 ? "ok 16" : "not ok 16"
     );
     System.out.println(
-      testLoop.dTest() == 42 ? "ok 16" : "not ok 16"
+      testLoop.dTest() == 42 ? "ok 17" : "not ok 17"
     );
     System.out.println(
-      testLoop.eTest() == 42 ? "ok 17" : "not ok 17"
+      testLoop.eTest() == 42 ? "ok 18" : "not ok 18"
+    );
+    Array testArray = new Array();
+    System.out.println(
+      testArray.bTest[0] == 42 ? "ok 19" : "not ok 19"
+    );
+    System.out.println(
+      testArray.cTest() == 42 ? "ok 20" : "not ok 20"
+    );
+    System.out.println(
+      testArray.dTest()[0] == 42 ? "ok 21" : "not ok 21"
     );
   }
 }

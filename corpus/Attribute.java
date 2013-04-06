@@ -1,4 +1,5 @@
 class Attribute {
+  public int a;
   public int aTest = 42;
   private int bTest = -7;
   public int cTest ( ) {
