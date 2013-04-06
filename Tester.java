@@ -60,15 +60,18 @@ class Tester {
     System.out.println(
       testLoop.eTest() == 42 ? "ok 18" : "not ok 18"
     );
+    System.out.println(
+      testLoop.fTest() == 42 ? "ok 19" : "not ok 19"
+    );
     Array testArray = new Array();
     System.out.println(
-      testArray.bTest[0] == 42 ? "ok 19" : "not ok 19"
+      testArray.bTest[0] == 42 ? "ok 20" : "not ok 20"
     );
     System.out.println(
-      testArray.cTest() == 42 ? "ok 20" : "not ok 20"
+      testArray.cTest() == 42 ? "ok 21" : "not ok 21"
     );
     System.out.println(
-      testArray.dTest()[0] == 42 ? "ok 21" : "not ok 21"
+      testArray.dTest()[0] == 42 ? "ok 22" : "not ok 22"
     );
   }
 }

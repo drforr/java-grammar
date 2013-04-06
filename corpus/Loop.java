@@ -36,4 +36,19 @@ class Loop {
     } while ( j++ < 41 );
     return i;
   }
+  public int fTest ( ) {
+    int i = 0;
+    int j = 0;
+    while ( j++ < 42 )
+      i++;
+    return i;
+  }
+  public int gTest ( ) {
+    int i = 0;
+    int j = 0;
+    while ( j++ < 42 ) {
+      i++;
+    }
+    return i;
+  }
 }

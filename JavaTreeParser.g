@@ -1258,6 +1258,7 @@ $s.id = 1;
 
 $s.string +=
   ( $blockStatement.s.id == 2 ? ";" : "" ) +
+  ( $blockStatement.s.id == 9 ? ";" : "" ) + // while ( j++ ) i++; // The 'i++'
   ( $blockStatement.s.id == 10 ? ";" : "" ) + // while ( j++ )
   ( $blockStatement.s.id == 14 ? ";" : "" ) +
   ( $blockStatement.s.id == 19 ? ";" : "" ) +
@@ -2503,3 +2504,4 @@ literal returns [String v]
 	;
 
 // }}}
+
