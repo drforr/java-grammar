@@ -82,5 +82,10 @@ class Tester {
     System.out.println(
       testArray.gTest( testArray.bTest ) == 42 ? "ok 25" : "not ok 25"
     );
+
+    Loop_Foreach testLoop_Foreach = new Loop_Foreach();
+    System.out.println(
+      testLoop_Foreach.aTest() == 4 ? "ok 26" : "not ok 26"
+    );
   }
 }
