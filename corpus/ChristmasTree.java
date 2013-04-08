@@ -145,14 +145,8 @@ javaSource:
   packageDeclaration: 1
   typeDeclaration: 1
 literal:
-  CHARACTER_LITERAL: 1
-  DECIMAL_LITERAL: 1
   FALSE: 1
-  FLOATING_POINT_LITERAL: 1
-  HEX_LITERAL: 1
-  NULL: 1
   OCTAL_LITERAL: 1
-  STRING_LITERAL: 1
   TRUE: 1
 localModifier:
   annotation: 1
@@ -261,7 +255,6 @@ typeDeclaration:
   interfaceTopLevelScope: 1
   modifierList: 1
 typeIdent:
-  IDENT: 1
   genericTypeArgumentList: 1
 variableDeclarator:
   variableDeclaratorId: 1
@@ -297,4 +290,11 @@ class ChristmasTree {
   volatile double r;	// modifier.VOLATILE
 			// primitiveType.DOUBLE
   static final int s;	// localModifier.FINAL
+  static final int theAnswer = 42; // literal.DECIMAL_LITERAL
+  static final float pi = 3.14f; // literal.FLOATING_POINT_LITERAL:
+  static final int foo = 0xff; // literal.HEX_LITERAL
+  static final int bar = null; // literal.NULL
+  static final String qux; // typeIdent.IDENT
+  static final String name = "foo"; // literal.STRING_LITERAL
+  static final char pound = '#'; // literal.CHARACTER_LITERAL: 1
 }
