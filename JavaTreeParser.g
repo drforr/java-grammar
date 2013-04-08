@@ -63,19 +63,17 @@ options {
 // {{{ @treeparser::members
 
 @treeparser::members {
-  private boolean cover_nonterminals = false;
-  //private boolean cover_nonterminals = true;
+  //private boolean cover = false;
+  public boolean cover = false;
   private String foo;
   private void nonterminal ( String s ) {
     foo = s;
-    if ( cover_nonterminals )
-      System.err.println( "Nonterminal: " + s );
+    if ( cover )
+      System.out.println( "Nonterminal: " + s );
   }
-  private boolean cover_children = false;
-  //private boolean cover_children = true;
   private void children ( String s ) {
-    if ( cover_children )
-      System.err.println( "Child: " + foo + " " + s );
+    if ( cover )
+      System.out.println( "Child: " + foo + " " + s );
   }
 
   /** Points to functions tracked by tree builder. */
@@ -199,7 +197,7 @@ packageDeclaration returns [String v]
 	   } )
 	   ( qualifiedIdentifier {
              children( "qualifiedIdentifier" );
-	     $v += $qualifiedIdentifier.v;
+	     $v += " " + $qualifiedIdentifier.v;
 	   } )
 	 )
 	;
@@ -217,15 +215,15 @@ importDeclaration returns [String v]
 	   } )
 	   ( STATIC {
              children( "STATIC" );
-	     $v += $STATIC.text;
+	     $v += " " + $STATIC.text;
 	   } )?
 	   ( qualifiedIdentifier {
              children( "qualifiedIdentifier" );
-	     $v += $qualifiedIdentifier.v;
+	     $v += " " + $qualifiedIdentifier.v;
 	   } )
 	   ( DOTSTAR {
              children( "DOTSTAR" );
-	     $v += $DOTSTAR.text;
+	     $v += " " + $DOTSTAR.text;
 	   } )?
 	 )
 	;
@@ -370,7 +368,7 @@ implementsClause returns [String v]
 	^( IMPLEMENTS_CLAUSE
 	   ( type {
              children( "type" );
-	     $v += ( _i == 0 ? "" : "/* implementsClause */" )
+	     $v += ( _i++ == 0 ? "" : "/* implementsClause */" )
 		 + $type.v;
 	   } )+
 	 )
@@ -390,7 +388,7 @@ genericTypeParameterList returns [String v]
 	^( GENERIC_TYPE_PARAM_LIST
 	   ( genericTypeParameter {
              children( "genericTypeParameter" );
-	     $v += ( _i == 0 ? "" : "/* genericTypeParameter */" )
+	     $v += ( _i++ == 0 ? "" : "/* genericTypeParameter */" )
 		 + $genericTypeParameter.v;
 	   } )+
 	 )
@@ -409,7 +407,7 @@ genericTypeParameter returns [String v]
 	   } )
 	   ( bound {
              children( "bound" );
-	     $v += $bound.v;
+	     $v += " " + $bound.v;
 	   } )?
 	 )
 	;
@@ -428,7 +426,7 @@ bound returns [String v]
 	^( EXTENDS_BOUND_LIST
 	   ( type {
              children( "type" );
-	     $v += ( _i == 0 ? "" : "/* bound */" )
+	     $v += ( _i++ == 0 ? "" : "/* bound */" )
 		 + $type.v;
 	   } )+
 	 )
@@ -452,7 +450,7 @@ enumTopLevelScope returns [String v]
 	   } )+
 	   ( classTopLevelScope {
              children( "classTopLevelScope" );
-	     $v += $classTopLevelScope.v;
+	     $v += " " + $classTopLevelScope.v;
 	   } )?
 	 )
 	;
@@ -473,15 +471,15 @@ enumConstant returns [String v]
 	   } )
 	   ( annotationList {
              children( "annotationList" );
-	     $v += $annotationList.v;
+	     $v += " " + $annotationList.v;
 	   } )
 	   ( arguments {
              children( "arguments" );
-	     $v += $arguments.v;
+	     $v += " " + $arguments.v;
 	   } )?
 	   ( classTopLevelScope {
              children( "classTopLevelScope" );
-	     $v += $classTopLevelScope.v;
+	     $v += " " + $classTopLevelScope.v;
 	   } )?
 	 )
 	;
@@ -500,7 +498,7 @@ classTopLevelScope returns [String v]
 	{ $v += "\n"; }
 	^( CLASS_TOP_LEVEL_SCOPE
 	   ( classScopeDeclarations {
-	     $v += ( _i == 0 ? "" : "/* classTopLevelScope */" )
+	     $v += ( _i++ == 0 ? "" : "/* classTopLevelScope */" )
 		 + $classScopeDeclarations.v;
 	   } )*
 	 )
@@ -552,7 +550,7 @@ classScopeDeclarations returns [String v]
 	   } )
 	   ( arrayDeclaratorList {
              children( "arrayDeclaratorList" );
-	     $v += $arrayDeclaratorList.v;
+	     $v += " " + $arrayDeclaratorList.v;
 	   } )?
 	   ( throwsClause {
              children( "throwsClause" );
@@ -671,27 +669,27 @@ interfaceScopeDeclarations returns [String v]
 	   } )
 	   ( genericTypeParameterList {
              children( "genericTypeParameterList" );
-	     $v += $genericTypeParameterList.v;
+	     $v += " " + $genericTypeParameterList.v;
 	   } )?
 	   ( type {
              children( "type" );
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
 	   ( IDENT {
              children( "IDENT" );
-	     $v += $IDENT.text;
+	     $v += " " + $IDENT.text;
 	   } )
 	   ( formalParameterList {
              children( "formalParameterList" );
-	     $v += $formalParameterList.v;
+	     $v += " " + $formalParameterList.v;
 	   } )
 	   ( arrayDeclaratorList {
              children( "arrayDeclaratorList" );
-	     $v += $arrayDeclaratorList.v;
+	     $v += " " + $arrayDeclaratorList.v;
 	   } )?
 	   ( throwsClause {
              children( "throwsClause" );
-	     $v += $throwsClause.v;
+	     $v += " " + $throwsClause.v;
 	   } )?
 	 )
 	|
@@ -705,19 +703,19 @@ interfaceScopeDeclarations returns [String v]
 	   } )
 	   ( genericTypeParameterList {
              children( "genericTypeParameterList" );
-	     $v += $genericTypeParameterList.v;
+	     $v += " " + $genericTypeParameterList.v;
 	   } )?
 	   ( IDENT {
              children( "IDENT" );
-	     $v += $IDENT.text;
+	     $v += " " + $IDENT.text;
 	   } )
 	   ( formalParameterList {
              children( "formalParameterList" );
-	     $v += $formalParameterList.v;
+	     $v += " " + $formalParameterList.v;
 	   } )
 	   ( throwsClause {
              children( "throwsClause" );
-	     $v += $throwsClause.v;
+	     $v += " " + $throwsClause.v;
 	   } )?
 	 )
 	|
@@ -728,11 +726,11 @@ interfaceScopeDeclarations returns [String v]
 	   } )
 	   ( type {
              children( "type" );
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
 	   ( variableDeclaratorList {
              children( "variableDeclaratorList" );
-	     $v = $variableDeclaratorList.v;
+	     $v = " " + $variableDeclaratorList.v;
 	   } )
 	 )
 	| 
@@ -830,7 +828,7 @@ arrayDeclarator returns [String v]
 	} )
 	( RBRACK {
           children( "RBRACK" );
-	  $v += $RBRACK.text;
+	  $v += " " + $RBRACK.text;
 	} )
 	;
 
@@ -911,7 +909,7 @@ modifierList returns [String v]
 	^( MODIFIER_LIST
 	   ( modifier {
              children( "modifier" );
-	     $v += ( _i == 0 ? "" : "/* modifierList */" )
+	     $v += ( _i++ == 0 ? "" : " " )
 	 	 + $modifier.v;
 	   } )*
 	 )
@@ -994,7 +992,7 @@ localModifierList returns [String v]
 	^( LOCAL_MODIFIER_LIST
 	   ( localModifier {
              children( "localModifier" );
-	     $v += ( _i == 0 ? "" : "/* localModifierList */" )
+	     $v += ( _i++ == 0 ? "" : "/* localModifierList */" )
 		 + $localModifier.v;
 	   } )*
 	 )
@@ -1166,7 +1164,7 @@ genericTypeArgument returns [String v]
 	   } )
 	   ( genericWildcardBoundType {
              children( "genericWildcardBoundType" );
-	     $v += $genericWildcardBoundType.v;
+	     $v += " " + $genericWildcardBoundType.v;
 	   } )?
  	 )
 	;
@@ -1184,7 +1182,7 @@ genericWildcardBoundType returns [String v]
 	   } )
 	   ( type {
              children( "type" );
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
 	 )
 	|
@@ -1194,7 +1192,7 @@ genericWildcardBoundType returns [String v]
 	   } )
 	   ( type {
              children( "type" );
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
 	 )
 	;
@@ -1219,7 +1217,7 @@ formalParameterList returns [String v]
 	   } )*
 	   ( formalParameterVarargDecl {
              children( "formalParameterVarargDecl" );
-	     $v += $formalParameterVarargDecl.v;
+	     $v += " " + $formalParameterVarargDecl.v;
 	   } )?
 	 )
 	{ $v += " "; }
@@ -1239,7 +1237,7 @@ formalParameterStandardDecl returns [String v]
 	   } )
 	   ( type {
              children( "type" );
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
 	   ( variableDeclaratorId {
              children( "variableDeclaratorId" );
@@ -1262,11 +1260,11 @@ formalParameterVarargDecl returns [String v]
 	   } )
 	   ( type {
              children( "type" );
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
 	   ( variableDeclaratorId {
              children( "variableDeclaratorId" );
-	     $v += $variableDeclaratorId.v;
+	     $v += " " + $variableDeclaratorId.v;
 	   } )
 	 )
 	;
@@ -1352,7 +1350,7 @@ annotationInit returns [String v]
 	^( ANNOTATION_INIT_BLOCK
 	   ( annotationInitializers {
              children( "annotationInitializers" );
-	     $v += $annotationInitializers.v;
+	     $v = $annotationInitializers.v;
 	   } ) ) 
 	;
 
@@ -1418,12 +1416,12 @@ annotationElementValue returns [String v]
 	|
 	( annotation {
           children( "annotation" );
-	  $v += $annotation.v;
+	  $v = $annotation.v;
 	} )
 	|
 	( expression {
           children( "expression" );
-	  $v += $expression.v;
+	  $v = $expression.v;
 	} )
 	;
 
@@ -1460,30 +1458,30 @@ annotationScopeDeclarations returns [String v]
 	   } )
 	   ( type {
              children( "type" );
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
 	   ( IDENT {
              children( "IDENT" );
-	     $v += $IDENT.text;
+	     $v += " " + $IDENT.text;
 	   } )
 	   ( annotationDefaultValue {
              children( "annotationDefaultValue" );
-	     $v += $annotationDefaultValue.v;
+	     $v += " " + $annotationDefaultValue.v;
 	   } )?
 	  )
 	|
 	^( VAR_DECLARATION
 	   ( modifierList {
              children( "modifierList" );
-	     $v += " " + $modifierList.v;
+	     $v += $modifierList.v;
 	   } )
 	   ( type {
              children( "type" );
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
 	   ( variableDeclaratorList {
              children( "variableDeclaratorList" );
-	     $v += $variableDeclaratorList.v;
+	     $v += " " + $variableDeclaratorList.v;
 	   } )
 	 )
 	|
@@ -1526,7 +1524,7 @@ block returns [Statement s]
 	^( BLOCK_SCOPE
 	   ( blockStatement {
              children( "blockStatement" );
-	     $s.string += ( _i == 0 ? "" : "/* block */" )
+	     $s.string += ( _i++ == 0 ? "" : "/* block */" )
 		  + $blockStatement.s.string;
 
 
@@ -1589,12 +1587,11 @@ localVariableDeclaration returns [String v]
 	   } )
 	   ( type {
              children( "type" );
-	     $v += $type.v;
+	     $v += " " + $type.v;
 	   } )
-	   { $v += " "; }
 	   ( variableDeclaratorList {
              children( "variableDeclaratorList" );
-	     $v += $variableDeclaratorList.v;
+	     $v += " " + $variableDeclaratorList.v;
 	   } )
 	 )
 	;
@@ -1618,10 +1615,10 @@ statement returns [Statement s]
 	     $s.string = $ASSERT.text;
 	   } )
 	   ( aExpression=expression {
-	     $s.string += $aExpression.v;
+	     $s.string += " " + $aExpression.v;
 	   } )
 	   ( bExpression=expression {
-	     $s.string += $bExpression.v;
+	     $s.string += " " + $bExpression.v;
 	   } )?
 	 )
 	|
@@ -1631,10 +1628,10 @@ statement returns [Statement s]
 	     $s.string = $IF.text;
 	   } )
 	   ( parenthesizedExpression {
-	     $s.string += $parenthesizedExpression.v;
+	     $s.string += " " + $parenthesizedExpression.v;
 	   } )
 	   ( cStatement=statement {
-	     $s.string += $cStatement.s.string;
+	     $s.string += " " + $cStatement.s.string;
 	   } )
 {
 $s.string +=
@@ -1664,15 +1661,15 @@ $s.string +=
 	   } )
 	   { $s.string += "("; }
 	   ( forInit {
-	     $s.string += $forInit.v;
+	     $s.string += " " + $forInit.v;
 	   } )
 	   { $s.string += ";"; }
 	   ( forCondition {
-	     $s.string += $forCondition.v;
+	     $s.string += " " + $forCondition.v;
 	   } )
 	   { $s.string += ";"; }
 	   ( forUpdater {
-	     $s.string += $forUpdater.v;
+	     $s.string += " " + $forUpdater.v;
 	   } )
 	   { $s.string += ")"; }
 	   ( eStatement=statement {
@@ -1713,10 +1710,10 @@ $s.string +=
 	     $s.string = $WHILE.text;
 	   } )
 	   ( parenthesizedExpression {
-	     $s.string += $parenthesizedExpression.v;
+	     $s.string += " " + $parenthesizedExpression.v;
 	   } )
 	   ( gStatement=statement {
-	     $s.string += $gStatement.s.string;
+	     $s.string += " " + $gStatement.s.string;
 	   } )
 	 )
 	|
@@ -1731,9 +1728,9 @@ $s.string +=
   ( $hStatement.s.id == 19 ? ";" : "" ) +
   "/* 4 (" + $hStatement.s.id + ") */";
 	   } )
-	   { $s.string += " " + "while" + " "; }
+	   { $s.string += " " + "while"; }
 	   ( parenthesizedExpression {
-	     $s.string += $parenthesizedExpression.v;
+	     $s.string += " " + $parenthesizedExpression.v;
 	   } )
 	 )
 	|
@@ -1744,13 +1741,13 @@ $s.string +=
 	     $s.string = $TRY.text;
 	   } )
 	   ( iBlock=block {
-	     $s.string += $iBlock.s.string;
+	     $s.string += " " + $iBlock.s.string;
 	   } )
 	   ( catches {
-	     $s.string += $catches.v;
+	     $s.string += " " + $catches.v;
 	   } )?
 	   ( jBlock=block {
-	     $s.string += $jBlock.s.string;
+	     $s.string += " " + $jBlock.s.string;
 	   } )?
 	 )
 	|
@@ -1760,10 +1757,10 @@ $s.string +=
 	     $s.string = $SWITCH.text;
 	   } )
 	   ( parenthesizedExpression {
-	     $s.string += $parenthesizedExpression.v;
+	     $s.string += " " + $parenthesizedExpression.v;
 	   } )
 	   ( switchBlockLabels {
-	     $s.string += $switchBlockLabels.v;
+	     $s.string += " " + $switchBlockLabels.v;
 	   } )
 	 )
 	|
@@ -1773,10 +1770,10 @@ $s.string +=
 	     $s.string = $SYNCHRONIZED.text;
 	   } )
 	   ( parenthesizedExpression {
-	     $s.string += $parenthesizedExpression.v;
+	     $s.string += " " + $parenthesizedExpression.v;
 	   } )
 	   ( block {
-	     $s.string += $block.s.string;
+	     $s.string += " " + $block.s.string;
 	   } )
 	 )
 	|
@@ -1796,7 +1793,7 @@ $s.string +=
 	     $s.string = $THROW.text;
 	   } )
 	   ( expression {
-	     $s.string += $expression.v;
+	     $s.string += " " + $expression.v;
 	   } )
 	 )
 	|
@@ -1806,7 +1803,7 @@ $s.string +=
 	     $s.string = $BREAK.text;
 	   } )
 	   ( IDENT {
-	     $s.string += $IDENT.text;
+	     $s.string += " " + $IDENT.text;
 	   } )?
 	 )
 	|
@@ -1816,7 +1813,7 @@ $s.string +=
 	     $s.string = $CONTINUE.text;
 	   } )
 	   ( IDENT {
-	     $s.string += $IDENT.text;
+	     $s.string += " " + $IDENT.text;
 	   } )?
 	 )
 	|
@@ -1826,10 +1823,10 @@ $s.string +=
 	     $s.string = $LABELED_STATEMENT.text;
 	   } )
 	   ( IDENT {
-	     $s.string += $IDENT.text;
+	     $s.string += " " + $IDENT.text;
 	   } )
 	   ( kStatement=statement {
-	     $s.string += $kStatement.s.string;
+	     $s.string += " " + $kStatement.s.string;
 	   } )
 	 )
 	|
@@ -1860,7 +1857,7 @@ catches returns [String v]
 	^( CATCH_CLAUSE_LIST
 	   ( catchClause {
              children( "catchClause" );
-	     $v += ( _i == 0 ? "" : "/* catches */" )
+	     $v += ( _i++ == 0 ? "" : "/* catches */" )
 		 + $catchClause.v;
 	   } )+
 	 )
@@ -1879,11 +1876,11 @@ catchClause returns [String v]
 	   } )
 	   ( formalParameterStandardDecl {
              children( "formalParameterStandardDecl" );
-	     $v += $formalParameterStandardDecl.v;
+	     $v += " " + $formalParameterStandardDecl.v;
 	   } )
 	   ( block {
              children( "block" );
-	     $v += $block.s.string;
+	     $v += " " + $block.s.string;
 	   } )
 	 )
 	;
@@ -1907,7 +1904,7 @@ switchBlockLabels returns [String v]
 	   } )*
 	   ( switchDefaultLabel {
              children( "SwitchDefaultLabel" );
-	     $v += $switchDefaultLabel.v;
+	     $v += " " + $switchDefaultLabel.v;
 	   } )?
 	   ( bSwitchCaseLabel=switchCaseLabel {
              children( "bSwitchCaseLabel" );
@@ -1933,11 +1930,11 @@ switchCaseLabel returns [String v]
 	   } )
 	   ( expression {
              children( "expression" );
-	     $v += $expression.v;
+	     $v += " " + $expression.v;
 	   } )
 	   ( blockStatement {
              children( "blockStatement" );
-	     $v += ( _i == 0 ? "" : "/* switchCaseLabel */" )
+	     $v += ( _i++ == 0 ? "" : "/* switchCaseLabel */" )
 		 + $blockStatement.s.string;
 	   } )*
 	 )
@@ -1957,7 +1954,7 @@ switchDefaultLabel returns [String v]
 	^( DEFAULT
 	   ( blockStatement {
              children( "blockStatement" );
-	     $v += ( _i == 0 ? "" : "/* switchDefaultLabel */" )
+	     $v += ( _i++ == 0 ? "" : "/* switchDefaultLabel */" )
 		 + $blockStatement.s.string;
 	   } )*
 	 )
@@ -2018,7 +2015,7 @@ forUpdater returns [String v]
 	^( FOR_UPDATE
 	   ( expression {
              children( "expression" );
-	     $v += ( _i == 0 ? "" : "/* forUpdater */" )
+	     $v += ( _i++ == 0 ? "" : "/* forUpdater */" )
 		 + $expression.v;
 	   } )*
 	 )
@@ -2544,7 +2541,7 @@ primaryExpression returns [String v]
 	   } )
            ( ( aPrimaryExpression=primaryExpression {
                children( "aPrimaryExpression" );
-	       $v += $aPrimaryExpression.v;
+	       $v += " " + $aPrimaryExpression.v;
 	     } )
              ( ( IDENT {
                  children( "IDENT" );
@@ -2810,7 +2807,7 @@ newArrayConstruction returns [String v]
 	} )
 	( arrayInitializer {
           children( "arrayInitializer" );
-	  $v += $arrayInitializer.v;
+	  $v += " " + $arrayInitializer.v;
 	} )
 	{ $v += "/*;5*/" + "\n"; }
 	|
@@ -2821,7 +2818,7 @@ newArrayConstruction returns [String v]
 	} )+
 	( arrayDeclaratorList {
           children( "arrayDeclaratorList" );
-	  $v += $arrayDeclaratorList.v;
+	  $v += " " + $arrayDeclaratorList.v;
 	} )?
 	;
 

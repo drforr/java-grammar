@@ -6,27 +6,34 @@ class IfThenElse {
     return 0;
   }
   public int bTest ( ) {
+    int i = 39;
+    if ( ++i == 40 )
+      if ( ++i == 41 )
+        return ++i;
+    return 0;
+  }
+  public int cTest ( ) {
     int i = 40;
     if ( ++i == 41 ) {
       return ++i;
     }
     return 0;
   }
-  public int cTest ( ) {
+  public int dTest ( ) {
     int i = 40;
     if ( ++i == 40 )
       return --i;
     else
       return ++i;
   }
-  public int dTest ( ) {
+  public int eTest ( ) {
     int i = 40;
     if ( ++i == 40 ) {
       return --i;
     } else
       return ++i;
   }
-  public int eTest ( ) {
+  public int fTest ( ) {
     int i = 40;
     if ( ++i == 40 )
       return --i;
@@ -34,7 +41,7 @@ class IfThenElse {
       return ++i;
     }
   }
-  public int fTest ( ) {
+  public int gTest ( ) {
     int i = 40;
     if ( ++i == 40 ) {
       return --i;

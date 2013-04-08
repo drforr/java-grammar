@@ -13,6 +13,9 @@ public class Converter {
       new CommonTreeNodeStream(t);
     JavaTreeParser evaluator =
       new JavaTreeParser(nodes, parser.functionDefinitions);
+    if ( args.length > 0 )
+      if ( args[0] != null )
+        evaluator.cover = true;
     System.out.println( evaluator.javaSource() );
   }
 }
