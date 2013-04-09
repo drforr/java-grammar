@@ -1029,7 +1029,8 @@ type returns [String v]
                children( "primitiveType" );
 	       $v = $primitiveType.v;
 	     } )
-	   | ( qualifiedTypeIdent {
+	     |
+	     ( qualifiedTypeIdent {
                children( "qualifiedTypeIdent" );
 	       $v = $qualifiedTypeIdent.v;
 	     } )
@@ -2720,14 +2721,18 @@ newExpression returns [String v]
 	:
 	{ $v = ""; }
 	^( STATIC_ARRAY_CREATOR
-	   ( ( primitiveType {
+	   ( { $v = "new"; }
+	     { $v += " "; }
+	     ( primitiveType {
                children( "primitiveType" );
-	       $v = $primitiveType.v;
+	       $v += $primitiveType.v;
 	     } )
+	     { $v += "["; }
 	     ( aNewArrayConstruction=newArrayConstruction {
                children( "aNewArrayConstruction" );
-	       $v += " " + $aNewArrayConstruction.v;
+	       $v += $aNewArrayConstruction.v;
 	     } )
+	     { $v += "]"; }
 	   | ( genericTypeArgumentList {
                children( "genericTypeArgumentList" );
 	       $v = $genericTypeArgumentList.v;
@@ -2812,6 +2817,7 @@ newArrayConstruction returns [String v]
 	} )
 	{ $v += "/*;5*/" + "\n"; }
 	|
+	{ $v = ""; }
 	( expression {
           children( "expression" );
 	  $v += ( _i++ == 0 ? "" : "/* newArrayConstruction */" )
