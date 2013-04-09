@@ -17,8 +17,7 @@ annotationInitializer:
 annotationInitializers:
   annotationElementValue: 1
   annotationInitializer: 1
-annotationList:
-  annotation: 1
+annotationList: {}
 annotationScopeDeclarations:
   IDENT: 1
   annotationDefaultValue: 1
@@ -30,13 +29,9 @@ annotationTopLevelScope:
   annotationScopeDeclarations: 1
 arguments:
   expression: 1
-arrayDeclarator:
-  LBRACK: 1
-  RBRACK: 1
-arrayDeclaratorList:
-  arrayDeclarator: 1
-arrayInitializer:
-  variableInitializer: 1
+arrayDeclarator: {}
+arrayDeclaratorList: {}
+arrayInitializer: {}
 arrayTypeDeclarator:
   aArrayTypeDeclarator: 1
   primitiveType: 1
@@ -66,6 +61,7 @@ classScopeDeclarations:
   type: 1
   typeDeclaration: 1
   variableDeclaratorList: 1
+classTopLevelScope: {}
 enumConstant:
   IDENT: 1
   annotationList: 1
@@ -144,10 +140,7 @@ javaSource:
   importDeclaration: 1
   packageDeclaration: 1
   typeDeclaration: 1
-literal:
-  FALSE: 1
-  OCTAL_LITERAL: 1
-  TRUE: 1
+literal: {}
 localModifier:
   annotation: 1
 localModifierList:
@@ -158,8 +151,7 @@ localVariableDeclaration:
   variableDeclaratorList: 1
 modifier:
   localModifier: 1
-modifierList:
-  modifier: 1
+modifierList: {}
 newArrayConstruction:
   arrayDeclaratorList: 1
   arrayInitializer: 1
@@ -204,8 +196,7 @@ qualifiedIdentifier:
   DOT: 1
   IDENT: 1
   aQualifiedIdentifier: 1
-qualifiedTypeIdent:
-  typeIdent: 1
+qualifiedTypeIdent: {}
 statement:
   ASSERT: 1
   BREAK: 1
@@ -261,13 +252,14 @@ variableDeclarator:
   variableInitializer: 1
 variableDeclaratorId:
   arrayDeclaratorList: 1
-variableDeclaratorList:
-  variableDeclarator: 1
+variableDeclaratorList: {}
 variableInitializer:
   arrayInitializer: 1
   expression: 1
 */
 class ChristmasTree {
+  // annotationList (?)
+  // variableDeclaratorList.variableDeclarator
   public int i; // classTopLevelScope
                 // modifier.PUBLIC
                 // primitiveType.INT
@@ -297,4 +289,25 @@ class ChristmasTree {
   static final String qux; // typeIdent.IDENT
   static final String name = "foo"; // literal.STRING_LITERAL
   static final char pound = '#'; // literal.CHARACTER_LITERAL: 1
+  static final int rwx = 012; // literal.OCTAL_LITERAL
+  static final boolean False = true; // literal.TRUE
+  static final boolean True = false; // literal.FALSE
+
+  public int ints[];		// arrayDeclarator.{LBRACK,RBRACK}
+				// arrayDeclaratorList.arrayDeclarator
+  public int myInts[] = { 1 };	// arrayInitializer.variableInitializer
+//  public String [ ] tokenIDs = new String [ ] { "foo" };
+//  public int myInts[] = {1}; // arrayInitializer.variableInitializer
+	// qualifiedTypeIdent.typeIdent:
 }
+/*
+
+
+
+
+
+
+
+
+
+*/

@@ -346,8 +346,8 @@ extendsClause returns [String v]
 	:
 	{ $v = ""; }
 	^( EXTENDS_CLAUSE
+           { children( "type" ); }
 	   ( type {
-             children( "type" );
 	     $v += (_i == 0 ? "" : "/* extendsClause */" )
 		 + $type.v;
 	   } )+
@@ -366,8 +366,8 @@ implementsClause returns [String v]
 	:
 	{ $v = ""; }
 	^( IMPLEMENTS_CLAUSE
+           { children( "type" ); }
 	   ( type {
-             children( "type" );
 	     $v += ( _i++ == 0 ? "" : "/* implementsClause */" )
 		 + $type.v;
 	   } )+
@@ -386,8 +386,8 @@ genericTypeParameterList returns [String v]
 	:
 	{ $v = ""; }
 	^( GENERIC_TYPE_PARAM_LIST
+           { children( "genericTypeParameter" ); }
 	   ( genericTypeParameter {
-             children( "genericTypeParameter" );
 	     $v += ( _i++ == 0 ? "" : "/* genericTypeParameter */" )
 		 + $genericTypeParameter.v;
 	   } )+
@@ -424,8 +424,8 @@ bound returns [String v]
 	:
 	{ $v = ""; }
 	^( EXTENDS_BOUND_LIST
+           { children( "type" ); }
 	   ( type {
-             children( "type" );
 	     $v += ( _i++ == 0 ? "" : "/* bound */" )
 		 + $type.v;
 	   } )+
@@ -497,6 +497,7 @@ classTopLevelScope returns [String v]
 	{ $v = "{"; }
 	{ $v += "\n"; }
 	^( CLASS_TOP_LEVEL_SCOPE
+	   { children( "classScopeDeclarations" ); }
 	   ( classScopeDeclarations {
 	     $v += ( _i++ == 0 ? "" : "/* classTopLevelScope */" )
 		 + $classScopeDeclarations.v;
@@ -647,8 +648,8 @@ interfaceTopLevelScope returns [String v]
 	:
 	{ $v = ""; }
 	^( INTERFACE_TOP_LEVEL_SCOPE
+           { children( "interfaceScopeDeclarations" ); }
 	   ( interfaceScopeDeclarations {
-             children( "interfaceScopeDeclarations" );
 	     $v += ( _i++ == 0 ? "" : "/* interfaceTopLevelScope */" )
 		 + $interfaceScopeDeclarations.v;
 	   } )*
@@ -752,8 +753,8 @@ variableDeclaratorList returns [String v]
 	:
 	{ $v = ""; }
 	^( VAR_DECLARATOR_LIST
+           { children( "variableDeclarator" ); }
 	   ( variableDeclarator {
-             children( "variableDeclarator" );
 	     $v += ( _i++ == 0 ? "" : ", " )
 	         + $variableDeclarator.v;
 	   } )+
@@ -844,8 +845,8 @@ arrayDeclaratorList returns [String v]
 	:
 	{ $v = ""; }
 	^( ARRAY_DECLARATOR_LIST
+           { children( "arrayDeclarator" ); }
 	   ( arrayDeclarator {
-             children( "arrayDeclarator" );
 	     $v += ( _i++ == 0 ? "" : "/* arrayDeclaratorList */" )
 		 + $arrayDeclarator.v;
 	   } )+
@@ -865,8 +866,8 @@ arrayInitializer returns [String v]
 	{ $v = "{"; }
 	{ $v += " "; }
 	^( ARRAY_INITIALIZER
+           { children( "variableInitializer" ); }
 	   ( variableInitializer {
-             children( "variableInitializer" );
 	     $v += ( _i++ == 0 ? "" : ", " )
 		 + $variableInitializer.v;
 	   } )*
@@ -887,8 +888,8 @@ throwsClause returns [String v]
 	:
 	{ $v = ""; }
 	^( THROWS_CLAUSE
+           { children( "qualifiedIdentifier" ); }
 	   ( qualifiedIdentifier {
-             children( "qualifiedIdentifier" );
 	     $v += ( _i++ == 0 ? "" : "/* throwsClause */" )
 		 + $qualifiedIdentifier.v;
 	   } )+
@@ -907,8 +908,8 @@ modifierList returns [String v]
 	:
 	{ $v = ""; }
 	^( MODIFIER_LIST
+           { children( "modifier" ); }
 	   ( modifier {
-             children( "modifier" );
 	     $v += ( _i++ == 0 ? "" : " " )
 	 	 + $modifier.v;
 	   } )*
@@ -990,8 +991,8 @@ localModifierList returns [String v]
 	:
 	{ $v = ""; }
 	^( LOCAL_MODIFIER_LIST
+           { children( "localModifier" ); }
 	   ( localModifier {
-             children( "localModifier" );
 	     $v += ( _i++ == 0 ? "" : "/* localModifierList */" )
 		 + $localModifier.v;
 	   } )*
@@ -1052,8 +1053,8 @@ qualifiedTypeIdent returns [String v]
 	:
 	{ $v = ""; }
 	^( QUALIFIED_TYPE_IDENT
+           { children( "typeIdent" ); }
 	   ( typeIdent {
-             children( "typeIdent" );
 	     $v += ( _i++ == 0 ? "" : "/* qualifiedTypeIdent */" )
 		 + $typeIdent.v;
 	   } )+
@@ -1138,8 +1139,8 @@ genericTypeArgumentList returns [String v]
 	:
 	{ $v = ""; }
 	^( GENERIC_TYPE_ARG_LIST
+           { children( "genericTypeArgument" ); }
 	   ( genericTypeArgument {
-             children( "genericTypeArgument" );
 	     $v += ( _i++ == 0 ? "" : "/* genericTypeArgumentList */" )
 		 + $genericTypeArgument.v;
 	   } )+
@@ -1310,8 +1311,8 @@ annotationList returns [String v]
 	:
 	{ $v = ""; }
 	^( ANNOTATION_LIST
+           { children( "annotation" ); }
 	   ( annotation {
-             children( "annotation" );
 	     $v += ( _i++ == 0 ? "" : "/* annotationList */" )
 		 + $annotationList.v;
 	   } )*
@@ -1348,8 +1349,8 @@ annotationInit returns [String v]
 @init{ nonterminal( "annotationInit" ); }
 	:
 	^( ANNOTATION_INIT_BLOCK
+           { children( "annotationInitializers" ); }
 	   ( annotationInitializers {
-             children( "annotationInitializers" );
 	     $v = $annotationInitializers.v;
 	   } ) ) 
 	;
@@ -1408,8 +1409,8 @@ annotationElementValue returns [String v]
 @init{ nonterminal( "annotationElementValue" ); }
 	:
 	^( ANNOTATION_INIT_ARRAY_ELEMENT
+           { children( "aAnnotationElementValue" ); }
 	   ( aAnnotationElementValue=annotationElementValue {
-             children( "aAnnotationElementValue" );
 	     $v += $aAnnotationElementValue.v;
 	   } )*
 	 )
@@ -1436,8 +1437,8 @@ annotationTopLevelScope returns [String v]
 }
 	:
 	^( ANNOTATION_TOP_LEVEL_SCOPE
+           { children( "annotationScopeDeclarations" ); }
 	   ( annotationScopeDeclarations {
-             children( "annotationScopeDeclarations" );
 	     $v += ( _i++ == 0 ? "" : "/* annotationTopLevelScope */" )
 		 + $annotationScopeDeclarations.v;
 	   } )*
@@ -1855,8 +1856,8 @@ catches returns [String v]
 	:
 	{ $v = ""; }
 	^( CATCH_CLAUSE_LIST
+           { children( "catchClause" ); }
 	   ( catchClause {
-             children( "catchClause" );
 	     $v += ( _i++ == 0 ? "" : "/* catches */" )
 		 + $catchClause.v;
 	   } )+
@@ -1952,8 +1953,8 @@ switchDefaultLabel returns [String v]
 	:
 	{ $v = ""; }
 	^( DEFAULT
+           { children( "blockStatement" ); }
 	   ( blockStatement {
-             children( "blockStatement" );
 	     $v += ( _i++ == 0 ? "" : "/* switchDefaultLabel */" )
 		 + $blockStatement.s.string;
 	   } )*
@@ -2013,8 +2014,8 @@ forUpdater returns [String v]
 	:
 	{ $v = ""; }
 	^( FOR_UPDATE
+           { children( "expression" ); }
 	   ( expression {
-             children( "expression" );
 	     $v += ( _i++ == 0 ? "" : "/* forUpdater */" )
 		 + $expression.v;
 	   } )*
@@ -2835,8 +2836,8 @@ arguments returns [String v]
 	{ $v = "("; }
 	{ $v += " "; }
 	^( ARGUMENT_LIST
+           { children( "expression" ); }
 	   ( expression {
-             children( "expression" );
 	     $v += ( _i++ == 0 ? "" : "/* arguments */" )
 		 + $expression.v;
 	   } )*
