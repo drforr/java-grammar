@@ -85,10 +85,13 @@ class Tester {
     System.out.println(
       testArray.hTest( testArray.bTest ) == 42 ? "ok 26" : "not ok 26"
     );
+    System.out.println(
+      testArray.iTest( ) == 42 ? "ok 27" : "not ok 27"
+    );
 
     Loop_Foreach testLoop_Foreach = new Loop_Foreach();
     System.out.println(
-      testLoop_Foreach.aTest() == 4 ? "ok 27" : "not ok 27"
+      testLoop_Foreach.aTest() == 4 ? "ok 28" : "not ok 28"
     );
   }
 }

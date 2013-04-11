@@ -157,10 +157,11 @@ options {
 // {{{ javaSource
 
 javaSource returns [String v]
-@init{
+@init
+  {
   int _i = 0, _j = 0;
   nonterminal( "javaSource" );
-}
+  }
 	:
 	^( JAVA_SOURCE
 	   ( annotationList {
@@ -189,7 +190,10 @@ javaSource returns [String v]
 // {{{ packageDeclaration
 
 packageDeclaration returns [String v]
-@init{ nonterminal( "packageDeclaration" ); }
+@init
+  {
+  nonterminal( "packageDeclaration" );
+  }
 	:
 	^( ( PACKAGE {
              children( "PACKAGE" );
@@ -207,7 +211,10 @@ packageDeclaration returns [String v]
 // {{{ importDeclaration
 
 importDeclaration returns [String v]
-@init{ nonterminal( "importDeclaration" ); }
+@init
+  {
+  nonterminal( "importDeclaration" );
+  }
 	:
 	^( ( IMPORT {
              children( "IMPORT" );
@@ -233,7 +240,10 @@ importDeclaration returns [String v]
 // {{{ typeDeclaration
 
 typeDeclaration returns [String v]
-@init{ nonterminal( "typeDeclaration" ); }
+@init
+  {
+  nonterminal( "typeDeclaration" );
+  }
 	:
 	^( ( CLASS {
              children( "CLASS" );
@@ -339,10 +349,11 @@ typeDeclaration returns [String v]
 // been resolved by the parser grammar.
 
 extendsClause returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "extendsClause" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( EXTENDS_CLAUSE
@@ -359,10 +370,11 @@ extendsClause returns [String v]
 // {{{ implementsClause
 
 implementsClause returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "implementsClause" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( IMPLEMENTS_CLAUSE
@@ -379,10 +391,11 @@ implementsClause returns [String v]
 // {{{ genericTypeParameterList
 
 genericTypeParameterList returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "genericTypeParameterList" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( GENERIC_TYPE_PARAM_LIST
@@ -399,7 +412,10 @@ genericTypeParameterList returns [String v]
 // {{{ genericTypeParameter
 
 genericTypeParameter returns [String v]
-@init{ nonterminal( "genericTypeParameter" ); }
+@init
+  {
+  nonterminal( "genericTypeParameter" );
+  }
 	:
 	^( ( IDENT {
              children( "IDENT" );
@@ -417,10 +433,11 @@ genericTypeParameter returns [String v]
 // {{{ bound
 
 bound returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "bound" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( EXTENDS_BOUND_LIST
@@ -437,10 +454,11 @@ bound returns [String v]
 // {{{ enumTopLevelScope
 
 enumTopLevelScope returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "enumTopLevelScope" );
-}
+  }
 	:
 	^( ENUM_TOP_LEVEL_SCOPE
 	   ( enumConstant {
@@ -460,10 +478,11 @@ enumTopLevelScope returns [String v]
 // {{{ enumConstant
 
 enumConstant returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "enumConstant" );
-}
+  }
 	:
 	^( ( IDENT {
              children( "IDENT" );
@@ -489,10 +508,11 @@ enumConstant returns [String v]
 // {{{ classTopLevelScope
 
 classTopLevelScope returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "classTopLevelScope" );
-}
+  }
 	:
 	{ $v = "{"; }
 	{ $v += "\n"; }
@@ -513,7 +533,10 @@ classTopLevelScope returns [String v]
 // {{{ classScopeDeclarations
 
 classScopeDeclarations returns [String v]
-@init{ nonterminal( "classScopeDeclarations" ); }
+@init
+  {
+  nonterminal( "classScopeDeclarations" );
+  }
 	:
 	^( CLASS_INSTANCE_INITIALIZER
 	   ( block {
@@ -641,10 +664,11 @@ classScopeDeclarations returns [String v]
 // {{{ interfaceTopLevelScope
 
 interfaceTopLevelScope returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "interfaceTopLevelScope" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( INTERFACE_TOP_LEVEL_SCOPE
@@ -661,7 +685,10 @@ interfaceTopLevelScope returns [String v]
 // {{{ interfaceScopeDeclarations
 
 interfaceScopeDeclarations returns [String v]
-@init{ nonterminal( "interfaceScopeDeclarations" ); }
+@init
+  {
+  nonterminal( "interfaceScopeDeclarations" );
+  }
 	:
 	^( FUNCTION_METHOD_DECL
 	   ( modifierList {
@@ -746,10 +773,11 @@ interfaceScopeDeclarations returns [String v]
 // {{{ variableDeclaratorList
 
 variableDeclaratorList returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "variableDeclaratorList" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( VAR_DECLARATOR_LIST
@@ -766,7 +794,10 @@ variableDeclaratorList returns [String v]
 // {{{ variableDeclarator
 
 variableDeclarator returns [String v]
-@init{ nonterminal( "variableDeclarator" ); }
+@init
+  {
+  nonterminal( "variableDeclarator" );
+  }
 	:
 	^( VAR_DECLARATOR
 	   ( variableDeclaratorId {
@@ -785,7 +816,10 @@ variableDeclarator returns [String v]
 // {{{ variableDeclaratorId
 
 variableDeclaratorId returns [String v]
-@init{ nonterminal( "variableDeclaratorId" ); }
+@init
+  {
+  nonterminal( "variableDeclaratorId" );
+  }
 	:
 	^( ( IDENT {
              children( "IDENT" );
@@ -803,7 +837,10 @@ variableDeclaratorId returns [String v]
 // {{{ variableInitializer
 
 variableInitializer returns [String v]
-@init{ nonterminal( "variableInitializer" ); }
+@init
+  {
+  nonterminal( "variableInitializer" );
+  }
 	:
 	( arrayInitializer {
           children( "arrayInitializer" );
@@ -821,7 +858,10 @@ variableInitializer returns [String v]
 // {{{ arrayDeclarator
 
 arrayDeclarator returns [String v]
-@init{ nonterminal( "arrayDeclarator" ); }
+@init
+  {
+  nonterminal( "arrayDeclarator" );
+  }
 	:
 	( LBRACK {
           children( "LBRACK" );
@@ -838,10 +878,11 @@ arrayDeclarator returns [String v]
 // {{{ arrayDeclaratorList
 
 arrayDeclaratorList returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "arrayDeclaratorList" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( ARRAY_DECLARATOR_LIST
@@ -858,10 +899,11 @@ arrayDeclaratorList returns [String v]
 // {{{ arrayInitializer
 
 arrayInitializer returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "arrayInitializer" );
-}
+  }
 	:
 	{ $v = "{"; }
 	{ $v += " "; }
@@ -881,10 +923,11 @@ arrayInitializer returns [String v]
 // {{{ throwsClause
 
 throwsClause returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "throwsClause" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( THROWS_CLAUSE
@@ -901,10 +944,11 @@ throwsClause returns [String v]
 // {{{ modifierList
 
 modifierList returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "modifierList" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( MODIFIER_LIST
@@ -921,7 +965,10 @@ modifierList returns [String v]
 // {{{ modifier
 
 modifier returns [String v]
-@init{ nonterminal( "modifier" ); }
+@init
+  {
+  nonterminal( "modifier" );
+  }
 	:
 	( PUBLIC {
           children( "PUBLIC" );
@@ -984,10 +1031,11 @@ modifier returns [String v]
 // {{{ localModifierList
 
 localModifierList returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "localModifierList" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( LOCAL_MODIFIER_LIST
@@ -1004,7 +1052,10 @@ localModifierList returns [String v]
 // {{{ localModifier
 
 localModifier returns [String v]
-@init{ nonterminal( "localModifier" ); }
+@init
+  {
+  nonterminal( "localModifier" );
+  }
 	:
 	( FINAL {
           children( "FINAL" );
@@ -1022,7 +1073,10 @@ localModifier returns [String v]
 // {{{ type
 
 type returns [String v]
-@init{ nonterminal( "type" ); }
+@init
+  {
+  nonterminal( "type" );
+  }
 	:
 	^( TYPE
 	   ( ( primitiveType {
@@ -1047,10 +1101,11 @@ type returns [String v]
 // {{{ qualifiedTypeIdent
 
 qualifiedTypeIdent returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "qualifiedTypeIdent" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( QUALIFIED_TYPE_IDENT
@@ -1067,7 +1122,10 @@ qualifiedTypeIdent returns [String v]
 // {{{ typeIdent
 
 typeIdent returns [String v]
-@init{ nonterminal( "typeIdent" ); }
+@init
+  {
+  nonterminal( "typeIdent" ); 
+  }
 	:
 	^( ( IDENT {
              children( "IDENT" );
@@ -1085,7 +1143,10 @@ typeIdent returns [String v]
 // {{{ primitiveType
 
 primitiveType returns [String v]
-@init{ nonterminal( "primitiveType" ); }
+@init
+  {
+  nonterminal( "primitiveType" );
+  }
 	:
 	( BOOLEAN {
           children( "BOOLEAN" );
@@ -1133,10 +1194,11 @@ primitiveType returns [String v]
 // {{{ genericTypeArgumentList
 
 genericTypeArgumentList returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "genericTypeArgumentList" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( GENERIC_TYPE_ARG_LIST
@@ -1153,7 +1215,10 @@ genericTypeArgumentList returns [String v]
 // {{{ genericTypeArgument
 
 genericTypeArgument returns [String v]
-@init{ nonterminal( "genericTypeArgument" ); }
+@init
+  {
+  nonterminal( "genericTypeArgument" ); 
+  }
 	:
 	( type {
           children( "type" );
@@ -1176,7 +1241,10 @@ genericTypeArgument returns [String v]
 // {{{ genericWildcardBoundType
 
 genericWildcardBoundType returns [String v]
-@init{ nonterminal( "genericWildcardBoundType" ); }
+@init
+  {
+  nonterminal( "genericWildcardBoundType" );
+  }
 	:
 	^( ( EXTENDS {
              children( "EXTENDS" );
@@ -1204,10 +1272,11 @@ genericWildcardBoundType returns [String v]
 // {{{ formalParameterList
 
 formalParameterList returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "formalParameterList" );
-}
+  }
 	:
 	{ $v = "("; }
 	{ $v += " "; }
@@ -1230,7 +1299,10 @@ formalParameterList returns [String v]
     
 // {{{ formalParameterStandardDecl
 formalParameterStandardDecl returns [String v]
-@init{ nonterminal( "formalParameterStandardDecl" ); }
+@init
+  {
+  nonterminal( "formalParameterStandardDecl" ); 
+  }
 	:
 	^( FORMAL_PARAM_STD_DECL
 	   ( localModifierList {
@@ -1253,7 +1325,10 @@ formalParameterStandardDecl returns [String v]
 // {{{ formalParameterVarargDecl
 
 formalParameterVarargDecl returns [String v]
-@init{ nonterminal( "formalParameterVarargDecl" ); }
+@init
+  {
+  nonterminal( "formalParameterVarargDecl" );
+  }
 	:
 	^( FORMAL_PARAM_VARARG_DECL
 	   ( localModifierList {
@@ -1276,7 +1351,10 @@ formalParameterVarargDecl returns [String v]
 // {{{ qualifiedIdentifier
 
 qualifiedIdentifier returns [String v]
-@init{ nonterminal( "qualifiedIdentifier" ); }
+@init
+  {
+  nonterminal( "qualifiedIdentifier" ); 
+  }
 	:
 	( IDENT {
           children( "IDENT" );
@@ -1305,10 +1383,11 @@ qualifiedIdentifier returns [String v]
 // {{{ annotationList
 
 annotationList returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "annotationList" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( ANNOTATION_LIST
@@ -1325,7 +1404,10 @@ annotationList returns [String v]
 // {{{ annotation
 
 annotation returns [String v]
-@init{ nonterminal( "annotation" ); }
+@init
+  {
+  nonterminal( "annotation" );
+  }
 	:
 	^( ( AT {
              children( "AT" );
@@ -1347,7 +1429,10 @@ annotation returns [String v]
 // {{{ annotationInit
 
 annotationInit returns [String v]
-@init{ nonterminal( "annotationInit" ); }
+@init
+  {
+  nonterminal( "annotationInit" );
+  }
 	:
 	^( ANNOTATION_INIT_BLOCK
            { children( "annotationInitializers" ); }
@@ -1361,10 +1446,11 @@ annotationInit returns [String v]
 // {{{ annotationInitializers
 
 annotationInitializers returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "annotationInitializers" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( ANNOTATION_INIT_KEY_LIST
@@ -1389,7 +1475,10 @@ annotationInitializers returns [String v]
 // {{{ annotationInitializer
 
 annotationInitializer returns [String v]
-@init{ nonterminal( "annotationInitializer" ); }
+@init
+  {
+  nonterminal( "annotationInitializer" ); 
+  }
 	:
 	^( ( IDENT {
              children( "IDENT" );
@@ -1407,7 +1496,10 @@ annotationInitializer returns [String v]
 // {{{ annotationElementValue
 
 annotationElementValue returns [String v]
-@init{ nonterminal( "annotationElementValue" ); }
+@init
+  {
+  nonterminal( "annotationElementValue" );
+  }
 	:
 	^( ANNOTATION_INIT_ARRAY_ELEMENT
            { children( "aAnnotationElementValue" ); }
@@ -1432,10 +1524,11 @@ annotationElementValue returns [String v]
 // {{{ annotationTopLevelScope
 
 annotationTopLevelScope returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "annotationTopLevelScope" );
-}
+  }
 	:
 	^( ANNOTATION_TOP_LEVEL_SCOPE
            { children( "annotationScopeDeclarations" ); }
@@ -1451,7 +1544,10 @@ annotationTopLevelScope returns [String v]
 // {{{ annotationScopeDeclarations
 
 annotationScopeDeclarations returns [String v]
-@init{ nonterminal( "annotationScopeDeclarations" ); }
+@init
+  {
+  nonterminal( "annotationScopeDeclarations" );
+  }
 	:
 	^( ANNOTATION_METHOD_DECL
 	   ( modifierList {
@@ -1498,7 +1594,10 @@ annotationScopeDeclarations returns [String v]
 // {{{ annotationDefaultValue
 
 annotationDefaultValue returns [String v]
-@init{ nonterminal( "annotationDefaultValue" ); }
+@init
+  {
+  nonterminal( "annotationDefaultValue" ); 
+  }
 	:
 	^( DEFAULT
 	   ( annotationElementValue {
@@ -1515,10 +1614,11 @@ annotationDefaultValue returns [String v]
 // {{{ block
 
 block returns [Statement s]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "block" );
-}
+  }
 	:
 	{ $s = new Statement( 1 ); }
 	{ $s.string += "{"; }
@@ -1553,7 +1653,10 @@ $s.string +=
 // {{{ blockStatement
 
 blockStatement returns [Statement s]
-@init{ nonterminal( "blockStatement" ); }
+@init
+  {
+  nonterminal( "blockStatement" );
+  }
 	:
 	( localVariableDeclaration { // XXX 'int i = 40;'
           children( "localVariableDeclaration" );
@@ -1580,7 +1683,10 @@ blockStatement returns [Statement s]
 // int i;
 
 localVariableDeclaration returns [String v]
-@init{ nonterminal( "localVariableDeclaration" ); }
+@init
+  {
+  nonterminal( "localVariableDeclaration" );
+  }
 	:
 	^( VAR_DECLARATION
 	   ( localModifierList {
@@ -1603,7 +1709,10 @@ localVariableDeclaration returns [String v]
 // {{{ statement
         
 statement returns [Statement s]
-@init{ nonterminal( "statement" ); }
+@init
+  {
+  nonterminal( "statement" ); 
+  }
 	:
 	( block {
           children( "block" );
@@ -1850,10 +1959,11 @@ $s.string +=
 // {{{ catches
 
 catches returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "catches" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( CATCH_CLAUSE_LIST
@@ -1870,7 +1980,10 @@ catches returns [String v]
 // {{{ catchClause
 
 catchClause returns [String v]
-@init{ nonterminal( "catchClause" ); }
+@init
+  {
+  nonterminal( "catchClause" ); 
+  }
 	:
 	^( ( CATCH {
              children( "CATCH" );
@@ -1892,10 +2005,11 @@ catchClause returns [String v]
 // {{{ switchBlockLabels
 
 switchBlockLabels returns [String v]
-@init{
+@init
+  {
   int _i = 0, _j = 0;
   nonterminal( "switchBlockLabels" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( SWITCH_BLOCK_LABEL_LIST
@@ -1921,10 +2035,11 @@ switchBlockLabels returns [String v]
 // {{{ switchCaseLabel
 
 switchCaseLabel returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "switchCaseLabel" );
-}
+  }
 	:
 	^( ( CASE {
              children( "CASE" );
@@ -1947,10 +2062,11 @@ switchCaseLabel returns [String v]
 // {{{ switchDefaultLabel
 
 switchDefaultLabel returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "switchDefaultLabel" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( DEFAULT
@@ -1967,10 +2083,11 @@ switchDefaultLabel returns [String v]
 // {{{ forInit
 
 forInit returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "forInit" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( FOR_INIT
@@ -1992,7 +2109,10 @@ forInit returns [String v]
 // {{{ forCondition
 
 forCondition returns [String v]
-@init{ nonterminal( "forCondition" ); }
+@init
+  {
+  nonterminal( "forCondition" );
+  }
 	:
 	{ $v = ""; }
 	^( FOR_CONDITION
@@ -2008,10 +2128,11 @@ forCondition returns [String v]
 // {{{ forUpdater
 
 forUpdater returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "forUpdater" );
-}
+  }
 	:
 	{ $v = ""; }
 	^( FOR_UPDATE
@@ -2030,7 +2151,10 @@ forUpdater returns [String v]
 // {{{ parenthesizedExpression
 
 parenthesizedExpression returns [String v]
-@init{ nonterminal( "parenthesizedExpression" ); }
+@init
+  {
+  nonterminal( "parenthesizedExpression" );
+  }
 	:
 	{ $v = "("; }
 	{ $v += " "; }
@@ -2049,7 +2173,10 @@ parenthesizedExpression returns [String v]
 // {{{ expression
 
 expression returns [String v]
-@init{ nonterminal( "expression" ); }
+@init
+  {
+  nonterminal( "expression" );
+  }
 	:
 	^( EXPR
 	   ( expr {
@@ -2064,7 +2191,10 @@ expression returns [String v]
 // {{{ expr
 
 expr returns [String v]
-@init{ nonterminal( "expr" ); }
+@init
+  {
+  nonterminal( "expr" );
+  }
 	:
 	^( ASSIGN
 	   ( aExpr=expr {
@@ -2535,7 +2665,10 @@ expr returns [String v]
 // {{{ primaryExpression
 
 primaryExpression returns [String v]
-@init{ nonterminal( "primaryExpression" ); }
+@init
+  { 
+  nonterminal( "primaryExpression" );
+  }
 	:
 	^( ( DOT {
              children( "DOT" );
@@ -2659,7 +2792,10 @@ primaryExpression returns [String v]
 // {{{ explicitConstructorCall
 
 explicitConstructorCall returns [String v]
-@init{ nonterminal( "explicitConstructorCall" ); }
+@init
+  {
+  nonterminal( "explicitConstructorCall" );
+  }
 	:
 	{ $v = ""; }
 	^( THIS_CONSTRUCTOR_CALL
@@ -2693,7 +2829,10 @@ explicitConstructorCall returns [String v]
 // {{{ arrayTypeDeclarator
 
 arrayTypeDeclarator returns [String v]
-@init{ nonterminal( "arrayTypeDeclarator" ); }
+@init
+  {
+  nonterminal( "arrayTypeDeclarator" );
+  }
 	:
 	^( ARRAY_DECLARATOR
 	   ( ( aArrayTypeDeclarator=arrayTypeDeclarator {
@@ -2717,7 +2856,10 @@ arrayTypeDeclarator returns [String v]
 // {{{ newExpression
 
 newExpression returns [String v]
-@init{ nonterminal( "newExpression" ); }
+@init
+  {
+  nonterminal( "newExpression" );
+  }
 	:
 	{ $v = ""; }
 	^( STATIC_ARRAY_CREATOR
@@ -2774,7 +2916,10 @@ newExpression returns [String v]
 // something like 'InnerType innerType = outer.new InnerType();'
 
 innerNewExpression returns [String v]
-@init{ nonterminal( "innerNewExpression" ); }
+@init
+  {
+  nonterminal( "innerNewExpression" );
+  }
 	:
 	{ $v = ""; }
 	^( CLASS_CONSTRUCTOR_CALL
@@ -2802,10 +2947,11 @@ innerNewExpression returns [String v]
 // {{{ newArrayConstruction
 
 newArrayConstruction returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "newArrayConstruction" );
-}
+  }
 	:
 	( arrayDeclaratorList {
           children( "arrayDeclaratorList" );
@@ -2834,10 +2980,11 @@ newArrayConstruction returns [String v]
 // {{{ arguments
 
 arguments returns [String v]
-@init{
+@init
+  {
   int _i = 0;
   nonterminal( "arguments" );
-}
+  }
 	:
 	{ $v = "("; }
 	{ $v += " "; }
@@ -2857,7 +3004,10 @@ arguments returns [String v]
 // {{{ literal
 
 literal returns [String v]
-@init{ nonterminal( "literal" ); }
+@init
+  {
+  nonterminal( "literal" ); 
+  }
 	:
 	( HEX_LITERAL {
           children( "HEX_LITERAL" );
