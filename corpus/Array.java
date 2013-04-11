@@ -28,4 +28,5 @@ class Array {
     iTest[0] = 42;
     return iTest[0];
   }
+  public static final String[] kTest = new String[] { "foo", "bar" };
 }

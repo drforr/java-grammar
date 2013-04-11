@@ -2875,9 +2875,9 @@ newExpression returns [String v]
 	       $v += $aNewArrayConstruction.v;
 	     } )
 	     { $v += "]"; }
-	   | ( genericTypeArgumentList {
+	   | { $v="new";} ( genericTypeArgumentList {
                children( "genericTypeArgumentList" );
-	       $v = $genericTypeArgumentList.v;
+	       $v += $genericTypeArgumentList.v;
 	     } )?
 	     ( qualifiedTypeIdent {
                children( "qualifiedTypeIdent" );
@@ -2961,7 +2961,7 @@ newArrayConstruction returns [String v]
           children( "arrayInitializer" );
 	  $v += " " + $arrayInitializer.v;
 	} )
-	{ $v += "/*;5*/" + "\n"; }
+	{ $v += ";/*;5*/" + "\n"; }
 	|
 	{ $v = ""; }
 	( expression {

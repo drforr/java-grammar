@@ -5,4 +5,6 @@ class Attribute {
   public int cTest ( ) {
     return bTest;
   }
+  static final String dTest = "foo";
+  public static final String eTest = "foo";
 }
