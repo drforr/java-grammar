@@ -7,4 +7,9 @@ class Attribute {
   }
   static final String dTest = "foo";
   public static final String eTest = "foo";
+  public Attribute ( ) {
+  }
+  public Attribute ( int i ) {
+    this.a = i;
+  }
 }

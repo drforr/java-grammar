@@ -631,10 +631,12 @@ classScopeDeclarations returns [String v]
 	 )
 	|
 	^( CONSTRUCTOR_DECL
+	   ( IDENT )
 	   ( modifierList {
              children( "modifierList" );
 	     $v = $modifierList.v;
 	   } )
+	   { $v+= " " + $IDENT.text; }
 	   ( genericTypeParameterList {
              children( "genericTypeParameterList" );
 	     $v += " " + $genericTypeParameterList.v;
@@ -2672,12 +2674,12 @@ primaryExpression returns [String v]
 	:
 	^( ( DOT {
              children( "DOT" );
-	     $v = $DOT.text;
 	   } )
            ( ( aPrimaryExpression=primaryExpression {
                children( "aPrimaryExpression" );
-	       $v += " " + $aPrimaryExpression.v;
+	       $v = " " + $aPrimaryExpression.v;
 	     } )
+	     { $v += $DOT.text; }
              ( ( IDENT {
                  children( "IDENT" );
 	         $v += $IDENT.text;

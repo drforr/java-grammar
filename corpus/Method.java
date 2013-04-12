@@ -19,4 +19,7 @@ class Method {
     int i = 41;
     return ++i;
   }
+  public String eTest ( ) {
+    return "foo";
+  }
 }
