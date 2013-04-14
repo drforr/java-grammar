@@ -1,4 +1,5 @@
-/** {{{ License
+// {{{ License
+/**
  * For more information see the head comment within the 'java.g' grammar file
  * that defines the input for this tree grammar.
  *
@@ -162,28 +163,28 @@ javaSource returns [String v]
   int _i = 0, _j = 0;
   nonterminal( "javaSource" );
   }
-	:
-	^( JAVA_SOURCE
-	   ( annotationList {
-             children( "annotationList" );
-	     $v = $annotationList.v;
-	   } )
-	   ( packageDeclaration {
-             children( "packageDeclaration" );
-	     $v += " " + $packageDeclaration.v;
-	   } )?
-	   ( importDeclaration {
-             children( "importDeclaration" );
-	     $v += ( _i++ == 0 ? "" : "/* javaSource 1 */" )
-		 + $importDeclaration.v;
-	   } )*
-	   ( typeDeclaration {
-             children( "typeDeclaration" );
-	     $v += ( _j++ == 0 ? "" : "/* javaSource 2 */" )
-		 + $typeDeclaration.v;
-	   } )*
-	 )
-	;
+  :
+  ^( JAVA_SOURCE
+     ( annotationList {
+       children( "annotationList" );
+       $v = $annotationList.v;
+     } )
+     ( packageDeclaration {
+       children( "packageDeclaration" );
+       $v += " " + $packageDeclaration.v;
+     } )?
+     ( importDeclaration {
+       children( "importDeclaration" );
+       $v += ( _i++ == 0 ? "" : "/* javaSource 1 */" )
+  	 + $importDeclaration.v;
+     } )*
+     ( typeDeclaration {
+       children( "typeDeclaration" );
+       $v += ( _j++ == 0 ? "" : "/* javaSource 2 */" )
+  	 + $typeDeclaration.v;
+     } )*
+   )
+  ;
 
 // }}}
 
@@ -194,17 +195,17 @@ packageDeclaration returns [String v]
   {
   nonterminal( "packageDeclaration" );
   }
-	:
-	^( ( PACKAGE {
-             children( "PACKAGE" );
-	     $v = $PACKAGE.text;
-	   } )
-	   ( qualifiedIdentifier {
-             children( "qualifiedIdentifier" );
-	     $v += " " + $qualifiedIdentifier.v;
-	   } )
-	 )
-	;
+  :
+  ^( ( PACKAGE {
+       children( "PACKAGE" );
+       $v = $PACKAGE.text;
+     } )
+     ( qualifiedIdentifier {
+       children( "qualifiedIdentifier" );
+       $v += " " + $qualifiedIdentifier.v;
+     } )
+   )
+  ;
 
 // }}}
     
@@ -215,25 +216,25 @@ importDeclaration returns [String v]
   {
   nonterminal( "importDeclaration" );
   }
-	:
-	^( ( IMPORT {
-             children( "IMPORT" );
-	     $v = $IMPORT.text;
-	   } )
-	   ( STATIC {
-             children( "STATIC" );
-	     $v += " " + $STATIC.text;
-	   } )?
-	   ( qualifiedIdentifier {
-             children( "qualifiedIdentifier" );
-	     $v += " " + $qualifiedIdentifier.v;
-	   } )
-	   ( DOTSTAR {
-             children( "DOTSTAR" );
-	     $v += " " + $DOTSTAR.text;
-	   } )?
-	 )
-	;
+  :
+  ^( ( IMPORT {
+       children( "IMPORT" );
+       $v = $IMPORT.text;
+     } )
+     ( STATIC {
+       children( "STATIC" );
+       $v += " " + $STATIC.text;
+     } )?
+     ( qualifiedIdentifier {
+       children( "qualifiedIdentifier" );
+       $v += " " + $qualifiedIdentifier.v;
+     } )
+     ( DOTSTAR {
+       children( "DOTSTAR" );
+       $v += " " + $DOTSTAR.text;
+     } )?
+   )
+  ;
 
 // }}}
     
@@ -244,103 +245,103 @@ typeDeclaration returns [String v]
   {
   nonterminal( "typeDeclaration" );
   }
-	:
-	^( ( CLASS {
-             children( "CLASS" );
-	     $v = $CLASS.text;
-	   } )
-	   ( modifierList {
-             children( "modifierList" );
-	     $v += " " + $modifierList.v;
-	   } )
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	   ( genericTypeParameterList {
-             children( "genericTpeParameterList" );
-	     $v += " " + $genericTypeParameterList.v;
-	   } )?
-	   ( extendsClause {
-             children( "extendsClause" );
-	     $v += " " + $extendsClause.v;
-	   } )?
-	   ( implementsClause {
-             children( "implementsClause" );
-	     $v += " " + $implementsClause.v;
-	   } )?
-	   ( classTopLevelScope {
-             children( "classTopLevelScope" );
-	     $v += " " + $classTopLevelScope.v;
-	   } )
-	 )
-	|
-	^( ( INTERFACE {
-             children( "INTERFACE" );
-	     $v = $INTERFACE.text;
-	   } )
-	   ( modifierList {
-             children( "modifierList" );
-	     $v += " " + $modifierList.v;
-	   } )
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	   ( genericTypeParameterList {
-             children( "genericTypeParameterList" );
-	     $v += " " + $genericTypeParameterList.v;
-	   } )?
-	   ( extendsClause {
-             children( "extendsClause" );
-	     $v += " " + $extendsClause.v;
-	   } )?
-	   ( interfaceTopLevelScope {
-             children( "interfaceTopLevelScope" );
-	     $v += " " + $interfaceTopLevelScope.v;
-	   } )
-	 )
-	|
-	^( ( ENUM {
-             children( "ENUM" );
-	     $v = $ENUM.text;
-	   } )
-	   ( modifierList {
-             children( "modifierList" );
-	     $v += " " + $modifierList.v;
-	   } )
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	   ( implementsClause {
-             children( "implementsClause" );
-	     $v += " " + $implementsClause.v;
-	   } )?
-	   ( enumTopLevelScope {
-             children( "enumTopLevelScope" );
-	     $v += " " + $enumTopLevelScope.v;
-	   } )
-	 )
-	|
-	^( ( AT {
-             children( "AT" );
-	     $v = $AT.text;
-	   } )
-	   ( modifierList {
-             children( "modifierList" );
-	     $v += " " + $modifierList.v;
-	   } )
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	   ( annotationTopLevelScope {
-             children( "annotationTopLevelScope" );
-	     $v += " " + $annotationTopLevelScope.v;
-	   } )
-	 )
-	;
+  :
+  ^( ( CLASS {
+       children( "CLASS" );
+       $v = $CLASS.text;
+     } )
+     ( modifierList {
+       children( "modifierList" );
+       $v += " " + $modifierList.v;
+     } )
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+     ( genericTypeParameterList {
+       children( "genericTpeParameterList" );
+       $v += " " + $genericTypeParameterList.v;
+     } )?
+     ( extendsClause {
+       children( "extendsClause" );
+       $v += " " + $extendsClause.v;
+     } )?
+     ( implementsClause {
+       children( "implementsClause" );
+       $v += " " + $implementsClause.v;
+     } )?
+     ( classTopLevelScope {
+       children( "classTopLevelScope" );
+       $v += " " + $classTopLevelScope.v;
+     } )
+   )
+  |
+  ^( ( INTERFACE {
+       children( "INTERFACE" );
+       $v = $INTERFACE.text;
+     } )
+     ( modifierList {
+       children( "modifierList" );
+       $v += " " + $modifierList.v;
+     } )
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+     ( genericTypeParameterList {
+       children( "genericTypeParameterList" );
+       $v += " " + $genericTypeParameterList.v;
+     } )?
+     ( extendsClause {
+       children( "extendsClause" );
+       $v += " " + $extendsClause.v;
+     } )?
+     ( interfaceTopLevelScope {
+       children( "interfaceTopLevelScope" );
+       $v += " " + $interfaceTopLevelScope.v;
+     } )
+   )
+  |
+  ^( ( ENUM {
+       children( "ENUM" );
+       $v = $ENUM.text;
+     } )
+     ( modifierList {
+       children( "modifierList" );
+       $v += " " + $modifierList.v;
+     } )
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+     ( implementsClause {
+       children( "implementsClause" );
+       $v += " " + $implementsClause.v;
+     } )?
+     ( enumTopLevelScope {
+       children( "enumTopLevelScope" );
+       $v += " " + $enumTopLevelScope.v;
+     } )
+   )
+  |
+  ^( ( AT {
+       children( "AT" );
+       $v = $AT.text;
+     } )
+     ( modifierList {
+       children( "modifierList" );
+       $v += " " + $modifierList.v;
+     } )
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+     ( annotationTopLevelScope {
+       children( "annotationTopLevelScope" );
+       $v += " " + $annotationTopLevelScope.v;
+     } )
+   )
+  ;
 
 // }}}
 
@@ -354,16 +355,16 @@ extendsClause returns [String v]
   int _i = 0;
   nonterminal( "extendsClause" );
   }
-	:
-	{ $v = ""; }
-	^( EXTENDS_CLAUSE
-           { children( "type" ); }
-	   ( type {
-	     $v += (_i == 0 ? "" : "/* extendsClause */" )
-		 + $type.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( EXTENDS_CLAUSE
+     { children( "type" ); }
+     ( type {
+       $v += (_i == 0 ? "" : "/* extendsClause */" )
+  	 + $type.v;
+     } )+
+   )
+  ;
 
 // }}}
     
@@ -375,16 +376,16 @@ implementsClause returns [String v]
   int _i = 0;
   nonterminal( "implementsClause" );
   }
-	:
-	{ $v = ""; }
-	^( IMPLEMENTS_CLAUSE
-           { children( "type" ); }
-	   ( type {
-	     $v += ( _i++ == 0 ? "" : "/* implementsClause */" )
-		 + $type.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( IMPLEMENTS_CLAUSE
+     { children( "type" ); }
+     ( type {
+       $v += ( _i++ == 0 ? "" : "/* implementsClause */" )
+  	 + $type.v;
+     } )+
+   )
+  ;
 
 // }}}
         
@@ -396,16 +397,16 @@ genericTypeParameterList returns [String v]
   int _i = 0;
   nonterminal( "genericTypeParameterList" );
   }
-	:
-	{ $v = ""; }
-	^( GENERIC_TYPE_PARAM_LIST
-           { children( "genericTypeParameter" ); }
-	   ( genericTypeParameter {
-	     $v += ( _i++ == 0 ? "" : "/* genericTypeParameter */" )
-		 + $genericTypeParameter.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( GENERIC_TYPE_PARAM_LIST
+     { children( "genericTypeParameter" ); }
+     ( genericTypeParameter {
+       $v += ( _i++ == 0 ? "" : "/* genericTypeParameter */" )
+  	 + $genericTypeParameter.v;
+     } )+
+   )
+  ;
 
 // }}}
 
@@ -416,17 +417,17 @@ genericTypeParameter returns [String v]
   {
   nonterminal( "genericTypeParameter" );
   }
-	:
-	^( ( IDENT {
-             children( "IDENT" );
-	     $v = $IDENT.text;
-	   } )
-	   ( bound {
-             children( "bound" );
-	     $v += " " + $bound.v;
-	   } )?
-	 )
-	;
+  :
+  ^( ( IDENT {
+       children( "IDENT" );
+       $v = $IDENT.text;
+     } )
+     ( bound {
+       children( "bound" );
+       $v += " " + $bound.v;
+     } )?
+   )
+  ;
 
 // }}}
         
@@ -438,16 +439,16 @@ bound returns [String v]
   int _i = 0;
   nonterminal( "bound" );
   }
-	:
-	{ $v = ""; }
-	^( EXTENDS_BOUND_LIST
-           { children( "type" ); }
-	   ( type {
-	     $v += ( _i++ == 0 ? "" : "/* bound */" )
-		 + $type.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( EXTENDS_BOUND_LIST
+     { children( "type" ); }
+     ( type {
+       $v += ( _i++ == 0 ? "" : "/* bound */" )
+  	 + $type.v;
+     } )+
+   )
+  ;
 
 // }}}
 
@@ -459,19 +460,19 @@ enumTopLevelScope returns [String v]
   int _i = 0;
   nonterminal( "enumTopLevelScope" );
   }
-	:
-	^( ENUM_TOP_LEVEL_SCOPE
-	   ( enumConstant {
-             children( "enumConstant" );
-	     $v += ( _i++ == 0 ? "" : "/* enumTopLevelScope */" )
-		 + $enumConstant.v;
-	   } )+
-	   ( classTopLevelScope {
-             children( "classTopLevelScope" );
-	     $v += " " + $classTopLevelScope.v;
-	   } )?
-	 )
-	;
+  :
+  ^( ENUM_TOP_LEVEL_SCOPE
+     ( enumConstant {
+       children( "enumConstant" );
+       $v += ( _i++ == 0 ? "" : "/* enumTopLevelScope */" )
+  	 + $enumConstant.v;
+     } )+
+     ( classTopLevelScope {
+       children( "classTopLevelScope" );
+       $v += " " + $classTopLevelScope.v;
+     } )?
+   )
+  ;
 
 // }}}
     
@@ -483,25 +484,25 @@ enumConstant returns [String v]
   int _i = 0;
   nonterminal( "enumConstant" );
   }
-	:
-	^( ( IDENT {
-             children( "IDENT" );
-	     $v = $IDENT.text;
-	   } )
-	   ( annotationList {
-             children( "annotationList" );
-	     $v += " " + $annotationList.v;
-	   } )
-	   ( arguments {
-             children( "arguments" );
-	     $v += " " + $arguments.v;
-	   } )?
-	   ( classTopLevelScope {
-             children( "classTopLevelScope" );
-	     $v += " " + $classTopLevelScope.v;
-	   } )?
-	 )
-	;
+  :
+  ^( ( IDENT {
+       children( "IDENT" );
+       $v = $IDENT.text;
+     } )
+     ( annotationList {
+       children( "annotationList" );
+       $v += " " + $annotationList.v;
+     } )
+     ( arguments {
+       children( "arguments" );
+       $v += " " + $arguments.v;
+     } )?
+     ( classTopLevelScope {
+       children( "classTopLevelScope" );
+       $v += " " + $classTopLevelScope.v;
+     } )?
+   )
+  ;
 
 // }}}
     
@@ -513,20 +514,20 @@ classTopLevelScope returns [String v]
   int _i = 0;
   nonterminal( "classTopLevelScope" );
   }
-	:
-	{ $v = "{"; }
-	{ $v += "\n"; }
-	^( CLASS_TOP_LEVEL_SCOPE
-	   { children( "classScopeDeclarations" ); }
-	   ( classScopeDeclarations {
-	     $v += ( _i++ == 0 ? "" : "/* classTopLevelScope */" )
-		 + $classScopeDeclarations.v;
-	   } )*
-	 )
-	{ $v += "\n"; }
-	{ $v += "}"; }
-	{ $v += "\n"; }
-	;
+  :
+  { $v = "{"; }
+  { $v += "\n"; }
+  ^( CLASS_TOP_LEVEL_SCOPE
+     { children( "classScopeDeclarations" ); }
+     ( classScopeDeclarations {
+       $v += ( _i++ == 0 ? "" : "/* classTopLevelScope */" )
+  	 + $classScopeDeclarations.v;
+     } )*
+   )
+  { $v += "\n"; }
+  { $v += "}"; }
+  { $v += "\n"; }
+  ;
 
 // }}}
     
@@ -537,129 +538,129 @@ classScopeDeclarations returns [String v]
   {
   nonterminal( "classScopeDeclarations" );
   }
-	:
-	^( CLASS_INSTANCE_INITIALIZER
-	   ( block {
-             children( "block" );
-	     $v = $block.s.string;
-	   } )?
-	 )
-	|
-	^( CLASS_STATIC_INITIALIZER
-	   ( block {
-             children( "block" );
-	     $v = $block.s.string;
-	   } )?
-	 )
-	|
-	^( FUNCTION_METHOD_DECL
-	   ( modifierList {
-             children( "modifierList" );
-	     $v = $modifierList.v;
-	   } )
-	   ( genericTypeParameterList {
-             children( "genericTypeParameterList" );
-	     $v += " " + $genericTypeParameterList.v;
-	   } )?
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	   ( formalParameterList {
-	     $v += " " + $formalParameterList.v;
-	   } )
-	   ( arrayDeclaratorList {
-             children( "arrayDeclaratorList" );
-	     $v += " " + $arrayDeclaratorList.v;
-	   } )?
-	   ( throwsClause {
-             children( "throwsClause" );
-	     $v += " " + $throwsClause.v;
-	   } )?
-	   ( block {
-             children( "block" );
-	     $v += " " + $block.s.string;
-	   } )?
-	  )
-	|
-	^( VOID_METHOD_DECL
-	   ( modifierList {
-             children( "modifierList" );
-	     $v = $modifierList.v;
-	   } )
-	   ( genericTypeParameterList {
-             children( "genericTypeParameterList" );
-	     $v += " " + $genericTypeParameterList.v;
-	   } )?
-	   { $v += " " + "void"; }
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	   ( formalParameterList {
-             children( "formalParameterList" );
-	     $v += " " + $formalParameterList.v;
-	   } )
-	   ( throwsClause {
-             children( "throwsClause" );
-	     $v += " " + $throwsClause.v;
-	   } )?
-	   ( block {
-             children( "block" );
-	     $v += " " + $block.s.string;
-	   } )?
-	 )
-	|
-	^( VAR_DECLARATION // XXX public int aTest = 42;
-	   ( modifierList {
-             children( "modifierList" );
-	     $v = $modifierList.v;
-	   } )
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	   ( variableDeclaratorList {
-             children( "variableDeclaratorList" );
-	     $v += " " + $variableDeclaratorList.v;
-	   } )
-	   { $v += ";" + "\n"; }
-	 )
-	|
-	^( CONSTRUCTOR_DECL
-	   ( IDENT )
-	   ( modifierList {
-             children( "modifierList" );
-	     $v = $modifierList.v;
-	   } )
-	   { $v+= " " + $IDENT.text; }
-	   ( genericTypeParameterList {
-             children( "genericTypeParameterList" );
-	     $v += " " + $genericTypeParameterList.v;
-	   } )?
-	   ( formalParameterList {
-             children( "formalParameterList" );
-	     $v += " " + $formalParameterList.v;
-	   } )
-	   ( throwsClause {
-             children( "throwsClause" );
-	     $v += " " + $throwsClause.v;
-	   } )?
-	   ( block {
-             children( "block" );
-	     $v += " " + $block.s.string;
-	   } )
-	 )
-	|
-	( typeDeclaration {
-          children( "typeDeclaration" );
-	  $v = $typeDeclaration.v;
-	} )
-    ;
+  :
+  ^( CLASS_INSTANCE_INITIALIZER
+     ( block {
+       children( "block" );
+       $v = $block.s.string;
+     } )?
+   )
+  |
+  ^( CLASS_STATIC_INITIALIZER
+     ( block {
+       children( "block" );
+       $v = $block.s.string;
+     } )?
+   )
+  |
+  ^( FUNCTION_METHOD_DECL
+     ( modifierList {
+       children( "modifierList" );
+       $v = $modifierList.v;
+     } )
+     ( genericTypeParameterList {
+       children( "genericTypeParameterList" );
+       $v += " " + $genericTypeParameterList.v;
+     } )?
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+     ( formalParameterList {
+       $v += " " + $formalParameterList.v;
+     } )
+     ( arrayDeclaratorList {
+       children( "arrayDeclaratorList" );
+       $v += " " + $arrayDeclaratorList.v;
+     } )?
+     ( throwsClause {
+       children( "throwsClause" );
+       $v += " " + $throwsClause.v;
+     } )?
+     ( block {
+       children( "block" );
+       $v += " " + $block.s.string;
+     } )?
+    )
+  |
+  ^( VOID_METHOD_DECL
+     ( modifierList {
+       children( "modifierList" );
+       $v = $modifierList.v;
+     } )
+     ( genericTypeParameterList {
+       children( "genericTypeParameterList" );
+       $v += " " + $genericTypeParameterList.v;
+     } )?
+     { $v += " " + "void"; }
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+     ( formalParameterList {
+       children( "formalParameterList" );
+       $v += " " + $formalParameterList.v;
+     } )
+     ( throwsClause {
+       children( "throwsClause" );
+       $v += " " + $throwsClause.v;
+     } )?
+     ( block {
+       children( "block" );
+       $v += " " + $block.s.string;
+     } )?
+   )
+  |
+  ^( VAR_DECLARATION // XXX public int aTest = 42;
+     ( modifierList {
+       children( "modifierList" );
+       $v = $modifierList.v;
+     } )
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+     ( variableDeclaratorList {
+       children( "variableDeclaratorList" );
+       $v += " " + $variableDeclaratorList.v;
+     } )
+     { $v += ";" + "\n"; }
+   )
+  |
+  ^( CONSTRUCTOR_DECL
+     ( IDENT )
+     ( modifierList {
+       children( "modifierList" );
+       $v = $modifierList.v;
+     } )
+     { $v+= " " + $IDENT.text; }
+     ( genericTypeParameterList {
+       children( "genericTypeParameterList" );
+       $v += " " + $genericTypeParameterList.v;
+     } )?
+     ( formalParameterList {
+       children( "formalParameterList" );
+       $v += " " + $formalParameterList.v;
+     } )
+     ( throwsClause {
+       children( "throwsClause" );
+       $v += " " + $throwsClause.v;
+     } )?
+     ( block {
+       children( "block" );
+       $v += " " + $block.s.string;
+     } )
+   )
+  |
+  ( typeDeclaration {
+    children( "typeDeclaration" );
+    $v = $typeDeclaration.v;
+  } )
+  ;
 
 // }}}
     
@@ -671,16 +672,16 @@ interfaceTopLevelScope returns [String v]
   int _i = 0;
   nonterminal( "interfaceTopLevelScope" );
   }
-	:
-	{ $v = ""; }
-	^( INTERFACE_TOP_LEVEL_SCOPE
-           { children( "interfaceScopeDeclarations" ); }
-	   ( interfaceScopeDeclarations {
-	     $v += ( _i++ == 0 ? "" : "/* interfaceTopLevelScope */" )
-		 + $interfaceScopeDeclarations.v;
-	   } )*
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( INTERFACE_TOP_LEVEL_SCOPE
+     { children( "interfaceScopeDeclarations" ); }
+     ( interfaceScopeDeclarations {
+       $v += ( _i++ == 0 ? "" : "/* interfaceTopLevelScope */" )
+  	 + $interfaceScopeDeclarations.v;
+     } )*
+   )
+  ;
 
 // }}}
     
@@ -691,84 +692,84 @@ interfaceScopeDeclarations returns [String v]
   {
   nonterminal( "interfaceScopeDeclarations" );
   }
-	:
-	^( FUNCTION_METHOD_DECL
-	   ( modifierList {
-             children( "modifierList" );
-	     $v = $modifierList.v;
-	   } )
-	   ( genericTypeParameterList {
-             children( "genericTypeParameterList" );
-	     $v += " " + $genericTypeParameterList.v;
-	   } )?
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	   ( formalParameterList {
-             children( "formalParameterList" );
-	     $v += " " + $formalParameterList.v;
-	   } )
-	   ( arrayDeclaratorList {
-             children( "arrayDeclaratorList" );
-	     $v += " " + $arrayDeclaratorList.v;
-	   } )?
-	   ( throwsClause {
-             children( "throwsClause" );
-	     $v += " " + $throwsClause.v;
-	   } )?
-	 )
-	|
-	// Interface constant declarations have been switched to variable
-	// declarations by 'java.g'; the parser has already checked that
-	// there's an obligatory initializer.
-	^( VOID_METHOD_DECL
-	   ( modifierList {
-             children( "modifierList" );
-	     $v = $modifierList.v;
-	   } )
-	   ( genericTypeParameterList {
-             children( "genericTypeParameterList" );
-	     $v += " " + $genericTypeParameterList.v;
-	   } )?
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	   ( formalParameterList {
-             children( "formalParameterList" );
-	     $v += " " + $formalParameterList.v;
-	   } )
-	   ( throwsClause {
-             children( "throwsClause" );
-	     $v += " " + $throwsClause.v;
-	   } )?
-	 )
-	|
-	^( VAR_DECLARATION
-	   ( modifierList {
-             children( "modifierList" );
-	     $v = $modifierList.v;
-	   } )
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	   ( variableDeclaratorList {
-             children( "variableDeclaratorList" );
-	     $v = " " + $variableDeclaratorList.v;
-	   } )
-	 )
-	| 
-	( typeDeclaration {
-          children( "typeDeclaration" );
-	  $v = $typeDeclaration.v;
-	} )
-	;
+  :
+  ^( FUNCTION_METHOD_DECL
+     ( modifierList {
+       children( "modifierList" );
+       $v = $modifierList.v;
+     } )
+     ( genericTypeParameterList {
+       children( "genericTypeParameterList" );
+       $v += " " + $genericTypeParameterList.v;
+     } )?
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+     ( formalParameterList {
+       children( "formalParameterList" );
+       $v += " " + $formalParameterList.v;
+     } )
+     ( arrayDeclaratorList {
+       children( "arrayDeclaratorList" );
+       $v += " " + $arrayDeclaratorList.v;
+     } )?
+     ( throwsClause {
+       children( "throwsClause" );
+       $v += " " + $throwsClause.v;
+     } )?
+   )
+  |
+  // Interface constant declarations have been switched to variable
+  // declarations by 'java.g'; the parser has already checked that
+  // there's an obligatory initializer.
+  ^( VOID_METHOD_DECL
+     ( modifierList {
+       children( "modifierList" );
+       $v = $modifierList.v;
+     } )
+     ( genericTypeParameterList {
+       children( "genericTypeParameterList" );
+       $v += " " + $genericTypeParameterList.v;
+     } )?
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+     ( formalParameterList {
+       children( "formalParameterList" );
+       $v += " " + $formalParameterList.v;
+     } )
+     ( throwsClause {
+       children( "throwsClause" );
+       $v += " " + $throwsClause.v;
+     } )?
+   )
+  |
+  ^( VAR_DECLARATION
+     ( modifierList {
+       children( "modifierList" );
+       $v = $modifierList.v;
+     } )
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+     ( variableDeclaratorList {
+       children( "variableDeclaratorList" );
+       $v = " " + $variableDeclaratorList.v;
+     } )
+   )
+  | 
+  ( typeDeclaration {
+    children( "typeDeclaration" );
+    $v = $typeDeclaration.v;
+  } )
+  ;
 
 // }}}
 
@@ -780,16 +781,16 @@ variableDeclaratorList returns [String v]
   int _i = 0;
   nonterminal( "variableDeclaratorList" );
   }
-	:
-	{ $v = ""; }
-	^( VAR_DECLARATOR_LIST
-           { children( "variableDeclarator" ); }
-	   ( variableDeclarator {
-	     $v += ( _i++ == 0 ? "" : ", " )
-	         + $variableDeclarator.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( VAR_DECLARATOR_LIST
+     { children( "variableDeclarator" ); }
+     ( variableDeclarator {
+       $v += ( _i++ == 0 ? "" : ", " )
+           + $variableDeclarator.v;
+     } )+
+   )
+  ;
 
 // }}}
 
@@ -800,18 +801,18 @@ variableDeclarator returns [String v]
   {
   nonterminal( "variableDeclarator" );
   }
-	:
-	^( VAR_DECLARATOR
-	   ( variableDeclaratorId {
-             children( "variableDeclaratorId" );
-	     $v = $variableDeclaratorId.v;
-	   } )
-	   ( variableInitializer {
-             children( "variableInitializer" );
-	     $v += " " + "=" + " " + $variableInitializer.v;
-	   } )?
-	 )
-	;
+  :
+  ^( VAR_DECLARATOR
+     ( variableDeclaratorId {
+       children( "variableDeclaratorId" );
+       $v = $variableDeclaratorId.v;
+     } )
+     ( variableInitializer {
+       children( "variableInitializer" );
+       $v += " " + "=" + " " + $variableInitializer.v;
+     } )?
+   )
+  ;
 
 // }}}
     
@@ -822,17 +823,17 @@ variableDeclaratorId returns [String v]
   {
   nonterminal( "variableDeclaratorId" );
   }
-	:
-	^( ( IDENT {
-             children( "IDENT" );
-	     $v = $IDENT.text;
-	   } )
-	   ( arrayDeclaratorList {
-             children( "arrayDeclaratorList" );
-	     $v += " " + $arrayDeclaratorList.v;
-	   } )?
-	 )
-	;
+  :
+  ^( ( IDENT {
+       children( "IDENT" );
+       $v = $IDENT.text;
+     } )
+     ( arrayDeclaratorList {
+       children( "arrayDeclaratorList" );
+       $v += " " + $arrayDeclaratorList.v;
+     } )?
+   )
+  ;
 
 // }}}
 
@@ -843,17 +844,17 @@ variableInitializer returns [String v]
   {
   nonterminal( "variableInitializer" );
   }
-	:
-	( arrayInitializer {
-          children( "arrayInitializer" );
-	  $v = $arrayInitializer.v;
-	} )
-	|
-	( expression {
-          children( "expression" );
-	  $v = $expression.v;
-	} )
-	;
+  :
+  ( arrayInitializer {
+    children( "arrayInitializer" );
+    $v = $arrayInitializer.v;
+  } )
+  |
+  ( expression {
+    children( "expression" );
+    $v = $expression.v;
+  } )
+  ;
 
 // }}}
 
@@ -864,16 +865,16 @@ arrayDeclarator returns [String v]
   {
   nonterminal( "arrayDeclarator" );
   }
-	:
-	( LBRACK {
-          children( "LBRACK" );
-	  $v = $LBRACK.text;
-	} )
-	( RBRACK {
-          children( "RBRACK" );
-	  $v += " " + $RBRACK.text;
-	} )
-	;
+  :
+  ( LBRACK {
+    children( "LBRACK" );
+    $v = $LBRACK.text;
+  } )
+  ( RBRACK {
+    children( "RBRACK" );
+    $v += " " + $RBRACK.text;
+  } )
+  ;
 
 // }}}
 
@@ -885,16 +886,16 @@ arrayDeclaratorList returns [String v]
   int _i = 0;
   nonterminal( "arrayDeclaratorList" );
   }
-	:
-	{ $v = ""; }
-	^( ARRAY_DECLARATOR_LIST
-           { children( "arrayDeclarator" ); }
-	   ( arrayDeclarator {
-	     $v += ( _i++ == 0 ? "" : "/* arrayDeclaratorList */" )
-		 + $arrayDeclarator.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( ARRAY_DECLARATOR_LIST
+     { children( "arrayDeclarator" ); }
+     ( arrayDeclarator {
+       $v += ( _i++ == 0 ? "" : "/* arrayDeclaratorList */" )
+  	 + $arrayDeclarator.v;
+     } )+
+   )
+  ;
 
 // }}}
     
@@ -906,19 +907,19 @@ arrayInitializer returns [String v]
   int _i = 0;
   nonterminal( "arrayInitializer" );
   }
-	:
-	{ $v = "{"; }
-	{ $v += " "; }
-	^( ARRAY_INITIALIZER
-           { children( "variableInitializer" ); }
-	   ( variableInitializer {
-	     $v += ( _i++ == 0 ? "" : ", " )
-		 + $variableInitializer.v;
-	   } )*
-	 )
-	{ $v += " "; }
-	{ $v += "}"; }
-	;
+  :
+  { $v = "{"; }
+  { $v += " "; }
+  ^( ARRAY_INITIALIZER
+     { children( "variableInitializer" ); }
+     ( variableInitializer {
+       $v += ( _i++ == 0 ? "" : ", " )
+  	 + $variableInitializer.v;
+     } )*
+   )
+  { $v += " "; }
+  { $v += "}"; }
+  ;
 
 // }}}
 
@@ -930,16 +931,16 @@ throwsClause returns [String v]
   int _i = 0;
   nonterminal( "throwsClause" );
   }
-	:
-	{ $v = ""; }
-	^( THROWS_CLAUSE
-           { children( "qualifiedIdentifier" ); }
-	   ( qualifiedIdentifier {
-	     $v += ( _i++ == 0 ? "" : "/* throwsClause */" )
-		 + $qualifiedIdentifier.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( THROWS_CLAUSE
+     { children( "qualifiedIdentifier" ); }
+     ( qualifiedIdentifier {
+       $v += ( _i++ == 0 ? "" : "/* throwsClause */" )
+  	 + $qualifiedIdentifier.v;
+     } )+
+   )
+  ;
 
 // }}}
 
@@ -951,16 +952,16 @@ modifierList returns [String v]
   int _i = 0;
   nonterminal( "modifierList" );
   }
-	:
-	{ $v = ""; }
-	^( MODIFIER_LIST
-           { children( "modifier" ); }
-	   ( modifier {
-	     $v += ( _i++ == 0 ? "" : " " )
-	 	 + $modifier.v;
-	   } )*
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( MODIFIER_LIST
+     { children( "modifier" ); }
+     ( modifier {
+       $v += ( _i++ == 0 ? "" : " " )
+   	 + $modifier.v;
+     } )*
+   )
+  ;
 
 // }}}
 
@@ -971,62 +972,62 @@ modifier returns [String v]
   {
   nonterminal( "modifier" );
   }
-	:
-	( PUBLIC {
-          children( "PUBLIC" );
-	  $v = $PUBLIC.text;
-	} )
-	|
-	( PROTECTED {
-          children( "PROTECTED" );
-	  $v = $PROTECTED.text;
-	} )
-	|
-	( PRIVATE {
-          children( "PRIVATE" );
-	  $v = $PRIVATE.text;
-	} )
-	|
-	( STATIC {
-          children( "STATIC" );
-	  $v = $STATIC.text;
-	} )
-	|
-	( ABSTRACT {
-          children( "ABSTRACT" );
-	  $v = $ABSTRACT.text;
-	} )
-	|
-	( NATIVE {
-          children( "NATIVE" );
-	  $v = $NATIVE.text;
-	} )
-	|
-	( SYNCHRONIZED {
-          children( "SYNCHRONIZED" );
-	  $v = $SYNCHRONIZED.text;
-	} )
-	|
-	( TRANSIENT {
-          children( "TRANSIENT" );
-	  $v = $TRANSIENT.text;
-	} )
-	|
-	( VOLATILE {
-          children( "VOLATILE" );
-	  $v = $VOLATILE.text;
-	} )
-	|
-	( STRICTFP {
-          children( "STRICTFP" );
-	  $v = $STRICTFP.text;
-	} )
-	|
-	( localModifier {
-          children( "localModifier" );
-	  $v = $localModifier.v;
-	} )
-	;
+  :
+  ( PUBLIC {
+    children( "PUBLIC" );
+    $v = $PUBLIC.text;
+  } )
+  |
+  ( PROTECTED {
+    children( "PROTECTED" );
+    $v = $PROTECTED.text;
+  } )
+  |
+  ( PRIVATE {
+    children( "PRIVATE" );
+    $v = $PRIVATE.text;
+  } )
+  |
+  ( STATIC {
+    children( "STATIC" );
+    $v = $STATIC.text;
+  } )
+  |
+  ( ABSTRACT {
+    children( "ABSTRACT" );
+    $v = $ABSTRACT.text;
+  } )
+  |
+  ( NATIVE {
+    children( "NATIVE" );
+    $v = $NATIVE.text;
+  } )
+  |
+  ( SYNCHRONIZED {
+    children( "SYNCHRONIZED" );
+    $v = $SYNCHRONIZED.text;
+  } )
+  |
+  ( TRANSIENT {
+    children( "TRANSIENT" );
+    $v = $TRANSIENT.text;
+  } )
+  |
+  ( VOLATILE {
+    children( "VOLATILE" );
+    $v = $VOLATILE.text;
+  } )
+  |
+  ( STRICTFP {
+    children( "STRICTFP" );
+    $v = $STRICTFP.text;
+  } )
+  |
+  ( localModifier {
+    children( "localModifier" );
+    $v = $localModifier.v;
+  } )
+  ;
 
 // }}}
 
@@ -1038,16 +1039,16 @@ localModifierList returns [String v]
   int _i = 0;
   nonterminal( "localModifierList" );
   }
-	:
-	{ $v = ""; }
-	^( LOCAL_MODIFIER_LIST
-           { children( "localModifier" ); }
-	   ( localModifier {
-	     $v += ( _i++ == 0 ? "" : "/* localModifierList */" )
-		 + $localModifier.v;
-	   } )*
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( LOCAL_MODIFIER_LIST
+     { children( "localModifier" ); }
+     ( localModifier {
+       $v += ( _i++ == 0 ? "" : "/* localModifierList */" )
+  	 + $localModifier.v;
+     } )*
+   )
+  ;
 
 // }}}
 
@@ -1058,17 +1059,17 @@ localModifier returns [String v]
   {
   nonterminal( "localModifier" );
   }
-	:
-	( FINAL {
-          children( "FINAL" );
-	  $v = $FINAL.text;
-	} )
-	|
-	( annotation {
-          children( "annotation" );
-	  $v = $annotation.v;
-	} )
-	;
+  :
+  ( FINAL {
+    children( "FINAL" );
+    $v = $FINAL.text;
+  } )
+  |
+  ( annotation {
+    children( "annotation" );
+    $v = $annotation.v;
+  } )
+  ;
 
 // }}}
 
@@ -1079,24 +1080,23 @@ type returns [String v]
   {
   nonterminal( "type" );
   }
-	:
-	^( TYPE
-	   ( ( primitiveType {
-               children( "primitiveType" );
-	       $v = $primitiveType.v;
-	     } )
-	     |
-	     ( qualifiedTypeIdent {
-               children( "qualifiedTypeIdent" );
-	       $v = $qualifiedTypeIdent.v;
-	     } )
-	   )
-	   ( arrayDeclaratorList {
-             children( "arrayDeclaratorList" );
-	     $v += " " + $arrayDeclaratorList.v;
-	   } )?
-	 )
-	;
+  :
+  ^( TYPE
+     ( ( primitiveType {
+         children( "primitiveType" );
+         $v = $primitiveType.v;
+       } )
+     | ( qualifiedTypeIdent {
+         children( "qualifiedTypeIdent" );
+         $v = $qualifiedTypeIdent.v;
+       } )
+     )
+     ( arrayDeclaratorList {
+       children( "arrayDeclaratorList" );
+       $v += " " + $arrayDeclaratorList.v;
+     } )?
+   )
+  ;
 
 // }}}
 
@@ -1108,16 +1108,16 @@ qualifiedTypeIdent returns [String v]
   int _i = 0;
   nonterminal( "qualifiedTypeIdent" );
   }
-	:
-	{ $v = ""; }
-	^( QUALIFIED_TYPE_IDENT
-           { children( "typeIdent" ); }
-	   ( typeIdent {
-	     $v += ( _i++ == 0 ? "" : "/* qualifiedTypeIdent */" )
-		 + $typeIdent.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( QUALIFIED_TYPE_IDENT
+     { children( "typeIdent" ); }
+     ( typeIdent {
+       $v += ( _i++ == 0 ? "" : "/* qualifiedTypeIdent */" )
+  	 + $typeIdent.v;
+     } )+
+   )
+  ;
 
 // }}}
 
@@ -1128,17 +1128,17 @@ typeIdent returns [String v]
   {
   nonterminal( "typeIdent" ); 
   }
-	:
-	^( ( IDENT {
-             children( "IDENT" );
-	     $v = $IDENT.text;
-	   } )
-	   ( genericTypeArgumentList {
-             children( "genericTypeArgumentList" );
-	     $v += " " + $genericTypeArgumentList.v;
-	   } )?
-	 )
-	;
+  :
+  ^( ( IDENT {
+       children( "IDENT" );
+       $v = $IDENT.text;
+     } )
+     ( genericTypeArgumentList {
+       children( "genericTypeArgumentList" );
+       $v += " " + $genericTypeArgumentList.v;
+     } )?
+   )
+  ;
 
 // }}}
 
@@ -1149,47 +1149,47 @@ primitiveType returns [String v]
   {
   nonterminal( "primitiveType" );
   }
-	:
-	( BOOLEAN {
-          children( "BOOLEAN" );
-	  $v = $BOOLEAN.text;
-	} )
-	|
-	( CHAR {
-          children( "CHAR" );
-	  $v = $CHAR.text;
-	} )
-	|
-	( BYTE {
-          children( "BYTE" );
-	  $v = $BYTE.text;
-	} )
-	|
-	( SHORT {
-          children( "SHORT" );
-	  $v = $SHORT.text;
-	} )
-	|
-	( INT {
-          children( "INT" );
-	  $v = $INT.text;
-	} )
-	|
-	( LONG {
-          children( "LONG" );
-	  $v = $LONG.text;
-	} )
-	|
-	( FLOAT {
-          children( "FLOAT" );
-	  $v = $FLOAT.text;
-	} )
-	|
-	( DOUBLE {
-          children( "DOUBLE" );
-	  $v = $DOUBLE.text;
-	} )
-	;
+  :
+  ( BOOLEAN {
+    children( "BOOLEAN" );
+    $v = $BOOLEAN.text;
+  } )
+  |
+  ( CHAR {
+    children( "CHAR" );
+    $v = $CHAR.text;
+  } )
+  |
+  ( BYTE {
+    children( "BYTE" );
+    $v = $BYTE.text;
+  } )
+  |
+  ( SHORT {
+    children( "SHORT" );
+    $v = $SHORT.text;
+  } )
+  |
+  ( INT {
+    children( "INT" );
+    $v = $INT.text;
+  } )
+  |
+  ( LONG {
+    children( "LONG" );
+    $v = $LONG.text;
+  } )
+  |
+  ( FLOAT {
+    children( "FLOAT" );
+    $v = $FLOAT.text;
+  } )
+  |
+  ( DOUBLE {
+    children( "DOUBLE" );
+    $v = $DOUBLE.text;
+  } )
+  ;
 
 // }}}
 
@@ -1201,16 +1201,16 @@ genericTypeArgumentList returns [String v]
   int _i = 0;
   nonterminal( "genericTypeArgumentList" );
   }
-	:
-	{ $v = ""; }
-	^( GENERIC_TYPE_ARG_LIST
-           { children( "genericTypeArgument" ); }
-	   ( genericTypeArgument {
-	     $v += ( _i++ == 0 ? "" : "/* genericTypeArgumentList */" )
-		 + $genericTypeArgument.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( GENERIC_TYPE_ARG_LIST
+     { children( "genericTypeArgument" ); }
+     ( genericTypeArgument {
+       $v += ( _i++ == 0 ? "" : "/* genericTypeArgumentList */" )
+  	 + $genericTypeArgument.v;
+     } )+
+   )
+  ;
 
 // }}}
     
@@ -1221,22 +1221,22 @@ genericTypeArgument returns [String v]
   {
   nonterminal( "genericTypeArgument" ); 
   }
-	:
-	( type {
-          children( "type" );
-	  $v = $type.v;
-	} )
-	|
-	^( ( QUESTION {
-             children( "QUESTION" );
-	     $v = $QUESTION.text;
-	   } )
-	   ( genericWildcardBoundType {
-             children( "genericWildcardBoundType" );
-	     $v += " " + $genericWildcardBoundType.v;
-	   } )?
- 	 )
-	;
+  :
+  ( type {
+    children( "type" );
+    $v = $type.v;
+  } )
+  |
+  ^( ( QUESTION {
+       children( "QUESTION" );
+       $v = $QUESTION.text;
+     } )
+     ( genericWildcardBoundType {
+       children( "genericWildcardBoundType" );
+       $v += " " + $genericWildcardBoundType.v;
+     } )?
+   )
+  ;
 
 // }}}
 
@@ -1247,27 +1247,27 @@ genericWildcardBoundType returns [String v]
   {
   nonterminal( "genericWildcardBoundType" );
   }
-	:
-	^( ( EXTENDS {
-             children( "EXTENDS" );
-	     $v = $EXTENDS.text;
-	   } )
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	 )
-	|
-	^( ( SUPER {
-             children( "SUPER" );
-	     $v = $SUPER.text;
-	   } )
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	 )
-	;
+  :
+  ^( ( EXTENDS {
+       children( "EXTENDS" );
+       $v = $EXTENDS.text;
+     } )
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+   )
+  |
+  ^( ( SUPER {
+       children( "SUPER" );
+       $v = $SUPER.text;
+     } )
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+   )
+  ;
 
 // }}}
 
@@ -1279,23 +1279,23 @@ formalParameterList returns [String v]
   int _i = 0;
   nonterminal( "formalParameterList" );
   }
-	:
-	{ $v = "("; }
-	{ $v += " "; }
-	^( FORMAL_PARAM_LIST
-	   ( formalParameterStandardDecl {
-             children( "formalParameterStandardDecl" );
-	     $v += ( _i++ == 0 ? "" : "/* formalParameterList */" )
-		 + $formalParameterStandardDecl.v;
-	   } )*
-	   ( formalParameterVarargDecl {
-             children( "formalParameterVarargDecl" );
-	     $v += " " + $formalParameterVarargDecl.v;
-	   } )?
-	 )
-	{ $v += " "; }
-	{ $v += ")"; }
-	;
+  :
+  { $v = "("; }
+  { $v += " "; }
+  ^( FORMAL_PARAM_LIST
+     ( formalParameterStandardDecl {
+       children( "formalParameterStandardDecl" );
+       $v += ( _i++ == 0 ? "" : "/* formalParameterList */" )
+  	 + $formalParameterStandardDecl.v;
+     } )*
+     ( formalParameterVarargDecl {
+       children( "formalParameterVarargDecl" );
+       $v += " " + $formalParameterVarargDecl.v;
+     } )?
+   )
+  { $v += " "; }
+  { $v += ")"; }
+  ;
 
 // }}}
     
@@ -1305,22 +1305,22 @@ formalParameterStandardDecl returns [String v]
   {
   nonterminal( "formalParameterStandardDecl" ); 
   }
-	:
-	^( FORMAL_PARAM_STD_DECL
-	   ( localModifierList {
-             children( "localModifierList" );
-	     $v = $localModifierList.v;
-	   } )
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	   ( variableDeclaratorId {
-             children( "variableDeclaratorId" );
-	     $v += " " + $variableDeclaratorId.v;
-	   } )
-	 )
-	;
+  :
+  ^( FORMAL_PARAM_STD_DECL
+     ( localModifierList {
+       children( "localModifierList" );
+       $v = $localModifierList.v;
+     } )
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+     ( variableDeclaratorId {
+       children( "variableDeclaratorId" );
+       $v += " " + $variableDeclaratorId.v;
+     } )
+   )
+  ;
 
 // }}}
     
@@ -1331,22 +1331,22 @@ formalParameterVarargDecl returns [String v]
   {
   nonterminal( "formalParameterVarargDecl" );
   }
-	:
-	^( FORMAL_PARAM_VARARG_DECL
-	   ( localModifierList {
-             children( "localModifierList" );
-	     $v = $localModifierList.v;
-	   } )
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	   ( variableDeclaratorId {
-             children( "variableDeclaratorId" );
-	     $v += " " + $variableDeclaratorId.v;
-	   } )
-	 )
-	;
+  :
+  ^( FORMAL_PARAM_VARARG_DECL
+     ( localModifierList {
+       children( "localModifierList" );
+       $v = $localModifierList.v;
+     } )
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+     ( variableDeclaratorId {
+       children( "variableDeclaratorId" );
+       $v += " " + $variableDeclaratorId.v;
+     } )
+   )
+  ;
 
 // }}}
     
@@ -1357,26 +1357,26 @@ qualifiedIdentifier returns [String v]
   {
   nonterminal( "qualifiedIdentifier" ); 
   }
-	:
-	( IDENT {
-          children( "IDENT" );
-	  $v = $IDENT.text;
-	} )
-	|
-	^( ( DOT {
-             children( "DOT" );
-	     $v = $DOT.text;
-	   } )
-	   ( aQualifiedIdentifier=qualifiedIdentifier {
-             children( "aQualifiedIdentifier" );
-	     $v += " " + $aQualifiedIdentifier.text;
-	   } )
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	 )
-	;
+  :
+  ( IDENT {
+    children( "IDENT" );
+    $v = $IDENT.text;
+  } )
+  |
+  ^( ( DOT {
+       children( "DOT" );
+       $v = $DOT.text;
+     } )
+     ( aQualifiedIdentifier=qualifiedIdentifier {
+       children( "aQualifiedIdentifier" );
+       $v += " " + $aQualifiedIdentifier.text;
+     } )
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+   )
+  ;
 
 // }}}
     
@@ -1390,16 +1390,16 @@ annotationList returns [String v]
   int _i = 0;
   nonterminal( "annotationList" );
   }
-	:
-	{ $v = ""; }
-	^( ANNOTATION_LIST
-           { children( "annotation" ); }
-	   ( annotation {
-	     $v += ( _i++ == 0 ? "" : "/* annotationList */" )
-		 + $annotationList.v;
-	   } )*
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( ANNOTATION_LIST
+     { children( "annotation" ); }
+     ( annotation {
+       $v += ( _i++ == 0 ? "" : "/* annotationList */" )
+  	 + $annotationList.v;
+     } )*
+   )
+  ;
 
 // }}}
 
@@ -1410,21 +1410,21 @@ annotation returns [String v]
   {
   nonterminal( "annotation" );
   }
-	:
-	^( ( AT {
-             children( "AT" );
-	     $v = $AT.text;
-	   } )
-	   ( qualifiedIdentifier {
-             children( "qualifiedIdentifier" );
- 	     $v += " " + $qualifiedIdentifier.v;
-	   } )
-	   ( annotationInit {
-             children( "annotationInit" );
- 	     $v += " " + $annotationInit.v;
-	   } )?
-	 )
-	;
+  :
+  ^( ( AT {
+       children( "AT" );
+       $v = $AT.text;
+     } )
+     ( qualifiedIdentifier {
+       children( "qualifiedIdentifier" );
+       $v += " " + $qualifiedIdentifier.v;
+     } )
+     ( annotationInit {
+       children( "annotationInit" );
+       $v += " " + $annotationInit.v;
+     } )?
+   )
+  ;
 
 // }}}
     
@@ -1435,13 +1435,13 @@ annotationInit returns [String v]
   {
   nonterminal( "annotationInit" );
   }
-	:
-	^( ANNOTATION_INIT_BLOCK
-           { children( "annotationInitializers" ); }
-	   ( annotationInitializers {
-	     $v = $annotationInitializers.v;
-	   } ) ) 
-	;
+  :
+  ^( ANNOTATION_INIT_BLOCK
+     { children( "annotationInitializers" ); }
+     ( annotationInitializers {
+       $v = $annotationInitializers.v;
+     } ) ) 
+  ;
 
 // }}}
 
@@ -1453,24 +1453,24 @@ annotationInitializers returns [String v]
   int _i = 0;
   nonterminal( "annotationInitializers" );
   }
-	:
-	{ $v = ""; }
-	^( ANNOTATION_INIT_KEY_LIST
-	   ( annotationInitializer {
-             children( "annotationInitializer" );
-	     $v += ( _i++ == 0 ? "" : "/* annotationInitializer 1 */" )
-		 + $annotationInitializer.v;
-	   } )+
-	 )
-	|
-	^( ANNOTATION_INIT_DEFAULT_KEY
-	   ( annotationElementValue {
-             children( "annotationElementValue" );
-	     $v += ( _i++ == 0 ? "" : "/* annotationElementValue 1 */" )
-		 + $annotationElementValue.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( ANNOTATION_INIT_KEY_LIST
+     ( annotationInitializer {
+       children( "annotationInitializer" );
+       $v += ( _i++ == 0 ? "" : "/* annotationInitializer 1 */" )
+  	 + $annotationInitializer.v;
+     } )+
+   )
+  |
+  ^( ANNOTATION_INIT_DEFAULT_KEY
+     ( annotationElementValue {
+       children( "annotationElementValue" );
+       $v += ( _i++ == 0 ? "" : "/* annotationElementValue 1 */" )
+  	 + $annotationElementValue.v;
+     } )+
+   )
+  ;
 
 // }}}
     
@@ -1481,17 +1481,17 @@ annotationInitializer returns [String v]
   {
   nonterminal( "annotationInitializer" ); 
   }
-	:
-	^( ( IDENT {
-             children( "IDENT" );
-	     $v = $IDENT.text;
-	   } )
-	   ( annotationElementValue {
-             children( "annotationElementValue" );
-	     $v += " " + $annotationElementValue.v;
-	   } )
-	 )
-	;
+  :
+  ^( ( IDENT {
+       children( "IDENT" );
+       $v = $IDENT.text;
+     } )
+     ( annotationElementValue {
+       children( "annotationElementValue" );
+       $v += " " + $annotationElementValue.v;
+     } )
+   )
+  ;
 
 // }}}
     
@@ -1502,24 +1502,24 @@ annotationElementValue returns [String v]
   {
   nonterminal( "annotationElementValue" );
   }
-	:
-	^( ANNOTATION_INIT_ARRAY_ELEMENT
-           { children( "aAnnotationElementValue" ); }
-	   ( aAnnotationElementValue=annotationElementValue {
-	     $v += $aAnnotationElementValue.v;
-	   } )*
-	 )
-	|
-	( annotation {
-          children( "annotation" );
-	  $v = $annotation.v;
-	} )
-	|
-	( expression {
-          children( "expression" );
-	  $v = $expression.v;
-	} )
-	;
+  :
+  ^( ANNOTATION_INIT_ARRAY_ELEMENT
+     { children( "aAnnotationElementValue" ); }
+     ( aAnnotationElementValue=annotationElementValue {
+       $v += $aAnnotationElementValue.v;
+     } )*
+   )
+  |
+  ( annotation {
+    children( "annotation" );
+    $v = $annotation.v;
+  } )
+  |
+  ( expression {
+    children( "expression" );
+    $v = $expression.v;
+  } )
+  ;
 
 // }}}
     
@@ -1531,15 +1531,15 @@ annotationTopLevelScope returns [String v]
   int _i = 0;
   nonterminal( "annotationTopLevelScope" );
   }
-	:
-	^( ANNOTATION_TOP_LEVEL_SCOPE
-           { children( "annotationScopeDeclarations" ); }
-	   ( annotationScopeDeclarations {
-	     $v += ( _i++ == 0 ? "" : "/* annotationTopLevelScope */" )
-		 + $annotationScopeDeclarations.v;
-	   } )*
-	  )
-	;
+  :
+  ^( ANNOTATION_TOP_LEVEL_SCOPE
+     { children( "annotationScopeDeclarations" ); }
+     ( annotationScopeDeclarations {
+       $v += ( _i++ == 0 ? "" : "/* annotationTopLevelScope */" )
+  	 + $annotationScopeDeclarations.v;
+     } )*
+    )
+  ;
 
 // }}}
     
@@ -1550,46 +1550,46 @@ annotationScopeDeclarations returns [String v]
   {
   nonterminal( "annotationScopeDeclarations" );
   }
-	:
-	^( ANNOTATION_METHOD_DECL
-	   ( modifierList {
-             children( "modifierList" );
-	     $v += $modifierList.v;
-	   } )
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	   ( annotationDefaultValue {
-             children( "annotationDefaultValue" );
-	     $v += " " + $annotationDefaultValue.v;
-	   } )?
-	  )
-	|
-	^( VAR_DECLARATION
-	   ( modifierList {
-             children( "modifierList" );
-	     $v += $modifierList.v;
-	   } )
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	   ( variableDeclaratorList {
-             children( "variableDeclaratorList" );
-	     $v += " " + $variableDeclaratorList.v;
-	   } )
-	 )
-	|
-	( typeDeclaration {
-          children( "typeDeclaration" );
-	  $v = $typeDeclaration.v;
-	} )
-	;
+  :
+  ^( ANNOTATION_METHOD_DECL
+     ( modifierList {
+       children( "modifierList" );
+       $v += $modifierList.v;
+     } )
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+     ( annotationDefaultValue {
+       children( "annotationDefaultValue" );
+       $v += " " + $annotationDefaultValue.v;
+     } )?
+    )
+  |
+  ^( VAR_DECLARATION
+     ( modifierList {
+       children( "modifierList" );
+       $v += $modifierList.v;
+     } )
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+     ( variableDeclaratorList {
+       children( "variableDeclaratorList" );
+       $v += " " + $variableDeclaratorList.v;
+     } )
+   )
+  |
+  ( typeDeclaration {
+    children( "typeDeclaration" );
+    $v = $typeDeclaration.v;
+  } )
+  ;
 
 // }}}
     
@@ -1600,14 +1600,14 @@ annotationDefaultValue returns [String v]
   {
   nonterminal( "annotationDefaultValue" ); 
   }
-	:
-	^( DEFAULT
-	   ( annotationElementValue {
-             children( "annotationElementValue" );
-	     $v = $annotationElementValue.v;
-	   } )
-	 )
-	;
+  :
+  ^( DEFAULT
+     ( annotationElementValue {
+       children( "annotationElementValue" );
+       $v = $annotationElementValue.v;
+     } )
+   )
+  ;
 
 // }}}
 
@@ -1621,15 +1621,15 @@ block returns [Statement s]
   int _i = 0;
   nonterminal( "block" );
   }
-	:
-	{ $s = new Statement( 1 ); }
-	{ $s.string += "{"; }
-	{ $s.string += "\n"; }
-	^( BLOCK_SCOPE
-	   ( blockStatement {
-             children( "blockStatement" );
-	     $s.string += ( _i++ == 0 ? "" : "/* block */" )
-		  + $blockStatement.s.string;
+  :
+  { $s = new Statement( 1 ); }
+  { $s.string += "{"; }
+  { $s.string += "\n"; }
+  ^( BLOCK_SCOPE
+     ( blockStatement {
+       children( "blockStatement" );
+       $s.string += ( _i++ == 0 ? "" : "/* block */" )
+  	  + $blockStatement.s.string;
 
 
 $s.string +=
@@ -1643,12 +1643,12 @@ $s.string +=
   "/* 1 (" + $blockStatement.s.id + ") */";
 
 
-	   } )*
-	 )
-	{ $s.string += "\n"; }
-	{ $s.string += "}"; }
-	{ $s.string += "\n"; }
-	;
+     } )*
+   )
+  { $s.string += "\n"; }
+  { $s.string += "}"; }
+  { $s.string += "\n"; }
+  ;
 
 // }}}
     
@@ -1659,25 +1659,25 @@ blockStatement returns [Statement s]
   {
   nonterminal( "blockStatement" );
   }
-	:
-	( localVariableDeclaration { // XXX 'int i = 40;'
-          children( "localVariableDeclaration" );
-	  $s = new Statement( 2 );
-	  $s.string = $localVariableDeclaration.v;
-	} )
-	|
-	( typeDeclaration {
-          children( "typeDeclaration" );
-	  $s = new Statement( 3 );
-	  $s.string = $typeDeclaration.v;
-	} )
-	|
-	( statement {
-          children( "statement" );
-	  $s = new Statement( $statement.s.id );
-	  $s.string = $statement.s.string;
-	} )
-	;
+  :
+  ( localVariableDeclaration { // XXX 'int i = 40;'
+    children( "localVariableDeclaration" );
+    $s = new Statement( 2 );
+    $s.string = $localVariableDeclaration.v;
+  } )
+  |
+  ( typeDeclaration {
+    children( "typeDeclaration" );
+    $s = new Statement( 3 );
+    $s.string = $typeDeclaration.v;
+  } )
+  |
+  ( statement {
+    children( "statement" );
+    $s = new Statement( $statement.s.id );
+    $s.string = $statement.s.string;
+  } )
+  ;
 
 // }}}
     
@@ -1689,22 +1689,22 @@ localVariableDeclaration returns [String v]
   {
   nonterminal( "localVariableDeclaration" );
   }
-	:
-	^( VAR_DECLARATION
-	   ( localModifierList {
-             children( "localModifierList" );
-	     $v = $localModifierList.v;
-	   } )
-	   ( type {
-             children( "type" );
-	     $v += " " + $type.v;
-	   } )
-	   ( variableDeclaratorList {
-             children( "variableDeclaratorList" );
-	     $v += " " + $variableDeclaratorList.v;
-	   } )
-	 )
-	;
+  :
+  ^( VAR_DECLARATION
+     ( localModifierList {
+       children( "localModifierList" );
+       $v = $localModifierList.v;
+     } )
+     ( type {
+       children( "type" );
+       $v += " " + $type.v;
+     } )
+     ( variableDeclaratorList {
+       children( "variableDeclaratorList" );
+       $v += " " + $variableDeclaratorList.v;
+     } )
+   )
+  ;
 
 // }}}
 
@@ -1715,37 +1715,37 @@ statement returns [Statement s]
   {
   nonterminal( "statement" ); 
   }
-	:
-	( block {
-          children( "block" );
-	  $s = new Statement( 5 );
-	  $s.string = $block.s.string;
-	} )
-	|
-	^( ( ASSERT {
-             children( "ASSERT" );
-	     $s = new Statement( 6 );
-	     $s.string = $ASSERT.text;
-	   } )
-	   ( aExpression=expression {
-	     $s.string += " " + $aExpression.v;
-	   } )
-	   ( bExpression=expression {
-	     $s.string += " " + $bExpression.v;
-	   } )?
-	 )
-	|
-	^( ( IF {
-             children( "IF" );
-	     $s = new Statement( 7 );
-	     $s.string = $IF.text;
-	   } )
-	   ( parenthesizedExpression {
-	     $s.string += " " + $parenthesizedExpression.v;
-	   } )
-	   ( cStatement=statement {
-	     $s.string += " " + $cStatement.s.string;
-	   } )
+  :
+  ( block {
+    children( "block" );
+    $s = new Statement( 5 );
+    $s.string = $block.s.string;
+  } )
+  |
+  ^( ( ASSERT {
+       children( "ASSERT" );
+       $s = new Statement( 6 );
+       $s.string = $ASSERT.text;
+     } )
+     ( aExpression=expression {
+       $s.string += " " + $aExpression.v;
+     } )
+     ( bExpression=expression {
+       $s.string += " " + $bExpression.v;
+     } )?
+   )
+  |
+  ^( ( IF {
+       children( "IF" );
+       $s = new Statement( 7 );
+       $s.string = $IF.text;
+     } )
+     ( parenthesizedExpression {
+       $s.string += " " + $parenthesizedExpression.v;
+     } )
+     ( cStatement=statement {
+       $s.string += " " + $cStatement.s.string;
+     } )
 {
 $s.string +=
   // XXX Not id=5, that's the block
@@ -1754,207 +1754,207 @@ $s.string +=
   "/* 2 (" + $cStatement.s.id + ") */";
 
 }
-	   ( dStatement=statement {
-	     $s.string += " ";
-	     $s.string += "else";
-	     $s.string += " ";
-	     $s.string += $dStatement.s.string;
+     ( dStatement=statement {
+       $s.string += " ";
+       $s.string += "else";
+       $s.string += " ";
+       $s.string += $dStatement.s.string;
 $s.string +=
   // XXX Not id=5, that's the block
   // XXX not id=14, while it 
   ( $dStatement.s.id == 14 ? ";" : "" ) +
   "/* 3 (" + $dStatement.s.id + ") */";
-	   } )?
-	 )
-	|
-	^( ( FOR {
-             children( "FOR" );
-	     $s = new Statement( 21 );
-	     $s.string = $FOR.text;
-	   } )
-	   { $s.string += "("; }
-	   ( forInit {
-	     $s.string += " " + $forInit.v;
-	   } )
-	   { $s.string += ";"; }
-	   ( forCondition {
-	     $s.string += " " + $forCondition.v;
-	   } )
-	   { $s.string += ";"; }
-	   ( forUpdater {
-	     $s.string += " " + $forUpdater.v;
-	   } )
-	   { $s.string += ")"; }
-	   ( eStatement=statement {
-	     $s.string += $eStatement.s.string;
-	   } )
-	 )
-	|
-	^( ( FOR_EACH {
-             children( "FOR_EACH" );
-	     $s = new Statement( 8 );
-	     $s.string = "for";
-	   } )
-	   { $s.string += "("; }
-	   ( localModifierList {
-	     $s.string += " " + $localModifierList.v;
-	   } )
-	   ( type {
-	     $s.string += " " + $type.v;
-	   } )
-	   ( IDENT {
-	     $s.string += " " + $IDENT.text;
-	   } )
-	   { $s.string += " "; }
-	   { $s.string += ":"; }
-	   ( expression {
-	     $s.string += " " + $expression.v;
-	   } )
-	   { $s.string += " "; }
-	   { $s.string += ")"; }
-	   ( fStatement=statement {
-	     $s.string += " " + $fStatement.s.string;
-	   } )
-	 ) 
-	|
-	^( ( WHILE {
-             children( "WHILE" );
-	     $s = new Statement( 9 );
-	     $s.string = $WHILE.text;
-	   } )
-	   ( parenthesizedExpression {
-	     $s.string += " " + $parenthesizedExpression.v;
-	   } )
-	   ( gStatement=statement {
-	     $s.string += " " + $gStatement.s.string;
-	   } )
-	 )
-	|
-	^( ( DO {
-             children( "DO" );
-	     $s = new Statement( 10 );
-	     $s.string = $DO.text;
-	   } )
-	   ( hStatement=statement {
-	     $s.string += " " + $hStatement.s.string;
+     } )?
+   )
+  |
+  ^( ( FOR {
+       children( "FOR" );
+       $s = new Statement( 21 );
+       $s.string = $FOR.text;
+     } )
+     { $s.string += "("; }
+     ( forInit {
+       $s.string += " " + $forInit.v;
+     } )
+     { $s.string += ";"; }
+     ( forCondition {
+       $s.string += " " + $forCondition.v;
+     } )
+     { $s.string += ";"; }
+     ( forUpdater {
+       $s.string += " " + $forUpdater.v;
+     } )
+     { $s.string += ")"; }
+     ( eStatement=statement {
+       $s.string += $eStatement.s.string;
+     } )
+   )
+  |
+  ^( ( FOR_EACH {
+       children( "FOR_EACH" );
+       $s = new Statement( 8 );
+       $s.string = "for";
+     } )
+     { $s.string += "("; }
+     ( localModifierList {
+       $s.string += " " + $localModifierList.v;
+     } )
+     ( type {
+       $s.string += " " + $type.v;
+     } )
+     ( IDENT {
+       $s.string += " " + $IDENT.text;
+     } )
+     { $s.string += " "; }
+     { $s.string += ":"; }
+     ( expression {
+       $s.string += " " + $expression.v;
+     } )
+     { $s.string += " "; }
+     { $s.string += ")"; }
+     ( fStatement=statement {
+       $s.string += " " + $fStatement.s.string;
+     } )
+   ) 
+  |
+  ^( ( WHILE {
+       children( "WHILE" );
+       $s = new Statement( 9 );
+       $s.string = $WHILE.text;
+     } )
+     ( parenthesizedExpression {
+       $s.string += " " + $parenthesizedExpression.v;
+     } )
+     ( gStatement=statement {
+       $s.string += " " + $gStatement.s.string;
+     } )
+   )
+  |
+  ^( ( DO {
+       children( "DO" );
+       $s = new Statement( 10 );
+       $s.string = $DO.text;
+     } )
+     ( hStatement=statement {
+       $s.string += " " + $hStatement.s.string;
 $s.string +=
   ( $hStatement.s.id == 19 ? ";" : "" ) +
   "/* 4 (" + $hStatement.s.id + ") */";
-	   } )
-	   { $s.string += " " + "while"; }
-	   ( parenthesizedExpression {
-	     $s.string += " " + $parenthesizedExpression.v;
-	   } )
-	 )
-	|
-	// The second optional block is the optional finally block.
-	^( ( TRY {
-             children( "TRY" );
-	     $s = new Statement( 11 );
-	     $s.string = $TRY.text;
-	   } )
-	   ( iBlock=block {
-	     $s.string += " " + $iBlock.s.string;
-	   } )
-	   ( catches {
-	     $s.string += " " + $catches.v;
-	   } )?
-	   ( jBlock=block {
-	     $s.string += " " + $jBlock.s.string;
-	   } )?
-	 )
-	|
-	^( ( SWITCH {
-             children( "SWITCH" );
-	     $s = new Statement( 12 );
-	     $s.string = $SWITCH.text;
-	   } )
-	   ( parenthesizedExpression {
-	     $s.string += " " + $parenthesizedExpression.v;
-	   } )
-	   ( switchBlockLabels {
-	     $s.string += " " + $switchBlockLabels.v;
-	   } )
-	 )
-	|
-	^( ( SYNCHRONIZED {
-             children( "SYNCHRONIZED" );
-	     $s = new Statement( 13 );
-	     $s.string = $SYNCHRONIZED.text;
-	   } )
-	   ( parenthesizedExpression {
-	     $s.string += " " + $parenthesizedExpression.v;
-	   } )
-	   ( block {
-	     $s.string += " " + $block.s.string;
-	   } )
-	 )
-	|
-	^( ( RETURN { // XXX 'return 0;'
-             children( "RETURN" );
-	     $s = new Statement( 14 );
-	     $s.string = $RETURN.text;
-	   } )
-	   ( expression {
-	     $s.string += " " + $expression.v;
-	   } )?
-	 )
-	|
-	^( ( THROW {
-             children( "THROW" );
-	     $s = new Statement( 15 );
-	     $s.string = $THROW.text;
-	   } )
-	   ( expression {
-	     $s.string += " " + $expression.v;
-	   } )
-	 )
-	|
-	^( ( BREAK {
-             children( "BREAK" );
-	     $s = new Statement( 16 );
-	     $s.string = $BREAK.text;
-	   } )
-	   ( IDENT {
-	     $s.string += " " + $IDENT.text;
-	   } )?
-	 )
-	|
-	^( ( CONTINUE {
-             children( "CONTINUE" );
-	     $s = new Statement( 17 );
-	     $s.string = $CONTINUE.text;
-	   } )
-	   ( IDENT {
-	     $s.string += " " + $IDENT.text;
-	   } )?
-	 )
-	|
-	^( ( LABELED_STATEMENT {
-             children( "LABELED_STATEMENT" );
-	     $s = new Statement( 18 );
-	     $s.string = $LABELED_STATEMENT.text;
-	   } )
-	   ( IDENT {
-	     $s.string += " " + $IDENT.text;
-	   } )
-	   ( kStatement=statement {
-	     $s.string += " " + $kStatement.s.string;
-	   } )
-	 )
-	|
-	( expression {
-          children( "expression" );
-	  $s = new Statement( 19 );
-	  $s.string = $expression.v;
-	} )
-	|
-	( SEMI { // Empty statement.
-          children( "SEMI" );
-	  $s = new Statement( 20 );
-	  $s.string = $SEMI.text;
-	} )
-	;
+     } )
+     { $s.string += " " + "while"; }
+     ( parenthesizedExpression {
+       $s.string += " " + $parenthesizedExpression.v;
+     } )
+   )
+  |
+  // The second optional block is the optional finally block.
+  ^( ( TRY {
+       children( "TRY" );
+       $s = new Statement( 11 );
+       $s.string = $TRY.text;
+     } )
+     ( iBlock=block {
+       $s.string += " " + $iBlock.s.string;
+     } )
+     ( catches {
+       $s.string += " " + $catches.v;
+     } )?
+     ( jBlock=block {
+       $s.string += " " + $jBlock.s.string;
+     } )?
+   )
+  |
+  ^( ( SWITCH {
+       children( "SWITCH" );
+       $s = new Statement( 12 );
+       $s.string = $SWITCH.text;
+     } )
+     ( parenthesizedExpression {
+       $s.string += " " + $parenthesizedExpression.v;
+     } )
+     ( switchBlockLabels {
+       $s.string += " " + $switchBlockLabels.v;
+     } )
+   )
+  |
+  ^( ( SYNCHRONIZED {
+       children( "SYNCHRONIZED" );
+       $s = new Statement( 13 );
+       $s.string = $SYNCHRONIZED.text;
+     } )
+     ( parenthesizedExpression {
+       $s.string += " " + $parenthesizedExpression.v;
+     } )
+     ( block {
+       $s.string += " " + $block.s.string;
+     } )
+   )
+  |
+  ^( ( RETURN { // XXX 'return 0;'
+       children( "RETURN" );
+       $s = new Statement( 14 );
+       $s.string = $RETURN.text;
+     } )
+     ( expression {
+       $s.string += " " + $expression.v;
+     } )?
+   )
+  |
+  ^( ( THROW {
+       children( "THROW" );
+       $s = new Statement( 15 );
+       $s.string = $THROW.text;
+     } )
+     ( expression {
+       $s.string += " " + $expression.v;
+     } )
+   )
+  |
+  ^( ( BREAK {
+       children( "BREAK" );
+       $s = new Statement( 16 );
+       $s.string = $BREAK.text;
+     } )
+     ( IDENT {
+       $s.string += " " + $IDENT.text;
+     } )?
+   )
+  |
+  ^( ( CONTINUE {
+       children( "CONTINUE" );
+       $s = new Statement( 17 );
+       $s.string = $CONTINUE.text;
+     } )
+     ( IDENT {
+       $s.string += " " + $IDENT.text;
+     } )?
+   )
+  |
+  ^( ( LABELED_STATEMENT {
+       children( "LABELED_STATEMENT" );
+       $s = new Statement( 18 );
+       $s.string = $LABELED_STATEMENT.text;
+     } )
+     ( IDENT {
+       $s.string += " " + $IDENT.text;
+     } )
+     ( kStatement=statement {
+       $s.string += " " + $kStatement.s.string;
+     } )
+   )
+  |
+  ( expression {
+    children( "expression" );
+    $s = new Statement( 19 );
+    $s.string = $expression.v;
+  } )
+  |
+  ( SEMI { // Empty statement.
+    children( "SEMI" );
+    $s = new Statement( 20 );
+    $s.string = $SEMI.text;
+  } )
+  ;
 
 // }}}
         
@@ -1966,16 +1966,16 @@ catches returns [String v]
   int _i = 0;
   nonterminal( "catches" );
   }
-	:
-	{ $v = ""; }
-	^( CATCH_CLAUSE_LIST
-           { children( "catchClause" ); }
-	   ( catchClause {
-	     $v += ( _i++ == 0 ? "" : "/* catches */" )
-		 + $catchClause.v;
-	   } )+
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( CATCH_CLAUSE_LIST
+     { children( "catchClause" ); }
+     ( catchClause {
+       $v += ( _i++ == 0 ? "" : "/* catches */" )
+  	 + $catchClause.v;
+     } )+
+   )
+  ;
 
 // }}}
     
@@ -1986,21 +1986,21 @@ catchClause returns [String v]
   {
   nonterminal( "catchClause" ); 
   }
-	:
-	^( ( CATCH {
-             children( "CATCH" );
-	     $v = $CATCH.text;
-	   } )
-	   ( formalParameterStandardDecl {
-             children( "formalParameterStandardDecl" );
-	     $v += " " + $formalParameterStandardDecl.v;
-	   } )
-	   ( block {
-             children( "block" );
-	     $v += " " + $block.s.string;
-	   } )
-	 )
-	;
+  :
+  ^( ( CATCH {
+       children( "CATCH" );
+       $v = $CATCH.text;
+     } )
+     ( formalParameterStandardDecl {
+       children( "formalParameterStandardDecl" );
+       $v += " " + $formalParameterStandardDecl.v;
+     } )
+     ( block {
+       children( "block" );
+       $v += " " + $block.s.string;
+     } )
+   )
+  ;
 
 // }}}
 
@@ -2012,25 +2012,25 @@ switchBlockLabels returns [String v]
   int _i = 0, _j = 0;
   nonterminal( "switchBlockLabels" );
   }
-	:
-	{ $v = ""; }
-	^( SWITCH_BLOCK_LABEL_LIST
-	   ( aSwitchCaseLabel=switchCaseLabel {
-             children( "aSwitchCaseLabel" );
-	     $v += ( _i++ == 0 ? "" : "/* switchBlockLabels */" )
-		 + $aSwitchCaseLabel.v;
-	   } )*
-	   ( switchDefaultLabel {
-             children( "SwitchDefaultLabel" );
-	     $v += " " + $switchDefaultLabel.v;
-	   } )?
-	   ( bSwitchCaseLabel=switchCaseLabel {
-             children( "bSwitchCaseLabel" );
-	     $v += ( _j++ == 0 ? "" : "/* switchBlockLabels */" )
-		 + $bSwitchCaseLabel.v;
-	   } )*
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( SWITCH_BLOCK_LABEL_LIST
+     ( aSwitchCaseLabel=switchCaseLabel {
+       children( "aSwitchCaseLabel" );
+       $v += ( _i++ == 0 ? "" : "/* switchBlockLabels */" )
+  	 + $aSwitchCaseLabel.v;
+     } )*
+     ( switchDefaultLabel {
+       children( "SwitchDefaultLabel" );
+       $v += " " + $switchDefaultLabel.v;
+     } )?
+     ( bSwitchCaseLabel=switchCaseLabel {
+       children( "bSwitchCaseLabel" );
+       $v += ( _j++ == 0 ? "" : "/* switchBlockLabels */" )
+  	 + $bSwitchCaseLabel.v;
+     } )*
+   )
+  ;
 
 // }}}
         
@@ -2042,22 +2042,22 @@ switchCaseLabel returns [String v]
   int _i = 0;
   nonterminal( "switchCaseLabel" );
   }
-	:
-	^( ( CASE {
-             children( "CASE" );
-	     $v = $CASE.text;
-	   } )
-	   ( expression {
-             children( "expression" );
-	     $v += " " + $expression.v;
-	   } )
-	   ( blockStatement {
-             children( "blockStatement" );
-	     $v += ( _i++ == 0 ? "" : "/* switchCaseLabel */" )
-		 + $blockStatement.s.string;
-	   } )*
-	 )
-	;
+  :
+  ^( ( CASE {
+       children( "CASE" );
+       $v = $CASE.text;
+     } )
+     ( expression {
+       children( "expression" );
+       $v += " " + $expression.v;
+     } )
+     ( blockStatement {
+       children( "blockStatement" );
+       $v += ( _i++ == 0 ? "" : "/* switchCaseLabel */" )
+  	 + $blockStatement.s.string;
+     } )*
+   )
+  ;
 
 // }}}
 
@@ -2069,16 +2069,16 @@ switchDefaultLabel returns [String v]
   int _i = 0;
   nonterminal( "switchDefaultLabel" );
   }
-	:
-	{ $v = ""; }
-	^( DEFAULT
-           { children( "blockStatement" ); }
-	   ( blockStatement {
-	     $v += ( _i++ == 0 ? "" : "/* switchDefaultLabel */" )
-		 + $blockStatement.s.string;
-	   } )*
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( DEFAULT
+     { children( "blockStatement" ); }
+     ( blockStatement {
+       $v += ( _i++ == 0 ? "" : "/* switchDefaultLabel */" )
+  	 + $blockStatement.s.string;
+     } )*
+   )
+  ;
 
 // }}}
     
@@ -2090,21 +2090,21 @@ forInit returns [String v]
   int _i = 0;
   nonterminal( "forInit" );
   }
-	:
-	{ $v = ""; }
-	^( FOR_INIT
-	   ( ( localVariableDeclaration {
-               children( "localVariableDeclaration" );
-	       $v = $localVariableDeclaration.v;
-	     } )
-	   | ( expression {
-               children( "expression" );
-	       $v += ( _i++ == 0 ? "" : "/* forInit */" )
-		   + $expression.v;
-	     } )*
-	   )? 
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( FOR_INIT
+     ( ( localVariableDeclaration {
+         children( "localVariableDeclaration" );
+         $v = $localVariableDeclaration.v;
+       } )
+     | ( expression {
+         children( "expression" );
+         $v += ( _i++ == 0 ? "" : "/* forInit */" )
+  	   + $expression.v;
+       } )*
+     )? 
+   )
+  ;
 
 // }}}
     
@@ -2115,15 +2115,15 @@ forCondition returns [String v]
   {
   nonterminal( "forCondition" );
   }
-	:
-	{ $v = ""; }
-	^( FOR_CONDITION
-	   ( expression {
-             children( "expression" );
-	     $v += $expression.v;
-	   } )?
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( FOR_CONDITION
+     ( expression {
+       children( "expression" );
+       $v += $expression.v;
+     } )?
+   )
+  ;
 
 // }}}
 
@@ -2135,16 +2135,16 @@ forUpdater returns [String v]
   int _i = 0;
   nonterminal( "forUpdater" );
   }
-	:
-	{ $v = ""; }
-	^( FOR_UPDATE
-           { children( "expression" ); }
-	   ( expression {
-	     $v += ( _i++ == 0 ? "" : "/* forUpdater */" )
-		 + $expression.v;
-	   } )*
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( FOR_UPDATE
+     { children( "expression" ); }
+     ( expression {
+       $v += ( _i++ == 0 ? "" : "/* forUpdater */" )
+  	 + $expression.v;
+     } )*
+   )
+  ;
 
 // }}}
     
@@ -2157,18 +2157,18 @@ parenthesizedExpression returns [String v]
   {
   nonterminal( "parenthesizedExpression" );
   }
-	:
-	{ $v = "("; }
-	{ $v += " "; }
-	^( PARENTESIZED_EXPR
-	   ( expression {
-             children( "expression" );
-	     $v += $expression.v;
-	   } )
-	 )
-	{ $v += " "; }
-	{ $v += ")"; }
-	;
+  :
+  { $v = "("; }
+  { $v += " "; }
+  ^( PARENTESIZED_EXPR
+     ( expression {
+       children( "expression" );
+       $v += $expression.v;
+     } )
+   )
+  { $v += " "; }
+  { $v += ")"; }
+  ;
 
 // }}}
     
@@ -2197,470 +2197,470 @@ expr returns [String v]
   {
   nonterminal( "expr" );
   }
-	:
-	^( ASSIGN
-	   ( aExpr=expr {
-	     $v = $aExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "="; }
-	   { $v += " "; }
-	   ( bExpr=expr {
-	     $v += $bExpr.v;
-	   } )
-	 )
-	|
-	^( PLUS_ASSIGN
-	   ( cExpr=expr {
-	     $v = $cExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "+="; }
-	   { $v += " "; }
-	   ( dExpr=expr {
-	     $v += $dExpr.v;
-	   } )
-	 )
-	|
-	^( MINUS_ASSIGN
-	   ( eExpr=expr {
-	     $v = $eExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "-="; }
-	   { $v += " "; }
-	   ( fExpr=expr {
-	     $v += $fExpr.v;
-	   } )
-	 )
-	|
-	^( STAR_ASSIGN
-	   ( gExpr=expr {
-	     $v = $gExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "*="; }
-	   { $v += " "; }
-	   ( hExpr=expr {
-	     $v += $hExpr.v;
-	   } )
-	 )
-	|
-	^( DIV_ASSIGN
-	   ( iExpr=expr {
-	     $v = $iExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "/="; }
-	   { $v += " "; }
-	   ( jExpr=expr {
-	     $v += $jExpr.v;
-	   } )
-	 )
-	|
-	^( AND_ASSIGN
-	   ( kExpr=expr {
-	     $v = $kExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "&="; }
-	   { $v += " "; }
-	   ( lExpr=expr {
-	     $v += $lExpr.v;
-	   } )
-	 )
-	|
-	^( OR_ASSIGN
-	   ( mExpr=expr {
-	     $v = $mExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "|="; }
-	   { $v += " "; }
-	   ( nExpr=expr {
-	     $v += $nExpr.v;
-	   } )
-	 )
-	|
-	^( XOR_ASSIGN
-	   ( oExpr=expr {
-	     $v = $oExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "^="; }
-	   { $v += " "; }
-	   ( pExpr=expr {
-	     $v += $pExpr.v;
-	   } )
-	 )
-	|
-	^( MOD_ASSIGN
-	   ( qExpr=expr {
-	     $v = $qExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "\%="; }
-	   { $v += " "; }
-	   ( rExpr=expr {
-	     $v += $rExpr.v;
-	   } )
-	 )
-	|
-	^( BIT_SHIFT_RIGHT_ASSIGN
-	   ( sExpr=expr {
-	     $v = $sExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += ">>>="; }
-	   { $v += " "; }
-	   ( tExpr=expr {
-	     $v += $tExpr.v;
-	   } )
-	 )
-	|
-	^( SHIFT_RIGHT_ASSIGN
-	   ( uExpr=expr {
-	     $v = $uExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += ">>="; }
-	   { $v += " "; }
-	   ( vExpr=expr {
-	     $v += $vExpr.v;
-	   } )
-	 )
-	|
-	^( SHIFT_LEFT_ASSIGN
-	   ( wExpr=expr {
-	     $v = $wExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "<<="; }
-	   { $v += " "; }
-	   ( xExpr=expr {
-	     $v += $xExpr.v;
-	   } )
-	 )
-	|
-	^( QUESTION
-	   ( yExpr=expr {
-	     $v = $yExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "?"; }
-	   { $v += " "; }
-	   ( zExpr=expr {
-	     $v += $zExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "?"; }
-	   { $v += " "; }
-	   ( aaExpr=expr {
-	     $v += $aaExpr.v;
-	   } )
-	 )
-	|
-	^( LOGICAL_OR
-	   ( abExpr=expr {
-	     $v = $abExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "||"; }
-	   { $v += " "; }
-	   ( acExpr=expr {
-	     $v += $acExpr.v;
-	   } )
-	 )
-	|
-	^( LOGICAL_AND
-	   ( adExpr=expr {
-	     $v = $adExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "&&"; }
-	   { $v += " "; }
-	   ( aeExpr=expr {
-	     $v += $aeExpr.v;
-	   } )
-	 )
-	|
-	^( OR
-	   ( afExpr=expr {
-	     $v = $afExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "|"; }
-	   { $v += " "; }
-	   ( agExpr=expr {
-	     $v += $agExpr.v;
-	   } )
-	 )
-	|
-	^( XOR
-	   ( ahExpr=expr {
-	     $v = $ahExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "^"; }
-	   { $v += " "; }
-	   ( aiExpr=expr {
-	     $v += $aiExpr.v;
-	   } )
-	 )
-	|
-	^( AND
-	   ( ajExpr=expr {
-	     $v = $ajExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "&"; }
-	   { $v += " "; }
-	   ( akExpr=expr {
-	     $v += $akExpr.v;
-	   } )
-	 )
-	|
-	^( EQUAL
-	   ( alExpr=expr {
-	     $v = $alExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "=="; }
-	   { $v += " "; }
-	   ( amExpr=expr {
-	     $v += $amExpr.v;
-	   } )
-	 )
-	|
-	^( NOT_EQUAL
-	   ( anExpr=expr {
-	     $v = $anExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "!="; }
-	   { $v += " "; }
-	   ( aoExpr=expr {
-	     $v += $aoExpr.v;
-	   } )
-	 )
-	|
-	^( LESS_OR_EQUAL
-	   ( apExpr=expr {
-	     $v = $apExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "instanceof"; }
-	   { $v += " "; }
-	   ( aqExpr=expr {
-	     $v += $aqExpr.v;
-	   } )
-	 )
-	|
-	^( LESS_OR_EQUAL
-	   ( arExpr=expr {
-	     $v = $arExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "<="; }
-	   { $v += " "; }
-	   ( asExpr=expr {
-	     $v += $asExpr.v;
-	   } )
-	 )
-	|
-	^( GREATER_THAN_OR_EQUAL
-	   ( atExpr=expr {
-	     $v = $atExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += ">="; }
-	   { $v += " "; }
-	   ( auExpr=expr {
-	     $v += $auExpr.v;
-	   } )
-	 )
-	|
-	^( BIT_SHIFT_RIGHT
-	   ( avExpr=expr {
-	     $v = $avExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += ">>>"; }
-	   { $v += " "; }
-	   ( awExpr=expr {
-	     $v += $awExpr.v;
-	   } )
-	 )
-	|
-	^( SHIFT_RIGHT
-	   ( axExpr=expr {
-	     $v = $axExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += ">>"; }
-	   { $v += " "; }
-	   ( ayExpr=expr {
-	     $v += $ayExpr.v;
-	   } )
-	 )
-	|
-	^( GREATER_THAN
-	   ( azExpr=expr {
-	     $v = $azExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += ">"; }
-	   { $v += " "; }
-	   ( baExpr=expr {
-	     $v += $baExpr.v;
-	   } )
-	 )
-	|
-	^( SHIFT_LEFT
-	   ( bbExpr=expr {
-	     $v = $bbExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "<<"; }
-	   { $v += " "; }
-	   ( bcExpr=expr {
-	     $v += $bcExpr.v;
-	   } )
-	 )
-	|
-	^( LESS_THAN
-	   ( bdExpr=expr {
-	     $v = $bdExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "<"; }
-	   { $v += " "; }
-	   ( beExpr=expr {
-	     $v += $beExpr.v;
-	   } )
-	 )
-	|
-	^( PLUS
-	   ( bfExpr=expr {
-	     $v = $bfExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "+"; }
-	   { $v += " "; }
-	   ( bgExpr=expr {
-	     $v += $bgExpr.v;
-	   } )
-	 )
-	|
-	^( MINUS
-	   ( bhExpr=expr {
-	     $v = $bhExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "-"; }
-	   { $v += " "; }
-	   ( biIexpr=expr {
-	     $v += $biIexpr.v;
-	   } )
-	 )
-	|
-	^( STAR
-	   ( bjExpr=expr {
-	     $v = $bjExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "*"; }
-	   { $v += " "; }
-	   ( bkExpr=expr {
-	     $v += $bkExpr.v;
-	   } )
-	 )
-	|
-	^( DIV
-	   ( blExpr=expr {
-	     $v = $blExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "/"; }
-	   { $v += " "; }
-	   ( bmExpr=expr {
-	     $v += $bmExpr.v;
-	   } )
-	 )
-	|
-	^( MOD
-	   ( bnExpr=expr {
-	     $v = $bnExpr.v;
-	   } )
-	   { $v += " "; }
-	   { $v += "\%"; }
-	   { $v += " "; }
-	   ( boExpr=expr {
-	     $v += $boExpr.v;
-	   } )
-	 )
-	|
-	^( UNARY_PLUS
-	   ( bpExpr=expr {
-	     $v = "+" + $bpExpr.v;
-	   } )
-	 )
-	|
-	^( UNARY_MINUS
-	   ( bqExpr=expr {
-	     $v = "-" + $bqExpr.v;
-	   } )
-	 )
-	|
-	^( PRE_INC
-	   ( brExpr=expr {
-	     $v = "++" + $brExpr.v;
-	   } )
-	 )
-	|
-	^( PRE_DEC
-	   ( bsExpr=expr {
-	     $v = "--" + $bsExpr.v;
-	   } )
-	 )
-	|
-	^( POST_INC
-	   ( btExpr=expr {
-	     $v = $btExpr.v + "++";
-	   } )
-	 )
-	|
-	^( POST_DEC
-	   ( buExpr=expr {
-	     $v = $buExpr.v + "--";
-	   } )
-	 )
-	|
-	^( NOT
-	   ( bvExpr=expr {
-	     $v = "~" + $bvExpr.v;
-	   } )
-	 )
-	|
-	^( LOGICAL_NOT
-	   ( bwExpr=expr {
-	     $v = "!" + $bwExpr.v;
-	   } )
-	 )
-	|
-	^( CAST_EXPR
-	   ( type {
-	     $v = " " + "(" + " " + $type.v;
-	   } )
-	   ( bxExpr=expr {
-	     $v += " " + ")" + " " + $bxExpr.v;
-	   } )
-	 )
-	|
-	( primaryExpression {
-	  $v = $primaryExpression.v;
-	} )
-	;
+  :
+  ^( ASSIGN
+     ( aExpr=expr {
+       $v = $aExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "="; }
+     { $v += " "; }
+     ( bExpr=expr {
+       $v += $bExpr.v;
+     } )
+   )
+  |
+  ^( PLUS_ASSIGN
+     ( cExpr=expr {
+       $v = $cExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "+="; }
+     { $v += " "; }
+     ( dExpr=expr {
+       $v += $dExpr.v;
+     } )
+   )
+  |
+  ^( MINUS_ASSIGN
+     ( eExpr=expr {
+       $v = $eExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "-="; }
+     { $v += " "; }
+     ( fExpr=expr {
+       $v += $fExpr.v;
+     } )
+   )
+  |
+  ^( STAR_ASSIGN
+     ( gExpr=expr {
+       $v = $gExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "*="; }
+     { $v += " "; }
+     ( hExpr=expr {
+       $v += $hExpr.v;
+     } )
+   )
+  |
+  ^( DIV_ASSIGN
+     ( iExpr=expr {
+       $v = $iExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "/="; }
+     { $v += " "; }
+     ( jExpr=expr {
+       $v += $jExpr.v;
+     } )
+   )
+  |
+  ^( AND_ASSIGN
+     ( kExpr=expr {
+       $v = $kExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "&="; }
+     { $v += " "; }
+     ( lExpr=expr {
+       $v += $lExpr.v;
+     } )
+   )
+  |
+  ^( OR_ASSIGN
+     ( mExpr=expr {
+       $v = $mExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "|="; }
+     { $v += " "; }
+     ( nExpr=expr {
+       $v += $nExpr.v;
+     } )
+   )
+  |
+  ^( XOR_ASSIGN
+     ( oExpr=expr {
+       $v = $oExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "^="; }
+     { $v += " "; }
+     ( pExpr=expr {
+       $v += $pExpr.v;
+     } )
+   )
+  |
+  ^( MOD_ASSIGN
+     ( qExpr=expr {
+       $v = $qExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "\%="; }
+     { $v += " "; }
+     ( rExpr=expr {
+       $v += $rExpr.v;
+     } )
+   )
+  |
+  ^( BIT_SHIFT_RIGHT_ASSIGN
+     ( sExpr=expr {
+       $v = $sExpr.v;
+     } )
+     { $v += " "; }
+     { $v += ">>>="; }
+     { $v += " "; }
+     ( tExpr=expr {
+       $v += $tExpr.v;
+     } )
+   )
+  |
+  ^( SHIFT_RIGHT_ASSIGN
+     ( uExpr=expr {
+       $v = $uExpr.v;
+     } )
+     { $v += " "; }
+     { $v += ">>="; }
+     { $v += " "; }
+     ( vExpr=expr {
+       $v += $vExpr.v;
+     } )
+   )
+  |
+  ^( SHIFT_LEFT_ASSIGN
+     ( wExpr=expr {
+       $v = $wExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "<<="; }
+     { $v += " "; }
+     ( xExpr=expr {
+       $v += $xExpr.v;
+     } )
+   )
+  |
+  ^( QUESTION
+     ( yExpr=expr {
+       $v = $yExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "?"; }
+     { $v += " "; }
+     ( zExpr=expr {
+       $v += $zExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "?"; }
+     { $v += " "; }
+     ( aaExpr=expr {
+       $v += $aaExpr.v;
+     } )
+   )
+  |
+  ^( LOGICAL_OR
+     ( abExpr=expr {
+       $v = $abExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "||"; }
+     { $v += " "; }
+     ( acExpr=expr {
+       $v += $acExpr.v;
+     } )
+   )
+  |
+  ^( LOGICAL_AND
+     ( adExpr=expr {
+       $v = $adExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "&&"; }
+     { $v += " "; }
+     ( aeExpr=expr {
+       $v += $aeExpr.v;
+     } )
+   )
+  |
+  ^( OR
+     ( afExpr=expr {
+       $v = $afExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "|"; }
+     { $v += " "; }
+     ( agExpr=expr {
+       $v += $agExpr.v;
+     } )
+   )
+  |
+  ^( XOR
+     ( ahExpr=expr {
+       $v = $ahExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "^"; }
+     { $v += " "; }
+     ( aiExpr=expr {
+       $v += $aiExpr.v;
+     } )
+   )
+  |
+  ^( AND
+     ( ajExpr=expr {
+       $v = $ajExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "&"; }
+     { $v += " "; }
+     ( akExpr=expr {
+       $v += $akExpr.v;
+     } )
+   )
+  |
+  ^( EQUAL
+     ( alExpr=expr {
+       $v = $alExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "=="; }
+     { $v += " "; }
+     ( amExpr=expr {
+       $v += $amExpr.v;
+     } )
+   )
+  |
+  ^( NOT_EQUAL
+     ( anExpr=expr {
+       $v = $anExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "!="; }
+     { $v += " "; }
+     ( aoExpr=expr {
+       $v += $aoExpr.v;
+     } )
+   )
+  |
+  ^( LESS_OR_EQUAL
+     ( apExpr=expr {
+       $v = $apExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "instanceof"; }
+     { $v += " "; }
+     ( aqExpr=expr {
+       $v += $aqExpr.v;
+     } )
+   )
+  |
+  ^( LESS_OR_EQUAL
+     ( arExpr=expr {
+       $v = $arExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "<="; }
+     { $v += " "; }
+     ( asExpr=expr {
+       $v += $asExpr.v;
+     } )
+   )
+  |
+  ^( GREATER_THAN_OR_EQUAL
+     ( atExpr=expr {
+       $v = $atExpr.v;
+     } )
+     { $v += " "; }
+     { $v += ">="; }
+     { $v += " "; }
+     ( auExpr=expr {
+       $v += $auExpr.v;
+     } )
+   )
+  |
+  ^( BIT_SHIFT_RIGHT
+     ( avExpr=expr {
+       $v = $avExpr.v;
+     } )
+     { $v += " "; }
+     { $v += ">>>"; }
+     { $v += " "; }
+     ( awExpr=expr {
+       $v += $awExpr.v;
+     } )
+   )
+  |
+  ^( SHIFT_RIGHT
+     ( axExpr=expr {
+       $v = $axExpr.v;
+     } )
+     { $v += " "; }
+     { $v += ">>"; }
+     { $v += " "; }
+     ( ayExpr=expr {
+       $v += $ayExpr.v;
+     } )
+   )
+  |
+  ^( GREATER_THAN
+     ( azExpr=expr {
+       $v = $azExpr.v;
+     } )
+     { $v += " "; }
+     { $v += ">"; }
+     { $v += " "; }
+     ( baExpr=expr {
+       $v += $baExpr.v;
+     } )
+   )
+  |
+  ^( SHIFT_LEFT
+     ( bbExpr=expr {
+       $v = $bbExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "<<"; }
+     { $v += " "; }
+     ( bcExpr=expr {
+       $v += $bcExpr.v;
+     } )
+   )
+  |
+  ^( LESS_THAN
+     ( bdExpr=expr {
+       $v = $bdExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "<"; }
+     { $v += " "; }
+     ( beExpr=expr {
+       $v += $beExpr.v;
+     } )
+   )
+  |
+  ^( PLUS
+     ( bfExpr=expr {
+       $v = $bfExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "+"; }
+     { $v += " "; }
+     ( bgExpr=expr {
+       $v += $bgExpr.v;
+     } )
+   )
+  |
+  ^( MINUS
+     ( bhExpr=expr {
+       $v = $bhExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "-"; }
+     { $v += " "; }
+     ( biIexpr=expr {
+       $v += $biIexpr.v;
+     } )
+   )
+  |
+  ^( STAR
+     ( bjExpr=expr {
+       $v = $bjExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "*"; }
+     { $v += " "; }
+     ( bkExpr=expr {
+       $v += $bkExpr.v;
+     } )
+   )
+  |
+  ^( DIV
+     ( blExpr=expr {
+       $v = $blExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "/"; }
+     { $v += " "; }
+     ( bmExpr=expr {
+       $v += $bmExpr.v;
+     } )
+   )
+  |
+  ^( MOD
+     ( bnExpr=expr {
+       $v = $bnExpr.v;
+     } )
+     { $v += " "; }
+     { $v += "\%"; }
+     { $v += " "; }
+     ( boExpr=expr {
+       $v += $boExpr.v;
+     } )
+   )
+  |
+  ^( UNARY_PLUS
+     ( bpExpr=expr {
+       $v = "+" + $bpExpr.v;
+     } )
+   )
+  |
+  ^( UNARY_MINUS
+     ( bqExpr=expr {
+       $v = "-" + $bqExpr.v;
+     } )
+   )
+  |
+  ^( PRE_INC
+     ( brExpr=expr {
+       $v = "++" + $brExpr.v;
+     } )
+   )
+  |
+  ^( PRE_DEC
+     ( bsExpr=expr {
+       $v = "--" + $bsExpr.v;
+     } )
+   )
+  |
+  ^( POST_INC
+     ( btExpr=expr {
+       $v = $btExpr.v + "++";
+     } )
+   )
+  |
+  ^( POST_DEC
+     ( buExpr=expr {
+       $v = $buExpr.v + "--";
+     } )
+   )
+  |
+  ^( NOT
+     ( bvExpr=expr {
+       $v = "~" + $bvExpr.v;
+     } )
+   )
+  |
+  ^( LOGICAL_NOT
+     ( bwExpr=expr {
+       $v = "!" + $bwExpr.v;
+     } )
+   )
+  |
+  ^( CAST_EXPR
+     ( type {
+       $v = " " + "(" + " " + $type.v;
+     } )
+     ( bxExpr=expr {
+       $v += " " + ")" + " " + $bxExpr.v;
+     } )
+   )
+  |
+  ( primaryExpression {
+    $v = $primaryExpression.v;
+  } )
+  ;
 
 // }}}
 
@@ -2671,123 +2671,123 @@ primaryExpression returns [String v]
   { 
   nonterminal( "primaryExpression" );
   }
-	:
-	^( ( DOT {
-             children( "DOT" );
-	   } )
-           ( ( aPrimaryExpression=primaryExpression {
-               children( "aPrimaryExpression" );
-	       $v = " " + $aPrimaryExpression.v;
-	     } )
-	     { $v += $DOT.text; }
-             ( ( IDENT {
-                 children( "IDENT" );
-	         $v += $IDENT.text;
-	       } )
-             | ( THIS {
-                 children( "THIS" );
-	         $v += $THIS.text;
-	       } )
-             | ( SUPER {
-                 children( "SUPER" );
-	         $v += $SUPER.text;
-	       } )
-             | ( innerNewExpression {
-                 children( "innerNewExpression" );
-	         $v += $innerNewExpression.v;
-	       } )
-             | ( bCLASS=CLASS {
-                 children( "bCLASS" );
-	         $v += $bCLASS.text;
-	       } )
-             )
-           | ( primitiveType {
-               children( "primitiveType" );
-	       $v += $primitiveType.v;
-	     } )
-             ( cCLASS=CLASS {
-               children( "cCLASS" );
-	       $v += " " + $cCLASS.text;
-	     } )
-           | ( VOID {
-               children( "VOID" );
-	       $v += $VOID.text;
-	     } )
-             ( dCLASS=CLASS {
-               children( "dCLASS" );
-	       $v += " " + $dCLASS.text;
-	     } )
-           )
-        )
-	|
-	( parenthesizedExpression {
-          children( "parenthesizedExpression" );
-	  $v = $parenthesizedExpression.v;
-	} )
-	|
-	( IDENT {
-          children( "IDENT" );
-	  $v = $IDENT.text;
-	} )
-	|
-	^( METHOD_CALL
-	   ( ePrimaryExpression=primaryExpression {
-             children( "ePrimaryExpression" );
-	     $v = $ePrimaryExpression.v;
-	   } )
-	   ( genericTypeArgumentList {
-             children( "genericTypeArgumentList" );
-	     $v += " " + $genericTypeArgumentList.v;
-	   } )?
-	   ( arguments {
-             children( "arguments" );
-	     $v += " " + $arguments.v;
-	   } )
-	 )
-	|
-	( explicitConstructorCall {
-          children( "explicitConstructorCall" );
-	  $v = $explicitConstructorCall.v;
-	} )
-	|
-	^( ARRAY_ELEMENT_ACCESS
-	   ( fPrimaryExpression=primaryExpression {
-             children( "fPrimaryExpression" );
-	     $v = $fPrimaryExpression.v;
-	   } )
-	   ( expression {
-             children( "expression" );
-	     $v+="[";
-	     $v += $expression.v;
-	     $v+="]";
-	   } )
-	 )
-	|
-	( literal {
-          children( "literal" );
-	  $v = $literal.v;
-	} )
-	|
-	( newExpression {
-          children( "newExpression" );
-	  $v = $newExpression.v;
-	} )
-	|
-	( THIS {
-          children( "THIS" );
-	  $v = $THIS.text;
-	} )
-	|
-	( arrayTypeDeclarator {
-          children( "arrayTypeDeclarator" );
-	  $v = $arrayTypeDeclarator.v;
-	} )
-	|
-	( SUPER {
-          children( "SUPER" );
-	  $v = $SUPER.text;
-	} )
-	;
+  :
+  ^( ( DOT {
+       children( "DOT" );
+     } )
+     ( ( aPrimaryExpression=primaryExpression {
+         children( "aPrimaryExpression" );
+         $v = " " + $aPrimaryExpression.v;
+       } )
+       { $v += $DOT.text; }
+       ( ( IDENT {
+           children( "IDENT" );
+           $v += $IDENT.text;
+         } )
+       | ( THIS {
+           children( "THIS" );
+           $v += $THIS.text;
+         } )
+       | ( SUPER {
+           children( "SUPER" );
+           $v += $SUPER.text;
+         } )
+       | ( innerNewExpression {
+           children( "innerNewExpression" );
+           $v += $innerNewExpression.v;
+         } )
+       | ( bCLASS=CLASS {
+           children( "bCLASS" );
+           $v += $bCLASS.text;
+         } )
+       )
+     | ( primitiveType {
+         children( "primitiveType" );
+         $v += $primitiveType.v;
+       } )
+       ( cCLASS=CLASS {
+         children( "cCLASS" );
+         $v += " " + $cCLASS.text;
+       } )
+     | ( VOID {
+         children( "VOID" );
+         $v += $VOID.text;
+       } )
+       ( dCLASS=CLASS {
+         children( "dCLASS" );
+         $v += " " + $dCLASS.text;
+       } )
+     )
+  )
+  |
+  ( parenthesizedExpression {
+    children( "parenthesizedExpression" );
+    $v = $parenthesizedExpression.v;
+  } )
+  |
+  ( IDENT {
+    children( "IDENT" );
+    $v = $IDENT.text;
+  } )
+  |
+  ^( METHOD_CALL
+     ( ePrimaryExpression=primaryExpression {
+       children( "ePrimaryExpression" );
+       $v = $ePrimaryExpression.v;
+     } )
+     ( genericTypeArgumentList {
+       children( "genericTypeArgumentList" );
+       $v += " " + $genericTypeArgumentList.v;
+     } )?
+     ( arguments {
+       children( "arguments" );
+       $v += " " + $arguments.v;
+     } )
+   )
+  |
+  ( explicitConstructorCall {
+    children( "explicitConstructorCall" );
+    $v = $explicitConstructorCall.v;
+  } )
+  |
+  ^( ARRAY_ELEMENT_ACCESS
+     ( fPrimaryExpression=primaryExpression {
+       children( "fPrimaryExpression" );
+       $v = $fPrimaryExpression.v;
+     } )
+     ( expression {
+       children( "expression" );
+       $v+="[";
+       $v += $expression.v;
+       $v+="]";
+     } )
+   )
+  |
+  ( literal {
+    children( "literal" );
+    $v = $literal.v;
+  } )
+  |
+  ( newExpression {
+    children( "newExpression" );
+    $v = $newExpression.v;
+  } )
+  |
+  ( THIS {
+    children( "THIS" );
+    $v = $THIS.text;
+  } )
+  |
+  ( arrayTypeDeclarator {
+    children( "arrayTypeDeclarator" );
+    $v = $arrayTypeDeclarator.v;
+  } )
+  |
+  ( SUPER {
+    children( "SUPER" );
+    $v = $SUPER.text;
+  } )
+  ;
 
 // }}}
     
@@ -2798,33 +2798,33 @@ explicitConstructorCall returns [String v]
   {
   nonterminal( "explicitConstructorCall" );
   }
-	:
-	{ $v = ""; }
-	^( THIS_CONSTRUCTOR_CALL
-	   ( genericTypeArgumentList {
-             children( "genericTypeArgumentList" );
-	     $v += $genericTypeArgumentList.v;
-	   } )?
-	   ( arguments {
-	     $v += " " + $arguments.v;
-	   } )
-	 )
-	|
-	^( SUPER_CONSTRUCTOR_CALL
-	   ( primaryExpression {
-             children( "primaryExpression" );
-	     $v += $primaryExpression.v;
-	   } )?
-	   ( genericTypeArgumentList {
-             children( "genericTypeArgumentList" );
-	     $v += " " + $genericTypeArgumentList.v;
-	   } )?
-	   ( arguments {
-             children( "arguments" );
-	     $v += " " + $arguments.v;
-	   } )
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( THIS_CONSTRUCTOR_CALL
+     ( genericTypeArgumentList {
+       children( "genericTypeArgumentList" );
+       $v += $genericTypeArgumentList.v;
+     } )?
+     ( arguments {
+       $v += " " + $arguments.v;
+     } )
+   )
+  |
+  ^( SUPER_CONSTRUCTOR_CALL
+     ( primaryExpression {
+       children( "primaryExpression" );
+       $v += $primaryExpression.v;
+     } )?
+     ( genericTypeArgumentList {
+       children( "genericTypeArgumentList" );
+       $v += " " + $genericTypeArgumentList.v;
+     } )?
+     ( arguments {
+       children( "arguments" );
+       $v += " " + $arguments.v;
+     } )
+   )
+  ;
 
 // }}}
 
@@ -2835,23 +2835,25 @@ arrayTypeDeclarator returns [String v]
   {
   nonterminal( "arrayTypeDeclarator" );
   }
-	:
-	^( ARRAY_DECLARATOR
-	   ( ( aArrayTypeDeclarator=arrayTypeDeclarator {
-               children( "aArrayTypeDeclarator" );
-	       $v = $aArrayTypeDeclarator.v;
-	     } )
-	   | ( qualifiedIdentifier {
-               children( "qualifiedIdentifier" );
-	       $v = $qualifiedIdentifier.v;
-	     } )
-	   | ( primitiveType {
-               children( "primitiveType" );
-	       $v = $primitiveType.v;
-	     } )
-	   )
-	 )
-	;
+  :
+  ^( ARRAY_DECLARATOR
+     ( ( aArrayTypeDeclarator=arrayTypeDeclarator {
+         children( "aArrayTypeDeclarator" );
+         $v = $aArrayTypeDeclarator.v;
+       } )
+       |
+       ( qualifiedIdentifier {
+         children( "qualifiedIdentifier" );
+         $v = $qualifiedIdentifier.v;
+       } )
+       |
+       ( primitiveType {
+         children( "primitiveType" );
+         $v = $primitiveType.v;
+       } )
+     )
+   )
+  ;
 
 // }}}
 
@@ -2862,55 +2864,55 @@ newExpression returns [String v]
   {
   nonterminal( "newExpression" );
   }
-	:
-	{ $v = ""; }
-	^( STATIC_ARRAY_CREATOR
-	   ( { $v = "new"; }
-	     { $v += " "; }
-	     ( primitiveType {
-               children( "primitiveType" );
-	       $v += $primitiveType.v;
-	     } )
-	     { $v += "["; }
-	     ( aNewArrayConstruction=newArrayConstruction {
-               children( "aNewArrayConstruction" );
-	       $v += $aNewArrayConstruction.v;
-	     } )
-	     { $v += "]"; }
-	   | { $v="new";} ( genericTypeArgumentList {
-               children( "genericTypeArgumentList" );
-	       $v += $genericTypeArgumentList.v;
-	     } )?
-	     ( qualifiedTypeIdent {
-               children( "qualifiedTypeIdent" );
-	       $v += " " + $qualifiedTypeIdent.v;
-	     } )
-	     ( bNewArrayConstruction=newArrayConstruction {
-               children( "bNewArrayConstruction" );
-	       $v += " " + $bNewArrayConstruction.v;
-	     } )
-	   )
-	 )
-	|
-	^( CLASS_CONSTRUCTOR_CALL
-	   ( genericTypeArgumentList {
-             children( "genericTypeArgumentList" );
-	     $v = $genericTypeArgumentList.v;
-	   } )?
-	   ( qualifiedTypeIdent {
-             children( "qualifiedTypeIdent" );
-	     $v += " " + $qualifiedTypeIdent.v;
-	   } )
-	   ( arguments {
-             children( "arguemnts" );
-	     $v += " " + $arguments.v;
-	   } )
-	   ( classTopLevelScope {
-             children( "classTopLevelScope" );
-	     $v += " " + $classTopLevelScope.v;
-	   } )?
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( STATIC_ARRAY_CREATOR
+     ( { $v = "new"; }
+       { $v += " "; }
+       ( primitiveType {
+         children( "primitiveType" );
+         $v += $primitiveType.v;
+       } )
+       { $v += "["; }
+       ( aNewArrayConstruction=newArrayConstruction {
+         children( "aNewArrayConstruction" );
+         $v += $aNewArrayConstruction.v;
+       } )
+       { $v += "]"; }
+     | { $v="new";} ( genericTypeArgumentList {
+         children( "genericTypeArgumentList" );
+         $v += $genericTypeArgumentList.v;
+       } )?
+       ( qualifiedTypeIdent {
+         children( "qualifiedTypeIdent" );
+         $v += " " + $qualifiedTypeIdent.v;
+       } )
+       ( bNewArrayConstruction=newArrayConstruction {
+         children( "bNewArrayConstruction" );
+         $v += " " + $bNewArrayConstruction.v;
+       } )
+     )
+   )
+  |
+  ^( CLASS_CONSTRUCTOR_CALL
+     ( genericTypeArgumentList {
+       children( "genericTypeArgumentList" );
+       $v = $genericTypeArgumentList.v;
+     } )?
+     ( qualifiedTypeIdent {
+       children( "qualifiedTypeIdent" );
+       $v += " " + $qualifiedTypeIdent.v;
+     } )
+     ( arguments {
+       children( "arguemnts" );
+       $v += " " + $arguments.v;
+     } )
+     ( classTopLevelScope {
+       children( "classTopLevelScope" );
+       $v += " " + $classTopLevelScope.v;
+     } )?
+   )
+  ;
 
 // }}}
 
@@ -2922,27 +2924,27 @@ innerNewExpression returns [String v]
   {
   nonterminal( "innerNewExpression" );
   }
-	:
-	{ $v = ""; }
-	^( CLASS_CONSTRUCTOR_CALL
-	   ( genericTypeArgumentList {
-             children( "genericTypeArgumentList" );
-	     $v += $genericTypeArgumentList.v;
-	   } )?
-	   ( IDENT {
-             children( "IDENT" );
-	     $v += " " + $IDENT.text;
-	   } )
-	   ( arguments {
-             children( "arguments" );
-	     $v += " " + $arguments.v;
-	   } )
-	   ( classTopLevelScope {
-             children( "classTopLevelScope" );
-	     $v += " " + $classTopLevelScope.v;
-	   } )?
-	 )
-	;
+  :
+  { $v = ""; }
+  ^( CLASS_CONSTRUCTOR_CALL
+     ( genericTypeArgumentList {
+       children( "genericTypeArgumentList" );
+       $v += $genericTypeArgumentList.v;
+     } )?
+     ( IDENT {
+       children( "IDENT" );
+       $v += " " + $IDENT.text;
+     } )
+     ( arguments {
+       children( "arguments" );
+       $v += " " + $arguments.v;
+     } )
+     ( classTopLevelScope {
+       children( "classTopLevelScope" );
+       $v += " " + $classTopLevelScope.v;
+     } )?
+   )
+  ;
 
 // }}}
     
@@ -2954,28 +2956,28 @@ newArrayConstruction returns [String v]
   int _i = 0;
   nonterminal( "newArrayConstruction" );
   }
-	:
-	( arrayDeclaratorList {
-          children( "arrayDeclaratorList" );
-	  $v = $arrayDeclaratorList.v;
-	} )
-	( arrayInitializer {
-          children( "arrayInitializer" );
-	  $v += " " + $arrayInitializer.v;
-	} )
-	{ $v += ";/*;5*/" + "\n"; }
-	|
-	{ $v = ""; }
-	( expression {
-          children( "expression" );
-	  $v += ( _i++ == 0 ? "" : "/* newArrayConstruction */" )
-	      + $expression.v;
-	} )+
-	( arrayDeclaratorList {
-          children( "arrayDeclaratorList" );
-	  $v += " " + $arrayDeclaratorList.v;
-	} )?
-	;
+  :
+  ( arrayDeclaratorList {
+    children( "arrayDeclaratorList" );
+    $v = $arrayDeclaratorList.v;
+  } )
+  ( arrayInitializer {
+    children( "arrayInitializer" );
+    $v += " " + $arrayInitializer.v;
+  } )
+  { $v += ";/*;5*/" + "\n"; }
+  |
+  { $v = ""; }
+  ( expression {
+    children( "expression" );
+    $v += ( _i++ == 0 ? "" : "/* newArrayConstruction */" )
+        + $expression.v;
+  } )+
+  ( arrayDeclaratorList {
+    children( "arrayDeclaratorList" );
+    $v += " " + $arrayDeclaratorList.v;
+  } )?
+  ;
 
 // }}}
 
@@ -2987,19 +2989,19 @@ arguments returns [String v]
   int _i = 0;
   nonterminal( "arguments" );
   }
-	:
-	{ $v = "("; }
-	{ $v += " "; }
-	^( ARGUMENT_LIST
-           { children( "expression" ); }
-	   ( expression {
-	     $v += ( _i++ == 0 ? "" : "/* arguments */" )
-		 + $expression.v;
-	   } )*
-	 )
-	{ $v += " "; }
-	{ $v += ")"; }
-	;
+  :
+  { $v = "("; }
+  { $v += " "; }
+  ^( ARGUMENT_LIST
+     { children( "expression" ); }
+     ( expression {
+       $v += ( _i++ == 0 ? "" : "/* arguments */" )
+  	 + $expression.v;
+     } )*
+   )
+  { $v += " "; }
+  { $v += ")"; }
+  ;
 
 // }}}
 
@@ -3010,52 +3012,52 @@ literal returns [String v]
   {
   nonterminal( "literal" ); 
   }
-	:
-	( HEX_LITERAL {
-          children( "HEX_LITERAL" );
-	  $v = $HEX_LITERAL.text;
-	} )
-	|
-	( OCTAL_LITERAL {
-          children( "OCTAL_LITERAL" );
-	  $v = $OCTAL_LITERAL.text;
-	} )
-	|
-	( DECIMAL_LITERAL {
-          children( "DECIMAL_LITERAL" );
-	  $v = $DECIMAL_LITERAL.text;
-	} )
-	|
-	( FLOATING_POINT_LITERAL {
-          children( "FLOATING_POINT_LITERAL" );
-	  $v = $FLOATING_POINT_LITERAL.text;
-	} )
-	|
-	( CHARACTER_LITERAL {
-          children( "CHARACTER_LITERAL" );
-	  $v = $CHARACTER_LITERAL.text;
-	} )
-	|
-	( STRING_LITERAL {
-          children( "STRING_LITERAL" );
-	  $v = $STRING_LITERAL.text;
-	} )
-	|
-	( TRUE {
-          children( "TRUE" );
-	  $v = $TRUE.text;
-	} )
-	|
-	( FALSE {
-          children( "FALSE" );
-	  $v = $FALSE.text;
-	} )
-	|
-	( NULL {
-          children( "NULL" );
-	  $v = $NULL.text;
-	} )
-	;
+  :
+  ( HEX_LITERAL {
+    children( "HEX_LITERAL" );
+    $v = $HEX_LITERAL.text;
+  } )
+  |
+  ( OCTAL_LITERAL {
+    children( "OCTAL_LITERAL" );
+    $v = $OCTAL_LITERAL.text;
+  } )
+  |
+  ( DECIMAL_LITERAL {
+    children( "DECIMAL_LITERAL" );
+    $v = $DECIMAL_LITERAL.text;
+  } )
+  |
+  ( FLOATING_POINT_LITERAL {
+    children( "FLOATING_POINT_LITERAL" );
+    $v = $FLOATING_POINT_LITERAL.text;
+  } )
+  |
+  ( CHARACTER_LITERAL {
+    children( "CHARACTER_LITERAL" );
+    $v = $CHARACTER_LITERAL.text;
+  } )
+  |
+  ( STRING_LITERAL {
+    children( "STRING_LITERAL" );
+    $v = $STRING_LITERAL.text;
+  } )
+  |
+  ( TRUE {
+    children( "TRUE" );
+    $v = $TRUE.text;
+  } )
+  |
+  ( FALSE {
+    children( "FALSE" );
+    $v = $FALSE.text;
+  } )
+  |
+  ( NULL {
+    children( "NULL" );
+    $v = $NULL.text;
+  } )
+  ;
 
 // }}}
 
