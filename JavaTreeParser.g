@@ -208,7 +208,7 @@ packageDeclaration returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ importDeclaration
 
 importDeclaration returns [String v]
@@ -237,7 +237,7 @@ importDeclaration returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ typeDeclaration
 
 typeDeclaration returns [String v]
@@ -367,7 +367,7 @@ extendsClause returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ implementsClause
 
 implementsClause returns [String v]
@@ -388,7 +388,7 @@ implementsClause returns [String v]
   ;
 
 // }}}
-        
+
 // {{{ genericTypeParameterList
 
 genericTypeParameterList returns [String v]
@@ -430,7 +430,7 @@ genericTypeParameter returns [String v]
   ;
 
 // }}}
-        
+
 // {{{ bound
 
 bound returns [String v]
@@ -475,7 +475,7 @@ enumTopLevelScope returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ enumConstant
 
 enumConstant returns [String v]
@@ -505,7 +505,7 @@ enumConstant returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ classTopLevelScope
 
 classTopLevelScope returns [String v]
@@ -530,7 +530,7 @@ classTopLevelScope returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ classScopeDeclarations
 
 classScopeDeclarations returns [String v]
@@ -663,7 +663,7 @@ classScopeDeclarations returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ interfaceTopLevelScope
 
 interfaceTopLevelScope returns [String v]
@@ -684,7 +684,7 @@ interfaceTopLevelScope returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ interfaceScopeDeclarations
 
 interfaceScopeDeclarations returns [String v]
@@ -815,7 +815,7 @@ variableDeclarator returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ variableDeclaratorId
 
 variableDeclaratorId returns [String v]
@@ -898,7 +898,7 @@ arrayDeclaratorList returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ arrayInitializer
 
 arrayInitializer returns [String v]
@@ -1213,7 +1213,7 @@ genericTypeArgumentList returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ genericTypeArgument
 
 genericTypeArgument returns [String v]
@@ -1298,7 +1298,7 @@ formalParameterList returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ formalParameterStandardDecl
 formalParameterStandardDecl returns [String v]
 @init
@@ -1323,7 +1323,7 @@ formalParameterStandardDecl returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ formalParameterVarargDecl
 
 formalParameterVarargDecl returns [String v]
@@ -1349,7 +1349,7 @@ formalParameterVarargDecl returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ qualifiedIdentifier
 
 qualifiedIdentifier returns [String v]
@@ -1379,7 +1379,7 @@ qualifiedIdentifier returns [String v]
   ;
 
 // }}}
-    
+
 // ANNOTATIONS
 
 // {{{ annotationList
@@ -1427,7 +1427,7 @@ annotation returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ annotationInit
 
 annotationInit returns [String v]
@@ -1473,7 +1473,7 @@ annotationInitializers returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ annotationInitializer
 
 annotationInitializer returns [String v]
@@ -1494,7 +1494,7 @@ annotationInitializer returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ annotationElementValue
 
 annotationElementValue returns [String v]
@@ -1522,7 +1522,7 @@ annotationElementValue returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ annotationTopLevelScope
 
 annotationTopLevelScope returns [String v]
@@ -1542,7 +1542,7 @@ annotationTopLevelScope returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ annotationScopeDeclarations
 
 annotationScopeDeclarations returns [String v]
@@ -1592,7 +1592,7 @@ annotationScopeDeclarations returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ annotationDefaultValue
 
 annotationDefaultValue returns [String v]
@@ -1631,7 +1631,6 @@ block returns [Statement s]
        $s.string += ( _i++ == 0 ? "" : "/* block */" )
   	  + $blockStatement.s.string;
 
-
 $s.string +=
   ( $blockStatement.s.id == 2 ? ";" : "" ) +
   ( $blockStatement.s.id == 8 ? ";" : "" ) + // for ( a : b ) i++; // The 'i++'
@@ -1642,7 +1641,6 @@ $s.string +=
   ( $blockStatement.s.id == 21 ? ";" : "" ) +
   "/* 1 (" + $blockStatement.s.id + ") */";
 
-
      } )*
    )
   { $s.string += "\n"; }
@@ -1651,7 +1649,7 @@ $s.string +=
   ;
 
 // }}}
-    
+
 // {{{ blockStatement
 
 blockStatement returns [Statement s]
@@ -1680,7 +1678,7 @@ blockStatement returns [Statement s]
   ;
 
 // }}}
-    
+
 // {{{ localVariableDeclaration
 // int i;
 
@@ -1957,7 +1955,7 @@ $s.string +=
   ;
 
 // }}}
-        
+
 // {{{ catches
 
 catches returns [String v]
@@ -1978,7 +1976,7 @@ catches returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ catchClause
 
 catchClause returns [String v]
@@ -1991,10 +1989,14 @@ catchClause returns [String v]
        children( "CATCH" );
        $v = $CATCH.text;
      } )
+     { $v += "("; }
+     { $v += " "; }
      ( formalParameterStandardDecl {
        children( "formalParameterStandardDecl" );
        $v += " " + $formalParameterStandardDecl.v;
      } )
+     { $v += " "; }
+     { $v += ")"; }
      ( block {
        children( "block" );
        $v += " " + $block.s.string;
@@ -2033,7 +2035,7 @@ switchBlockLabels returns [String v]
   ;
 
 // }}}
-        
+
 // {{{ switchCaseLabel
 
 switchCaseLabel returns [String v]
@@ -2081,7 +2083,7 @@ switchDefaultLabel returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ forInit
 
 forInit returns [String v]
@@ -2107,7 +2109,7 @@ forInit returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ forCondition
 
 forCondition returns [String v]
@@ -2147,7 +2149,7 @@ forUpdater returns [String v]
   ;
 
 // }}}
-    
+
 // EXPRESSIONS
 
 // {{{ parenthesizedExpression
@@ -2171,7 +2173,7 @@ parenthesizedExpression returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ expression
 
 expression returns [String v]
@@ -2179,14 +2181,14 @@ expression returns [String v]
   {
   nonterminal( "expression" );
   }
-	:
-	^( EXPR
-	   ( expr {
-             children( "expr" );
-	     $v = $expr.v;
-	   } )
-	 )
-	;
+  :
+  ^( EXPR
+     ( expr {
+       children( "expr" );
+       $v = $expr.v;
+     } )
+   )
+  ;
 
 // }}}
 
@@ -2790,7 +2792,7 @@ primaryExpression returns [String v]
   ;
 
 // }}}
-    
+
 // {{{ explicitConstructorCall
 
 explicitConstructorCall returns [String v]
@@ -2865,7 +2867,6 @@ newExpression returns [String v]
   nonterminal( "newExpression" );
   }
   :
-  { $v = ""; }
   ^( STATIC_ARRAY_CREATOR
      ( { $v = "new"; }
        { $v += " "; }

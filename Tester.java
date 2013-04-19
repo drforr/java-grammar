@@ -113,5 +113,10 @@ class Tester {
     System.out.println(
       ( testLoop_Foreach.aTest() == 4 ? "" : "not " ) + "ok 34"
     );
+
+    TryCatch testTryCatch = new TryCatch();
+    System.out.println(
+      ( testTryCatch.aTest() == 42 ? "" : "not " ) + "ok 35"
+    );
   }
 }

@@ -11,9 +11,10 @@ conversion:
 	java Converter < corpus/Loop.java > Loop.java
 	java Converter < corpus/Array.java > Array.java
 	java Converter < corpus/Loop_Foreach.java > Loop_Foreach.java
+	java Converter < corpus/TryCatch.java > TryCatch.java
 	
 
-test:	Class.java Method.java Attribute.java IfThenElse.java Loop.java Array.java Loop_Foreach.java Tester.java
+test:	Class.java Method.java Attribute.java IfThenElse.java Loop.java Array.java Loop_Foreach.java TryCatch.java Tester.java
 	javac Class.java Tester.java
 	java Tester
 
