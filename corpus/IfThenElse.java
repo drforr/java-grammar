@@ -13,8 +13,9 @@ class IfThenElse {
     return 0;
   }
   public int cTest ( ) {
-    int i = 40;
-    if ( ++i == 41 ) {
+    int i = 39;
+    if ( ++i == 40 ) {
+      ++i;
       return ++i;
     }
     return 0;
@@ -29,6 +30,7 @@ class IfThenElse {
   public int eTest ( ) {
     int i = 40;
     if ( ++i == 40 ) {
+      ++i;
       return --i;
     } else
       return ++i;
@@ -42,10 +44,12 @@ class IfThenElse {
     }
   }
   public int gTest ( ) {
-    int i = 40;
-    if ( ++i == 40 ) {
+    int i = 39;
+    if ( ++i == 39 ) {
+      ++i;
       return --i;
     } else {
+      ++i;
       return ++i;
     }
   }
