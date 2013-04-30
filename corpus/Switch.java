@@ -6,6 +6,7 @@ class Switch {
       case 0: ++j; return j;
       case 1: ++j; break;
       case 2: return j;
+      default: return -2;
     }
     return -1;
   }

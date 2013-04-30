@@ -2029,7 +2029,7 @@ switchBlockLabels returns [String v]
      } )*
      ( switchDefaultLabel {
        children( "SwitchDefaultLabel" );
-       $v += " " + $switchDefaultLabel.v;
+       $v += ";" + " " + $switchDefaultLabel.v;
      } )?
      ( bSwitchCaseLabel=switchCaseLabel {
        children( "bSwitchCaseLabel" );
@@ -2081,6 +2081,8 @@ switchDefaultLabel returns [String v]
   { $v = ""; }
   ^( DEFAULT
      { children( "blockStatement" ); }
+     { $v += "default"; }
+     { $v += ":"; }
      ( blockStatement {
        $v += ( _i++ == 0 ? "" : "/* switchDefaultLabel */" )
   	 + $blockStatement.s.string;
