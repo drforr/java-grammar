@@ -1870,9 +1870,14 @@ $s.string +=
      ( parenthesizedExpression {
        $s.string += " " + $parenthesizedExpression.v;
      } )
+     { $s.string += "{"; }
+     { $s.string += "\n"; }
      ( switchBlockLabels {
        $s.string += " " + $switchBlockLabels.v;
      } )
+     { $s.string += ";"; }
+     { $s.string += "\n"; }
+     { $s.string += "}"; }
    )
   |
   ^( ( SYNCHRONIZED {
@@ -2019,7 +2024,7 @@ switchBlockLabels returns [String v]
   ^( SWITCH_BLOCK_LABEL_LIST
      ( aSwitchCaseLabel=switchCaseLabel {
        children( "aSwitchCaseLabel" );
-       $v += ( _i++ == 0 ? "" : "/* switchBlockLabels */" )
+       $v += ( _i++ == 0 ? "" : ";/* switchBlockLabels */" )
   	 + $aSwitchCaseLabel.v;
      } )*
      ( switchDefaultLabel {
@@ -2028,7 +2033,7 @@ switchBlockLabels returns [String v]
      } )?
      ( bSwitchCaseLabel=switchCaseLabel {
        children( "bSwitchCaseLabel" );
-       $v += ( _j++ == 0 ? "" : "/* switchBlockLabels */" )
+       $v += ( _j++ == 0 ? "" : ";/* switchBlockLabels */" )
   	 + $bSwitchCaseLabel.v;
      } )*
    )
@@ -2053,9 +2058,10 @@ switchCaseLabel returns [String v]
        children( "expression" );
        $v += " " + $expression.v;
      } )
+     { $v += ":"; }
      ( blockStatement {
        children( "blockStatement" );
-       $v += ( _i++ == 0 ? "" : "/* switchCaseLabel */" )
+       $v += ( _i++ == 0 ? "" : ";/* switchCaseLabel */" )
   	 + $blockStatement.s.string;
      } )*
    )

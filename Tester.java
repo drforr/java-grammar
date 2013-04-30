@@ -39,87 +39,92 @@ class Tester {
       ( testIfThenElse.gTest() == 42 ? "" : "not " ) + "ok 12"
     );
 
+    Switch testSwitch = new Switch();
+    System.out.println(
+      ( testSwitch.aTest() == 42 ? "" : "not " ) + "ok 13"
+    );
+
     Attribute testAttribute = new Attribute();
     System.out.println(
-      ( testAttribute.a == 0 ? "" : "not " ) + "ok 13"
+      ( testAttribute.a == 0 ? "" : "not " ) + "ok 14"
     );
     System.out.println(
-      ( testAttribute.aTest == 42 ? "" : "not " ) + "ok 14"
+      ( testAttribute.aTest == 42 ? "" : "not " ) + "ok 15"
     );
     System.out.println(
-      ( testAttribute.cTest() == -7 ? "" : "not " ) + "ok 15"
+      ( testAttribute.cTest() == -7 ? "" : "not " ) + "ok 16"
     );
     System.out.println(
-      ( testAttribute.dTest == "foo" ? "" : "not " ) + "ok 16"
+      ( testAttribute.dTest == "foo" ? "" : "not " ) + "ok 17"
     );
     System.out.println(
-      ( testAttribute.eTest == "foo" ? "" : "not " ) + "ok 17"
+      ( testAttribute.eTest == "foo" ? "" : "not " ) + "ok 18"
     );
     Attribute testAttribute2 = new Attribute( 42 );
     System.out.println(
-      ( testAttribute2.a == 42 ? "" : "not " ) + "ok 18"
+      ( testAttribute2.a == 42 ? "" : "not " ) + "ok 19"
     );
 
     Loop testLoop = new Loop();
     System.out.println(
-      ( testLoop.aTest() == 42 ? "" : "not " ) + "ok 19"
+      ( testLoop.aTest() == 42 ? "" : "not " ) + "ok 20"
     );
     System.out.println(
-      ( testLoop.bTest() == -7 ? "" : "not " ) + "ok 20"
+      ( testLoop.bTest() == -7 ? "" : "not " ) + "ok 21"
     );
     System.out.println(
-      ( testLoop.cTest() == 7 ? "" : "not " ) + "ok 21"
+      ( testLoop.cTest() == 7 ? "" : "not " ) + "ok 22"
     );
     System.out.println(
-      ( testLoop.dTest() == 42 ? "" : "not " ) + "ok 22"
+      ( testLoop.dTest() == 42 ? "" : "not " ) + "ok 23"
     );
     System.out.println(
-      ( testLoop.eTest() == 42 ? "" : "not " ) + "ok 23"
+      ( testLoop.eTest() == 42 ? "" : "not " ) + "ok 24"
     );
     System.out.println(
-      ( testLoop.fTest() == 42 ? "" : "not " ) + "ok 24"
+      ( testLoop.fTest() == 42 ? "" : "not " ) + "ok 25"
     );
 
     Array testArray = new Array();
     System.out.println(
-      ( testArray.bTest[0] == 42 ? "" : "not " ) + "ok 25"
+      ( testArray.bTest[0] == 42 ? "" : "not " ) + "ok 26"
     );
     System.out.println(
-      ( testArray.dTest() == 42 ? "" : "not " ) + "ok 26"
+      ( testArray.dTest() == 42 ? "" : "not " ) + "ok 27"
     );
     System.out.println(
-      ( testArray.eTest()[0] == 42 ? "" : "not " ) + "ok 27"
+      ( testArray.eTest()[0] == 42 ? "" : "not " ) + "ok 28"
     );
     System.out.println(
-      ( testArray.fTest() == 42 ? "" : "not " ) + "ok 28"
+      ( testArray.fTest() == 42 ? "" : "not " ) + "ok 29"
     );
     System.out.println(
-      ( testArray.gTest() == 42 ? "" : "not " ) + "ok 29"
+      ( testArray.gTest() == 42 ? "" : "not " ) + "ok 30"
     );
     System.out.println(
-      ( testArray.hTest( testArray.bTest ) == 42 ? "" : "not " ) + "ok 30"
+      ( testArray.hTest( testArray.bTest ) == 42 ? "" : "not " ) + "ok 31"
     );
     System.out.println(
-      ( testArray.iTest( ) == 42 ? "" : "not " ) + "ok 31"
+      ( testArray.iTest( ) == 42 ? "" : "not " ) + "ok 32"
     );
     System.out.println(
-      ( testArray.jTest( ) == 42 ? "" : "not " ) + "ok 32"
+      ( testArray.jTest( ) == 42 ? "" : "not " ) + "ok 33"
     );
     System.out.println(
-      ( testArray.kTest[0] == "foo" ? "" : "not " ) + "ok 33"
+      ( testArray.kTest[0] == "foo" ? "" : "not " ) + "ok 34"
     );
 
     Loop_Foreach testLoop_Foreach = new Loop_Foreach();
     System.out.println(
-      ( testLoop_Foreach.aTest() == 4 ? "" : "not " ) + "ok 34"
+      ( testLoop_Foreach.aTest() == 4 ? "" : "not " ) + "ok 35"
     );
     System.out.println(
-      ( testLoop_Foreach.bTest() == 8 ? "" : "not " ) + "ok 35"
+      ( testLoop_Foreach.bTest() == 8 ? "" : "not " ) + "ok 36"
     );
 
     TryCatch testTryCatch = new TryCatch();
     System.out.println(
-      ( testTryCatch.aTest() == 42 ? "" : "not " ) + "ok 36"
+      ( testTryCatch.aTest() == 42 ? "" : "not " ) + "ok 37"
     );
   }
 }
