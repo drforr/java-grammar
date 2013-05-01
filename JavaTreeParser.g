@@ -64,7 +64,6 @@ options {
 // {{{ @treeparser::members
 
 @treeparser::members {
-  //private boolean cover = false;
   public boolean cover = false;
   private String foo;
   private void nonterminal ( String s ) {
@@ -73,8 +72,8 @@ options {
       System.out.println( "Nonterminal: " + s );
   }
   private void children ( String s ) {
-    if ( cover )
-      System.out.println( "Child: " + foo + " " + s );
+//    if ( cover )
+//      System.out.println( "Child: " + foo + " " + s );
   }
 
   /** Points to functions tracked by tree builder. */
@@ -326,20 +325,24 @@ typeDeclaration returns [String v]
   |
   ^( ( AT {
        children( "AT" );
-       $v = $AT.text;
      } )
      ( modifierList {
        children( "modifierList" );
-       $v += " " + $modifierList.v;
+       $v = $modifierList.v;
      } )
+     { $v += " " + $AT.text; }
+     { $v += "interface"; }
+     { $v += " "; }
      ( IDENT {
        children( "IDENT" );
-       $v += " " + $IDENT.text;
+       $v += $IDENT.text;
      } )
+     { $v += "{"; }
      ( annotationTopLevelScope {
        children( "annotationTopLevelScope" );
        $v += " " + $annotationTopLevelScope.v;
      } )
+     { $v += "}"; }
    )
   ;
 
@@ -1417,7 +1420,7 @@ annotation returns [String v]
      } )
      ( qualifiedIdentifier {
        children( "qualifiedIdentifier" );
-       $v += " " + $qualifiedIdentifier.v;
+       $v += $qualifiedIdentifier.v;
      } )
      ( annotationInit {
        children( "annotationInit" );
@@ -1533,6 +1536,7 @@ annotationTopLevelScope returns [String v]
   }
   :
   ^( ANNOTATION_TOP_LEVEL_SCOPE
+     { $v = ""; }
      { children( "annotationScopeDeclarations" ); }
      ( annotationScopeDeclarations {
        $v += ( _i++ == 0 ? "" : "/* annotationTopLevelScope */" )

@@ -126,5 +126,10 @@ class Tester {
     System.out.println(
       ( testTryCatch.aTest() == 42 ? "" : "not " ) + "ok 37"
     );
+
+    Annotation testAnnotation = new Annotation();
+    System.out.println(
+      ( testAnnotation.aTest() == 42 ? "" : "not " ) + "ok 38"
+    );
   }
 }

@@ -13,9 +13,10 @@ conversion:
 	java Converter < corpus/Array.java > Array.java
 	java Converter < corpus/Loop_Foreach.java > Loop_Foreach.java
 	java Converter < corpus/TryCatch.java > TryCatch.java
+	java Converter < corpus/Annotation.java > Annotation.java
 	
 
-test:	Class.java Method.java Attribute.java IfThenElse.java Switch.java Loop.java Array.java Loop_Foreach.java TryCatch.java Tester.java
+test:	Class.java Method.java Attribute.java IfThenElse.java Switch.java Loop.java Array.java Loop_Foreach.java TryCatch.java Annotation.java Tester.java
 	javac Class.java Tester.java
 	java Tester
 
