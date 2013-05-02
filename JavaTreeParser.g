@@ -464,6 +464,7 @@ enumTopLevelScope returns [String v]
   nonterminal( "enumTopLevelScope" );
   }
   :
+  { $v = ""; }
   ^( ENUM_TOP_LEVEL_SCOPE
      ( enumConstant {
        children( "enumConstant" );
@@ -542,6 +543,7 @@ classScopeDeclarations returns [String v]
   nonterminal( "classScopeDeclarations" );
   }
   :
+  { $v = ""; }
   ^( CLASS_INSTANCE_INITIALIZER
      ( block {
        children( "block" );
@@ -549,6 +551,7 @@ classScopeDeclarations returns [String v]
      } )?
    )
   |
+  { $v = ""; }
   ^( CLASS_STATIC_INITIALIZER
      ( block {
        children( "block" );
@@ -1466,13 +1469,18 @@ annotationInitializers returns [String v]
      } )+
    )
   |
+  { $v = "("; }
+  { $v += " "; }
   ^( ANNOTATION_INIT_DEFAULT_KEY
+    {$v += " ";}
      ( annotationElementValue {
        children( "annotationElementValue" );
        $v += ( _i++ == 0 ? "" : "/* annotationElementValue 1 */" )
   	 + $annotationElementValue.v;
      } )+
    )
+  { $v += " "; }
+  { $v += ")"; }
   ;
 
 // }}}
@@ -1506,6 +1514,7 @@ annotationElementValue returns [String v]
   nonterminal( "annotationElementValue" );
   }
   :
+  { $v = ""; }
   ^( ANNOTATION_INIT_ARRAY_ELEMENT
      { children( "aAnnotationElementValue" ); }
      ( aAnnotationElementValue=annotationElementValue {
@@ -1535,8 +1544,8 @@ annotationTopLevelScope returns [String v]
   nonterminal( "annotationTopLevelScope" );
   }
   :
+  { $v = ""; }
   ^( ANNOTATION_TOP_LEVEL_SCOPE
-     { $v = ""; }
      { children( "annotationScopeDeclarations" ); }
      ( annotationScopeDeclarations {
        $v += ( _i++ == 0 ? "" : "/* annotationTopLevelScope */" )
@@ -1555,6 +1564,7 @@ annotationScopeDeclarations returns [String v]
   nonterminal( "annotationScopeDeclarations" );
   }
   :
+  { $v = ""; }
   ^( ANNOTATION_METHOD_DECL
      ( modifierList {
        children( "modifierList" );
@@ -1570,6 +1580,13 @@ annotationScopeDeclarations returns [String v]
      } )
      ( annotationDefaultValue {
        children( "annotationDefaultValue" );
+$v+=" ";
+$v+="(";
+$v+=" ";
+$v+=")";
+$v+=" ";
+$v+="default";
+$v+=" ";
        $v += " " + $annotationDefaultValue.v;
      } )?
     )
@@ -1610,6 +1627,7 @@ annotationDefaultValue returns [String v]
        children( "annotationElementValue" );
        $v = $annotationElementValue.v;
      } )
+{$v+=";";}
    )
   ;
 

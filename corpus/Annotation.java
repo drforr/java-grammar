@@ -5,4 +5,8 @@ class Annotation {
   }
   public @interface myAnnotation {
   }
+  @light(true)
+  public @interface light {
+    boolean value() default false;
+  }
 }
