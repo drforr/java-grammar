@@ -9,4 +9,9 @@ class Annotation {
   public @interface light {
     boolean value() default false;
   }
+  @color(name="blue",hue=254)
+  public @interface color {
+    String name();
+    int hue();
+  }
 }

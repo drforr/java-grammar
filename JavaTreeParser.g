@@ -1460,14 +1460,17 @@ annotationInitializers returns [String v]
   nonterminal( "annotationInitializers" );
   }
   :
-  { $v = ""; }
+  { $v = "("; }
+  { $v += " "; }
   ^( ANNOTATION_INIT_KEY_LIST
      ( annotationInitializer {
        children( "annotationInitializer" );
-       $v += ( _i++ == 0 ? "" : "/* annotationInitializer 1 */" )
+       $v += ( _i++ == 0 ? "" : ", " )
   	 + $annotationInitializer.v;
      } )+
    )
+  { $v += " "; }
+  { $v += ")"; }
   |
   { $v = "("; }
   { $v += " "; }
@@ -1497,6 +1500,9 @@ annotationInitializer returns [String v]
        children( "IDENT" );
        $v = $IDENT.text;
      } )
+     { $v += " "; }
+     { $v += "="; }
+     { $v += " "; }
      ( annotationElementValue {
        children( "annotationElementValue" );
        $v += " " + $annotationElementValue.v;
@@ -1548,9 +1554,10 @@ annotationTopLevelScope returns [String v]
   ^( ANNOTATION_TOP_LEVEL_SCOPE
      { children( "annotationScopeDeclarations" ); }
      ( annotationScopeDeclarations {
-       $v += ( _i++ == 0 ? "" : "/* annotationTopLevelScope */" )
+       $v += ( _i++ == 0 ? "" : ";/* annotationTopLevelScope 1 */" )
   	 + $annotationScopeDeclarations.v;
      } )*
+     {$v+=";/* annotationTopLevelScope 2 */";}
     )
   ;
 
@@ -1577,16 +1584,15 @@ annotationScopeDeclarations returns [String v]
      ( IDENT {
        children( "IDENT" );
        $v += " " + $IDENT.text;
+       $v += "(";
+       $v += " ";
+       $v += ")";
      } )
      ( annotationDefaultValue {
        children( "annotationDefaultValue" );
-$v+=" ";
-$v+="(";
-$v+=" ";
-$v+=")";
-$v+=" ";
-$v+="default";
-$v+=" ";
+       $v+=" ";
+       $v+="default";
+       $v+=" ";
        $v += " " + $annotationDefaultValue.v;
      } )?
     )
