@@ -176,6 +176,7 @@ javaSource returns [String v]
        children( "importDeclaration" );
        $v += ( _i++ == 0 ? "" : "/* javaSource 1 */" )
   	 + $importDeclaration.v;
+     {$v+=";";}
      } )*
      ( typeDeclaration {
        children( "typeDeclaration" );
@@ -1371,11 +1372,11 @@ qualifiedIdentifier returns [String v]
   |
   ^( ( DOT {
        children( "DOT" );
-       $v = $DOT.text;
      } )
      ( aQualifiedIdentifier=qualifiedIdentifier {
        children( "aQualifiedIdentifier" );
-       $v += " " + $aQualifiedIdentifier.text;
+       $v = " " + $aQualifiedIdentifier.v;
+       $v += $DOT.text;
      } )
      ( IDENT {
        children( "IDENT" );

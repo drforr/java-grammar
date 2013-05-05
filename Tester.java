@@ -131,5 +131,10 @@ class Tester {
     System.out.println(
       ( testAnnotation.aTest() == 42 ? "" : "not " ) + "ok 38"
     );
+
+    Import testImport = new Import();
+    System.out.println(
+      ( testImport.aTest() == 42 ? "" : "not " ) + "ok 39"
+    );
   }
 }
