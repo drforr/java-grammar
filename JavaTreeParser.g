@@ -304,12 +304,12 @@ typeDeclaration returns [String v]
   |
   ^( ( ENUM {
        children( "ENUM" );
-       $v = $ENUM.text;
      } )
      ( modifierList {
        children( "modifierList" );
-       $v += " " + $modifierList.v;
+       $v = " " + $modifierList.v;
      } )
+     { $v += " " + $ENUM.text; }
      ( IDENT {
        children( "IDENT" );
        $v += " " + $IDENT.text;
@@ -318,10 +318,16 @@ typeDeclaration returns [String v]
        children( "implementsClause" );
        $v += " " + $implementsClause.v;
      } )?
+     { $v += " "; }
+     { $v += "{"; }
+     { $v += "\n"; }
      ( enumTopLevelScope {
        children( "enumTopLevelScope" );
        $v += " " + $enumTopLevelScope.v;
      } )
+     { $v += "\n"; }
+     { $v += "}"; }
+     { $v += "\n"; }
    )
   |
   ^( ( AT {
@@ -469,7 +475,7 @@ enumTopLevelScope returns [String v]
   ^( ENUM_TOP_LEVEL_SCOPE
      ( enumConstant {
        children( "enumConstant" );
-       $v += ( _i++ == 0 ? "" : "/* enumTopLevelScope */" )
+       $v += ( _i++ == 0 ? "" : ",/* enumTopLevelScope */" )
   	 + $enumConstant.v;
      } )+
      ( classTopLevelScope {

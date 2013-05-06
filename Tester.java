@@ -136,5 +136,10 @@ class Tester {
     System.out.println(
       ( testImport.aTest() == 42 ? "" : "not " ) + "ok 39"
     );
+
+    Enum testEnum = new Enum();
+    System.out.println(
+      ( testEnum.aTest() == 42 ? "" : "not " ) + "ok 40"
+    );
   }
 }
