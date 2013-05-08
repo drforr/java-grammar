@@ -4,6 +4,7 @@ all:
 	javac JavaLexer.java JavaParser.java JavaTreeParser.java Statement.java Converter.java
 
 conversion:
+	mkdir -p test/
 	java Converter < corpus/Class.java > Class.java
 	java Converter < corpus/Method.java > Method.java
 	java Converter < corpus/Attribute.java > Attribute.java
@@ -18,10 +19,12 @@ conversion:
 	java Converter < corpus/Day.java > Day.java
 	java Converter < corpus/Enum.java > Enum.java
 	java Converter < corpus/Extends.java > Extends.java
+	java Converter < corpus/test/Package.java > test/Package.java
 
-test:	Class.java Method.java Attribute.java IfThenElse.java Switch.java Loop.java Array.java Loop_Foreach.java TryCatch.java Import.java Annotation.java Enum.java Day.java Extends.java Tester.java
+test:	Class.java Method.java Attribute.java IfThenElse.java Switch.java Loop.java Array.java Loop_Foreach.java TryCatch.java Import.java Annotation.java Enum.java Day.java Extends.java test/Package.java Tester.java
 	javac Class.java Tester.java
 	java Tester
 
 clean:
 	rm -f *.class *.tokens JavaLexer* JavaParser* JavaTreeParser.java Class.java Attribute.java
+	rm -rf test/

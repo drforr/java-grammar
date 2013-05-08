@@ -171,6 +171,7 @@ javaSource returns [String v]
      ( packageDeclaration {
        children( "packageDeclaration" );
        $v += " " + $packageDeclaration.v;
+     {$v+=";";}
      } )?
      ( importDeclaration {
        children( "importDeclaration" );
@@ -248,11 +249,11 @@ typeDeclaration returns [String v]
   :
   ^( ( CLASS {
        children( "CLASS" );
-       $v = $CLASS.text;
      } )
      ( modifierList {
        children( "modifierList" );
-       $v += " " + $modifierList.v;
+       $v = $modifierList.v;
+       $v += " " + $CLASS.text;
      } )
      ( IDENT {
        children( "IDENT" );
@@ -371,7 +372,7 @@ extendsClause returns [String v]
      { children( "type" ); }
      { $v += " " + "extends" + " "; }
      ( type {
-       $v += (_i == 0 ? "" : "/* extendsClause */" )
+       $v += (_i == 0 ? "" + " " : ",/* extendsClause */" )
   	 + $type.v;
      } )+
    )
@@ -453,7 +454,6 @@ bound returns [String v]
   :
   { $v = ""; }
   ^( EXTENDS_BOUND_LIST
-{$v+="/* 2 */";}
      { children( "type" ); }
      ( type {
        $v += ( _i++ == 0 ? "" : "/* bound */" )
@@ -1264,7 +1264,6 @@ genericWildcardBoundType returns [String v]
   }
   :
   ^( ( EXTENDS {
-{$v+="/* 3 */";}
        children( "EXTENDS" );
        $v = $EXTENDS.text;
      } )

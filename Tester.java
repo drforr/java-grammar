@@ -146,5 +146,10 @@ class Tester {
     System.out.println(
       ( testExtends.aTest() == 42 ? "" : "not " ) + "ok 41"
     );
+
+    test.Package testPackage = new test.Package();
+    System.out.println(
+      ( testPackage.aTest() == 42 ? "" : "not " ) + "ok 42"
+    );
   }
 }
