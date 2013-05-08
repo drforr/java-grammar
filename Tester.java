@@ -141,5 +141,10 @@ class Tester {
     System.out.println(
       ( testEnum.aTest() == 42 ? "" : "not " ) + "ok 40"
     );
+
+    Extends testExtends = new Extends();
+    System.out.println(
+      ( testExtends.aTest() == 42 ? "" : "not " ) + "ok 41"
+    );
   }
 }

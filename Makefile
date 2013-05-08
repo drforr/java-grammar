@@ -17,8 +17,9 @@ conversion:
 	java Converter < corpus/Annotation.java > Annotation.java
 	java Converter < corpus/Day.java > Day.java
 	java Converter < corpus/Enum.java > Enum.java
+	java Converter < corpus/Extends.java > Extends.java
 
-test:	Class.java Method.java Attribute.java IfThenElse.java Switch.java Loop.java Array.java Loop_Foreach.java TryCatch.java Import.java Annotation.java Enum.java Day.java Tester.java
+test:	Class.java Method.java Attribute.java IfThenElse.java Switch.java Loop.java Array.java Loop_Foreach.java TryCatch.java Import.java Annotation.java Enum.java Day.java Extends.java Tester.java
 	javac Class.java Tester.java
 	java Tester
 

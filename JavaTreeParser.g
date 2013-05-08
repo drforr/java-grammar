@@ -369,6 +369,7 @@ extendsClause returns [String v]
   { $v = ""; }
   ^( EXTENDS_CLAUSE
      { children( "type" ); }
+     { $v += " " + "extends" + " "; }
      ( type {
        $v += (_i == 0 ? "" : "/* extendsClause */" )
   	 + $type.v;
@@ -452,6 +453,7 @@ bound returns [String v]
   :
   { $v = ""; }
   ^( EXTENDS_BOUND_LIST
+{$v+="/* 2 */";}
      { children( "type" ); }
      ( type {
        $v += ( _i++ == 0 ? "" : "/* bound */" )
@@ -1262,6 +1264,7 @@ genericWildcardBoundType returns [String v]
   }
   :
   ^( ( EXTENDS {
+{$v+="/* 3 */";}
        children( "EXTENDS" );
        $v = $EXTENDS.text;
      } )
